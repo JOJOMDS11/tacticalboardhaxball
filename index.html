@@ -140,6 +140,13 @@
         gap: 8px;
         margin-top: 8px;
     }
+    /* Novo estilo para o criador */
+    .credits-message {
+        margin-top: 10px;
+        font-size: 14px;
+        text-align: center;
+        color: #999;
+    }
   </style>
 </head>
 <body>
@@ -187,6 +194,9 @@
       <canvas id="drawLayer"></canvas>
       <div class="players-layer" id="players"></div>
     </div>
+    <div class="credits-message">
+      <span id="creditsLabel"></span> jojo discordurser: dranklean
+    </div>
   </div>
 
   <script>
@@ -219,7 +229,8 @@
         arrowBtn: "Seta",
         strokeSizeLabel: "Tamanho do Traço:",
         eraserSizeLabel: "Tamanho da Borracha:",
-        discordMessage: "ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS."
+        discordMessage: "ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.",
+        creditsLabel: "Feito por:"
       },
       en: {
         drawOnBtn: "Activate Draw",
@@ -235,7 +246,8 @@
         arrowBtn: "Arrow",
         strokeSizeLabel: "Stroke Size:",
         eraserSizeLabel: "Eraser Size:",
-        discordMessage: "JOIN OUR DISCORD NOW TO PARTICIPATE IN EVENTS."
+        discordMessage: "JOIN OUR DISCORD NOW TO PARTICIPATE IN EVENTS.",
+        creditsLabel: "Made by:"
       },
       tr: {
         drawOnBtn: "Çizimi Etkinleştir",
@@ -251,7 +263,8 @@
         arrowBtn: "Ok",
         strokeSizeLabel: "Çizgi Kalınlığı:",
         eraserSizeLabel: "Silgi Boyutu:",
-        discordMessage: "ETKİNLİKLERE KATILMAK İÇİN DISCORD'UMUZA HEMEN KATILIN."
+        discordMessage: "ETKİNLİKLERE KATILMAK İÇİN DISCORD'UMUZA HEMEN KATILIN.",
+        creditsLabel: "Yapılan:"
       }
     };
 
@@ -270,6 +283,7 @@
       document.getElementById('strokeSizeLabel').textContent = translations[currentLang].strokeSizeLabel;
       document.getElementById('eraserSizeLabel').textContent = translations[currentLang].eraserSizeLabel;
       document.querySelector('.discord-message a').textContent = translations[currentLang].discordMessage;
+      document.getElementById('creditsLabel').textContent = translations[currentLang].creditsLabel;
 
       // Atualiza a classe 'active' das bandeiras
       document.querySelectorAll('.language-selector img').forEach(img => {
