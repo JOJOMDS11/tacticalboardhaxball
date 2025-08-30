@@ -20,8 +20,15 @@
       margin:0 0 10px;
     }
     .app { width:100%; max-width:1100px; }
-    .toolbar { margin-bottom:10px; text-align: center; }
-    .toolbar button, .toolbar input {
+    .toolbar {
+      margin-bottom:10px;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+    .toolbar button, .toolbar input[type="range"] {
       margin: 4px;
       padding:8px 12px;
       border-radius:6px;
@@ -29,6 +36,19 @@
       background:#2c2c2c;
       color:white;
       cursor:pointer;
+    }
+    .toolbar input[type="color"] {
+      width: 40px; /* Adjust size for visibility */
+      height: 30px;
+      border: 1px solid #444;
+      padding: 0;
+      background: #2c2c2c;
+      cursor: pointer;
+    }
+    .toolbar label {
+        margin-right: 5px;
+        color: #e5e7eb;
+        font-size: 14px;
     }
     .board-wrap {
       position:relative;
@@ -75,7 +95,9 @@
       <button id="drawOffBtn">Desativar Desenho</button>
       <button id="eraseBtn">Borracha</button>
       <button id="clearBtn">Limpar</button>
+      <label for="colorPicker">Cor:</label>
       <input type="color" id="colorPicker" value="#ffffff">
+      <label for="sizePicker">Tamanho do Traço:</label>
       <input type="range" id="sizePicker" min="2" max="20" value="4">
     </div>
 
