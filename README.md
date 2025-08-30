@@ -1,4 +1,4 @@
-tacticalboardhaxball
+link: https://haxballboard.netlify.app
 
 Haxball 3v3 Tactical Board | Quadro Tático X3 | Haxball 3v3 Taktik Tahtası
 
