@@ -147,6 +147,12 @@
         text-align: center;
         color: #999;
     }
+    /* Novo estilo para botões ativos */
+    .toolbar button.active {
+      background: #B917FF;
+      border: 1px solid #B917FF;
+      box-shadow: 0 0 5px #B917FF;
+    }
   </style>
 </head>
 <body>
@@ -501,21 +507,35 @@
         }
     });
 
+    // Função para gerenciar o estado ativo dos botões
+    function updateActiveButtons(activeButtonId) {
+      document.querySelectorAll('.shape-menu button, #drawOnBtn, #eraseBtn, #drawOffBtn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      if (activeButtonId) {
+        document.getElementById(activeButtonId).classList.add('active');
+      }
+    }
+
     // Buttons
     document.getElementById("drawOnBtn").onclick=()=>{
       erasing = false;
       mode = 'line';
       draw.style.pointerEvents = "auto";
+      updateActiveButtons('drawOnBtn');
+      document.getElementById('lineBtn').classList.add('active');
     };
     document.getElementById("drawOffBtn").onclick=()=>{
       erasing = false;
       mode = null;
       draw.style.pointerEvents = "none";
+      updateActiveButtons('drawOffBtn');
     };
     document.getElementById("eraseBtn").onclick=()=>{
       erasing = true;
       mode = null;
       draw.style.pointerEvents = "auto";
+      updateActiveButtons('eraseBtn');
     };
     document.getElementById("clearBtn").onclick=()=>{
       ctx.clearRect(0,0,draw.width,draw.height);
@@ -525,26 +545,31 @@
       erasing = false;
       mode = 'line';
       draw.style.pointerEvents = "auto";
+      updateActiveButtons('lineBtn');
     };
     document.getElementById("squareBtn").onclick=()=>{
       erasing = false;
       mode = 'square';
       draw.style.pointerEvents = "auto";
+      updateActiveButtons('squareBtn');
     };
     document.getElementById("triangleBtn").onclick=()=>{
       erasing = false;
       mode = 'triangle';
       draw.style.pointerEvents = "auto";
+      updateActiveButtons('triangleBtn');
     };
     document.getElementById("circleBtn").onclick=()=>{
       erasing = false;
       mode = 'circle';
       draw.style.pointerEvents = "auto";
+      updateActiveButtons('circleBtn');
     };
     document.getElementById("arrowBtn").onclick=()=>{
       erasing = false;
       mode = 'arrow';
       draw.style.pointerEvents = "auto";
+      updateActiveButtons('arrowBtn');
     };
     
     // Função de download PNG
