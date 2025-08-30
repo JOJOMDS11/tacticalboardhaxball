@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quadro Tático Haxball 3x3 - Versão Final</title>
+  <style>
+    body {
+      margin:0;
+      background:#1b1b1b;
+      color:#e5e7eb;
+      font-family: Arial, sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:16px;
+    }
+    h1 {
+      font-size:20px;
+      margin:0 0 10px;
+    }
+    .app { width:100%; max-width:1100px; }
+    .toolbar { margin-bottom:10px; text-align: center; }
+    .toolbar button, .toolbar input {
+      margin: 4px;
+      padding:8px 12px;
+      border-radius:6px;
+      border:1px solid #444;
+      background:#2c2c2c;
+      color:white;
+      cursor:pointer;
+    }
+    .board-wrap {
+      position:relative;
+      width:100%;
+      aspect-ratio:16/9;
+      border:2px solid #444;
+      border-radius:12px;
+      overflow:hidden;
+      background:url('https://i.imgur.com/UiOK7Gr.png') center/contain no-repeat;
+      background-color: #4a4a4a;
+    }
+    canvas { position:absolute; inset:0; width:100%; height:100%; }
+    .players-layer {
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+    .player {
+      --size:29px;
+      width:var(--size); height:var(--size);
+      position:absolute;
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:bold; color:white;
+      cursor:grab;
+      border:2px solid black;
+      pointer-events:auto;
+    }
+    .red { background:#e53935; }
+    .blue { background:#1e88e5; }
+    .ball {
+      --size: 10px; /* Tamanho da bola */
+      background: #B917FF; /* Cor da bola B917FF */
+      border: 2px solid black;
+    }
+    .player:active { cursor:grabbing; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Quadro Tático Haxball – 3x3</h1>
+    <div class="toolbar">
+      <button id="drawOnBtn">Ativar Desenho</button>
+      <button id="drawOffBtn">Desativar Desenho</button>
+      <button id="eraseBtn">Borracha</button>
+      <button id="clearBtn">Limpar</button>
+      <input type="color" id="colorPicker" value="#ffffff">
+      <input type="range" id="sizePicker" min="2" max="20" value="4">
+    </div>
+
+    <div class="board-wrap" id="board">
+      <canvas id="drawLayer"></canvas>
+      <div class="players-layer" id="players"></div>
+    </div>
+  </div>
+
+  <script>
+    const board = document.getElementById("board");
+    const draw = document.getElementById("drawLayer");
+    const playersLayer = document.getElementById("players");
+    const ctx = draw.getContext("2d");
+    // Mode agora controla apenas o desenho
+    let drawingMode = false;
+    let erasing = false;
+    let last = null;
+
+    function resizeCanvas(){
+      draw.width = board.clientWidth;
+      draw.height = board.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Players
+    const players=[
+      {uid: 1, id:'GK',team:'red',x:0.1,y:0.5},
+      {uid: 2, id:'VL',team:'red',x:0.25,y:0.25},
+      {uid: 3, id:'PV',team:'red',x:0.25,y:0.75},
+      {uid: 4, id:'GK',team:'blue',x:0.9,y:0.5},
+      {uid: 5, id:'VL',team:'blue',x:0.75,y:0.25},
+      {uid: 6, id:'PV',team:'blue',x:0.75,y:0.75},
+      {uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5}
+    ];
+
+    players.forEach(p=>{
+      const el=document.createElement("div");
+      el.className=`player ${p.team}`;
+      el.textContent=p.id;
+      el.dataset.uid = p.uid;
+      playersLayer.appendChild(el);
+      p.el=el;
+    });
+
+    function placePlayers(){
+      const rect=board.getBoundingClientRect();
+      players.forEach(p=>{
+        const size = parseInt(getComputedStyle(p.el).getPropertyValue('--size'), 10);
+        p.el.style.left=(p.x*rect.width - size/2)+"px";
+        p.el.style.top=(p.y*rect.height - size/2)+"px";
+      });
+    }
+    placePlayers();
+    window.addEventListener("resize",placePlayers);
+
+    // Drag (arrastar) - SEMPRE ATIVO
+    let drag=null;
+    board.addEventListener("pointerdown",e=>{
+      const t=e.target.closest('.player'); 
+      if(!t) return;
+      
+      const rect=board.getBoundingClientRect();
+      const uniqueId = t.dataset.uid;
+      const p = players.find(pp=>pp.uid == uniqueId);
+      if (!p) return;
+
+      const size = parseInt(getComputedStyle(t).getPropertyValue('--size'), 10);
+      drag={p,offsetX:e.clientX-rect.left-(p.x*rect.width),offsetY:e.clientY-rect.top-(p.y*rect.height)};
+      t.setPointerCapture(e.pointerId);
+    });
+
+    window.addEventListener("pointermove",e=>{
+      if(!drag) return;
+      const rect=board.getBoundingClientRect();
+      drag.p.x=(e.clientX-rect.left-drag.offsetX)/rect.width;
+      drag.p.y=(e.clientY-rect.top-drag.offsetY)/rect.height;
+      placePlayers();
+    });
+    window.addEventListener("pointerup",()=>{ drag=null; });
+
+    // Drawing (desenho) - CONTROLADO PELOS BOTÕES
+    function getPos(e){
+      const rect=draw.getBoundingClientRect();
+      return {x:e.clientX-rect.left,y:e.clientY-rect.top};
+    }
+    function startDraw(e){ 
+      if(!drawingMode) return; 
+      drawing=true; 
+      last=getPos(e); 
+    }
+    function moveDraw(e){
+      if(!drawing) return;
+      const pos=getPos(e);
+      ctx.lineWidth=document.getElementById("sizePicker").value;
+      ctx.lineCap="round";
+      ctx.strokeStyle=document.getElementById("colorPicker").value;
+      ctx.globalCompositeOperation=erasing?"destination-out":"source-over";
+      ctx.beginPath();
+      ctx.moveTo(last.x,last.y);
+      ctx.lineTo(pos.x,pos.y);
+      ctx.stroke();
+      last=pos;
+    }
+    function endDraw(){ 
+      drawing=false; 
+      last=null; 
+    }
+
+    // Apenas os listeners de desenho precisam ser ativados/desativados
+    draw.addEventListener("mousedown", startDraw);
+    draw.addEventListener("mousemove", moveDraw);
+    window.addEventListener("mouseup", endDraw);
+    draw.addEventListener("mouseleave", endDraw);
+
+    // Buttons
+    document.getElementById("drawOnBtn").onclick=()=>{
+      drawingMode = true;
+      erasing = false;
+      draw.style.pointerEvents = "auto";
+    };
+    document.getElementById("drawOffBtn").onclick=()=>{
+      drawingMode = false;
+      draw.style.pointerEvents = "none";
+    };
+    document.getElementById("eraseBtn").onclick=()=>{
+      drawingMode = true;
+      erasing = true;
+      draw.style.pointerEvents = "auto";
+    };
+    document.getElementById("clearBtn").onclick=()=>{
+      ctx.clearRect(0,0,draw.width,draw.height);
+    };
+
+    // Desativa o desenho por padrão
+    drawOffBtn.click();
+  </script>
+</body>
+</html>
