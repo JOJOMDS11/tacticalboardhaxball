@@ -24,12 +24,19 @@
       margin-bottom:10px;
       text-align: center;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      gap: 8px;
+    }
+    .button-group, .size-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
     }
     .toolbar button, .toolbar input[type="range"] {
-      margin: 4px;
+      margin: 0;
       padding:8px 12px;
       border-radius:6px;
       border:1px solid #444;
@@ -38,7 +45,7 @@
       cursor:pointer;
     }
     .toolbar input[type="color"] {
-      width: 40px; /* Adjust size for visibility */
+      width: 40px;
       height: 30px;
       border: 1px solid #444;
       padding: 0;
@@ -49,6 +56,7 @@
         margin-right: 5px;
         color: #e5e7eb;
         font-size: 14px;
+        white-space: nowrap;
     }
     .board-wrap {
       position:relative;
@@ -80,25 +88,55 @@
     .red { background:#e53935; }
     .blue { background:#1e88e5; }
     .ball {
-      --size: 10px; /* Tamanho da bola */
-      background: #B917FF; /* Cor da bola B917FF */
+      --size: 10px;
+      background: #B917FF;
       border: 2px solid black;
     }
     .player:active { cursor:grabbing; }
+
+    /* Estilo para a mensagem do Discord */
+    .discord-message {
+        margin-top: 10px;
+        font-size: 16px;
+        text-align: center;
+        color: #e5e7eb;
+    }
+    .discord-message a {
+        color: #7289da; /* Cor azul do Discord */
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .discord-message a:hover {
+        text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <div class="app">
     <h1>Quadro Tático Haxball – 3x3</h1>
     <div class="toolbar">
-      <button id="drawOnBtn">Ativar Desenho</button>
-      <button id="drawOffBtn">Desativar Desenho</button>
-      <button id="eraseBtn">Borracha</button>
-      <button id="clearBtn">Limpar</button>
-      <label for="colorPicker">Cor:</label>
-      <input type="color" id="colorPicker" value="#ffffff">
-      <label for="sizePicker">Tamanho do Traço:</label>
-      <input type="range" id="sizePicker" min="2" max="20" value="4">
+      <div class="button-group">
+        <button id="drawOnBtn">Ativar Desenho</button>
+        <button id="drawOffBtn">Desativar Desenho</button>
+        <button id="eraseBtn">Borracha</button>
+        <button id="clearBtn">Limpar</button>
+        <label for="colorPicker">Cor:</label>
+        <input type="color" id="colorPicker" value="#ffffff">
+      </div>
+      <div class="size-group">
+        <label for="sizePicker">Tamanho do Traço:</label>
+        <input type="range" id="sizePicker" min="2" max="20" value="4">
+        <label for="eraserSizePicker">Tamanho da Borracha:</label>
+        <input type="range" id="eraserSizePicker" min="2" max="50" value="20">
+      </div>
+    </div>
+    
+    <div class="discord-message">
+      <p>
+        <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank">
+          ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.
+        </a>
+      </p>
     </div>
 
     <div class="board-wrap" id="board">
@@ -112,14 +150,45 @@
     const draw = document.getElementById("drawLayer");
     const playersLayer = document.getElementById("players");
     const ctx = draw.getContext("2d");
-    // Mode agora controla apenas o desenho
     let drawingMode = false;
     let erasing = false;
     let last = null;
+    let history = [];
+    const maxHistory = 10;
+
+    function saveState() {
+      if (history.length >= maxHistory) {
+        history.shift();
+      }
+      history.push(draw.toDataURL());
+    }
+
+    function undo() {
+      if (history.length > 0) {
+        history.pop();
+        if (history.length > 0) {
+          const img = new Image();
+          img.onload = () => {
+            ctx.clearRect(0, 0, draw.width, draw.height);
+            ctx.drawImage(img, 0, 0);
+          };
+          img.src = history[history.length - 1];
+        } else {
+          ctx.clearRect(0, 0, draw.width, draw.height);
+        }
+      }
+    }
 
     function resizeCanvas(){
       draw.width = board.clientWidth;
       draw.height = board.clientHeight;
+      if (history.length > 0) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = history[history.length - 1];
+      }
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
@@ -193,7 +262,7 @@
     function moveDraw(e){
       if(!drawing) return;
       const pos=getPos(e);
-      ctx.lineWidth=document.getElementById("sizePicker").value;
+      ctx.lineWidth = erasing ? document.getElementById("eraserSizePicker").value : document.getElementById("sizePicker").value;
       ctx.lineCap="round";
       ctx.strokeStyle=document.getElementById("colorPicker").value;
       ctx.globalCompositeOperation=erasing?"destination-out":"source-over";
@@ -204,6 +273,9 @@
       last=pos;
     }
     function endDraw(){ 
+      if(drawing) {
+        saveState();
+      }
       drawing=false; 
       last=null; 
     }
@@ -213,6 +285,14 @@
     draw.addEventListener("mousemove", moveDraw);
     window.addEventListener("mouseup", endDraw);
     draw.addEventListener("mouseleave", endDraw);
+    
+    // Ctrl+Z para desfazer
+    window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'z') {
+            e.preventDefault();
+            undo();
+        }
+    });
 
     // Buttons
     document.getElementById("drawOnBtn").onclick=()=>{
@@ -231,6 +311,7 @@
     };
     document.getElementById("clearBtn").onclick=()=>{
       ctx.clearRect(0,0,draw.width,draw.height);
+      history = [];
     };
 
     // Desativa o desenho por padrão
