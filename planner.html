@@ -22,6 +22,16 @@
       margin:0 0 10px;
       text-align: center;
       width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .coming-soon {
+      font-size: 14px;
+      color: #999;
+      white-space: nowrap;
     }
     .app { width:100%; max-width:1100px; }
     .toolbar {
@@ -154,11 +164,42 @@
       border: 1px solid #B917FF;
       box-shadow: 0 0 5px #B917FF;
     }
+    .donations {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .donations h2 {
+      font-size: 18px;
+      margin: 0;
+      color: #e5e7eb;
+      text-align: center;
+    }
+    .donations .links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .donations a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #e5e7eb;
+      font-weight: bold;
+    }
+    .donations img {
+      height: 30px;
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <h1>Quadro Tático Haxball – 3x3</h1>
+    <h1>Quadro Tático Haxball – 3x3 <span class="coming-soon" id="comingSoonLabel"></span></h1>
     <div class="toolbar">
       <div class="button-group">
         <button id="drawOnBtn"></button>
@@ -189,6 +230,20 @@
       </div>
     </div>
     
+    <div class="donations">
+        <h2 id="helpProjectLabel"></h2>
+        <div class="links">
+            <a href="https://livepix.gg/jojos" target="_blank">
+                <img src="https://logospng.org/wp-content/uploads/pix.png" alt="Doar com Pix" />
+                <span>PIX</span>
+            </a>
+            <a href="https://www.paypal.com/paypalme/prettyjphm" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png" alt="Doar com PayPal" />
+                <span>PAYPAL</span>
+            </a>
+        </div>
+    </div>
+
     <div class="discord-message">
       <p>
         <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank">
@@ -237,7 +292,9 @@
         strokeSizeLabel: "Tamanho do Traço:",
         eraserSizeLabel: "Tamanho da Borracha:",
         discordMessage: "ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.",
-        creditsLabel: "Feito por:"
+        creditsLabel: "Feito por:",
+        helpProject: "Ajude o projeto",
+        comingSoon: "(Em breve novos modos)"
       },
       en: {
         drawOnBtn: "Activate Draw",
@@ -254,7 +311,9 @@
         strokeSizeLabel: "Stroke Size:",
         eraserSizeLabel: "Eraser Size:",
         discordMessage: "JOIN OUR DISCORD NOW TO PARTICIPATE IN EVENTS.",
-        creditsLabel: "Made by:"
+        creditsLabel: "Made by:",
+        helpProject: "Help the project",
+        comingSoon: "(Coming soon new modes)"
       },
       tr: {
         drawOnBtn: "Çizimi Etkinleştir",
@@ -271,7 +330,9 @@
         strokeSizeLabel: "Çizgi Kalınlığı:",
         eraserSizeLabel: "Silgi Boyutu:",
         discordMessage: "ETKİNLİKLERE KATILMAK İÇİN DISCORD'UMUZA HEMEN KATILIN.",
-        creditsLabel: "Yapılan:"
+        creditsLabel: "Yapılan:",
+        helpProject: "Projeye yardım et",
+        comingSoon: "(Yakında yeni modlar)"
       }
     };
 
@@ -291,6 +352,9 @@
       document.getElementById('eraserSizeLabel').textContent = translations[currentLang].eraserSizeLabel;
       document.querySelector('.discord-message a').textContent = translations[currentLang].discordMessage;
       document.getElementById('creditsLabel').textContent = translations[currentLang].creditsLabel;
+      document.getElementById('helpProjectLabel').textContent = translations[currentLang].helpProject;
+      document.getElementById('comingSoonLabel').textContent = translations[currentLang].comingSoon;
+
 
       // Atualiza a classe 'active' das bandeiras
       document.querySelectorAll('.language-selector img').forEach(img => {
