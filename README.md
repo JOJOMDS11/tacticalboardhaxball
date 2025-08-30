@@ -1,16 +1,15 @@
-# tacticalboardhaxball
-Haxball 3v3 Tactical Board | Quadro Tático X3
+tacticalboardhaxball
 
-🎮 Show your moves, dominate the game! / Mostre suas jogadas, domine o jogo!
+Haxball 3v3 Tactical Board | Quadro Tático X3 | Haxball 3v3 Taktik Tahtası
 
-Este é um quadro tático 3v3 gratuito para Haxball, feito para planejar estratégias, jogadas ensaiadas e posicionamentos de times.
+🎮 Show your moves, dominate the game! / Mostre suas jogadas, domine o jogo! / Hamlelerini göster, oyunu domine et!
 
-✅ Totalmente gratuito / Free to use
+Este é um quadro tático 3v3 gratuito para Haxball, feito para planejar estratégias, jogadas ensaiadas e posicionamentos de times / Haxball için ücretsiz 3v3 taktik tahtası, stratejiler, hazır oyun planları ve takım pozisyonlarını planlamak için hazırlandı.
 
-⚡ Fácil de usar / Easy to use
+✅ Totalmente gratuito / Free to use / Tamamen ücretsiz
 
-🏆 Mostre e compartilhe suas táticas com amigos / Share your tactics with friends
+⚡ Fácil de usar / Easy to use / Kullanımı kolay
 
-⌨️ Undo your last move with Ctrl+Z / Desfaça sua última ação com Ctrl+Z
+🏆 Mostre e compartilhe suas táticas com amigos / Share your tactics with friends / Taktiklerini arkadaşlarınla paylaş
 
-💡 Dica: Perfeito para treinos, torneios e criar estratégias inteligentes no Haxball 3x3.
+⌨️ Undo your last move with Ctrl+Z / Desfaça sua última ação com Ctrl+Z / Son hamleni Ctrl+Z ile geri al
