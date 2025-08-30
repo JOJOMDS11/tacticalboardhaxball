@@ -131,6 +131,15 @@
     .language-selector img.active {
         border: 2px solid #fff;
     }
+    /* Estilos para o menu de formas */
+    .shape-menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -150,6 +159,13 @@
             <img src="https://flagcdn.com/us.svg" alt="English" data-lang="en" id="flag-en">
             <img src="https://flagcdn.com/tr.svg" alt="Türkçe" data-lang="tr" id="flag-tr">
         </div>
+      </div>
+      <div class="shape-menu">
+        <button id="lineBtn"></button>
+        <button id="squareBtn"></button>
+        <button id="triangleBtn"></button>
+        <button id="circleBtn"></button>
+        <button id="arrowBtn"></button>
       </div>
       <div class="size-group">
         <label id="strokeSizeLabel" for="sizePicker"></label>
@@ -178,9 +194,11 @@
     const draw = document.getElementById("drawLayer");
     const playersLayer = document.getElementById("players");
     const ctx = draw.getContext("2d");
-    let drawingMode = false;
+    let mode = 'line'; // Modo inicial: linha
+    let drawing = false;
     let erasing = false;
     let last = null;
+    let startPos = null;
     let history = [];
     const maxHistory = 10;
     let currentLang = 'pt'; // Idioma padrão
@@ -194,6 +212,11 @@
         clearBtn: "Limpar",
         colorLabel: "Cor:",
         downloadBtn: "Baixar PNG",
+        lineBtn: "Linha",
+        squareBtn: "Quadrado",
+        triangleBtn: "Triângulo",
+        circleBtn: "Círculo",
+        arrowBtn: "Seta",
         strokeSizeLabel: "Tamanho do Traço:",
         eraserSizeLabel: "Tamanho da Borracha:",
         discordMessage: "ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS."
@@ -205,6 +228,11 @@
         clearBtn: "Clear",
         colorLabel: "Color:",
         downloadBtn: "Download PNG",
+        lineBtn: "Line",
+        squareBtn: "Square",
+        triangleBtn: "Triangle",
+        circleBtn: "Circle",
+        arrowBtn: "Arrow",
         strokeSizeLabel: "Stroke Size:",
         eraserSizeLabel: "Eraser Size:",
         discordMessage: "JOIN OUR DISCORD NOW TO PARTICIPATE IN EVENTS."
@@ -216,6 +244,11 @@
         clearBtn: "Temizle",
         colorLabel: "Renk:",
         downloadBtn: "PNG İndir",
+        lineBtn: "Çizgi",
+        squareBtn: "Kare",
+        triangleBtn: "Üçgen",
+        circleBtn: "Çember",
+        arrowBtn: "Ok",
         strokeSizeLabel: "Çizgi Kalınlığı:",
         eraserSizeLabel: "Silgi Boyutu:",
         discordMessage: "ETKİNLİKLERE KATILMAK İÇİN DISCORD'UMUZA HEMEN KATILIN."
@@ -229,6 +262,11 @@
       document.getElementById('clearBtn').textContent = translations[currentLang].clearBtn;
       document.getElementById('colorLabel').textContent = translations[currentLang].colorLabel;
       document.getElementById('downloadBtn').textContent = translations[currentLang].downloadBtn;
+      document.getElementById('lineBtn').textContent = translations[currentLang].lineBtn;
+      document.getElementById('squareBtn').textContent = translations[currentLang].squareBtn;
+      document.getElementById('triangleBtn').textContent = translations[currentLang].triangleBtn;
+      document.getElementById('circleBtn').textContent = translations[currentLang].circleBtn;
+      document.getElementById('arrowBtn').textContent = translations[currentLang].arrowBtn;
       document.getElementById('strokeSizeLabel').textContent = translations[currentLang].strokeSizeLabel;
       document.getElementById('eraserSizeLabel').textContent = translations[currentLang].eraserSizeLabel;
       document.querySelector('.discord-message a').textContent = translations[currentLang].discordMessage;
@@ -343,32 +381,98 @@
       const rect=draw.getBoundingClientRect();
       return {x:e.clientX-rect.left,y:e.clientY-rect.top};
     }
-    function startDraw(e){ 
-      if(!drawingMode) return; 
-      drawing=true; 
-      last=getPos(e); 
+    
+    function drawShape(e) {
+        const pos = getPos(e);
+        ctx.clearRect(0, 0, draw.width, draw.height);
+        // Restaura o estado anterior do canvas
+        if (history.length > 0) {
+            const lastState = new Image();
+            lastState.src = history[history.length - 1];
+            ctx.drawImage(lastState, 0, 0);
+        }
+
+        ctx.strokeStyle = document.getElementById("colorPicker").value;
+        ctx.lineWidth = document.getElementById("sizePicker").value;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+
+        if (mode === 'line') {
+            ctx.moveTo(startPos.x, startPos.y);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        } else if (mode === 'square') {
+            const width = pos.x - startPos.x;
+            const height = pos.y - startPos.y;
+            ctx.strokeRect(startPos.x, startPos.y, width, height);
+        } else if (mode === 'triangle') {
+            ctx.moveTo(startPos.x, startPos.y);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.lineTo(startPos.x + (pos.x - startPos.x) / 2, startPos.y);
+            ctx.closePath();
+            ctx.stroke();
+        } else if (mode === 'circle') {
+            const dx = pos.x - startPos.x;
+            const dy = pos.y - startPos.y;
+            const radius = Math.sqrt(dx * dx + dy * dy) / 2;
+            ctx.arc(startPos.x + dx / 2, startPos.y + dy / 2, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+        } else if (mode === 'arrow') {
+            const headlen = 15;
+            const angle = Math.atan2(pos.y - startPos.y, pos.x - startPos.x);
+            ctx.moveTo(startPos.x, startPos.y);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            ctx.lineTo(pos.x - headlen * Math.cos(angle - Math.PI / 6), pos.y - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(pos.x - headlen * Math.cos(angle + Math.PI / 6), pos.y - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.fill();
+        }
     }
+
+    function startDraw(e){ 
+      if(erasing) {
+        drawing = true;
+        last = getPos(e);
+        return;
+      }
+      if(mode === null) return;
+      drawing = true; 
+      startPos = getPos(e); 
+      last = getPos(e);
+    }
+    
     function moveDraw(e){
-      if(!drawing) return;
-      const pos=getPos(e);
-      ctx.lineWidth = erasing ? document.getElementById("eraserSizePicker").value : document.getElementById("sizePicker").value;
-      ctx.lineCap="round";
-      ctx.strokeStyle=document.getElementById("colorPicker").value;
-      ctx.globalCompositeOperation=erasing?"destination-out":"source-over";
-      ctx.beginPath();
-      ctx.moveTo(last.x,last.y);
-      ctx.lineTo(pos.x,pos.y);
-      ctx.stroke();
-      last=pos;
+        if (!drawing) return;
+        if (erasing) {
+            const pos = getPos(e);
+            ctx.lineWidth = document.getElementById("eraserSizePicker").value;
+            ctx.lineCap = "round";
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.beginPath();
+            ctx.moveTo(last.x, last.y);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            last = pos;
+        } else {
+            drawShape(e);
+        }
     }
     function endDraw(){ 
       if(drawing) {
-        saveState();
+        if (!erasing) {
+            drawShape(event); // Desenha a forma final
+            saveState(); // Salva o estado
+        }
+        drawing = false; 
+        last = null;
+        startPos = null;
       }
-      drawing=false; 
-      last=null; 
     }
-
+    
     // Apenas os listeners de desenho precisam ser ativados/desativados
     draw.addEventListener("mousedown", startDraw);
     draw.addEventListener("mousemove", moveDraw);
@@ -385,22 +489,48 @@
 
     // Buttons
     document.getElementById("drawOnBtn").onclick=()=>{
-      drawingMode = true;
       erasing = false;
+      mode = 'line';
       draw.style.pointerEvents = "auto";
     };
     document.getElementById("drawOffBtn").onclick=()=>{
-      drawingMode = false;
+      erasing = false;
+      mode = null;
       draw.style.pointerEvents = "none";
     };
     document.getElementById("eraseBtn").onclick=()=>{
-      drawingMode = true;
       erasing = true;
+      mode = null;
       draw.style.pointerEvents = "auto";
     };
     document.getElementById("clearBtn").onclick=()=>{
       ctx.clearRect(0,0,draw.width,draw.height);
       history = [];
+    };
+    document.getElementById("lineBtn").onclick=()=>{
+      erasing = false;
+      mode = 'line';
+      draw.style.pointerEvents = "auto";
+    };
+    document.getElementById("squareBtn").onclick=()=>{
+      erasing = false;
+      mode = 'square';
+      draw.style.pointerEvents = "auto";
+    };
+    document.getElementById("triangleBtn").onclick=()=>{
+      erasing = false;
+      mode = 'triangle';
+      draw.style.pointerEvents = "auto";
+    };
+    document.getElementById("circleBtn").onclick=()=>{
+      erasing = false;
+      mode = 'circle';
+      draw.style.pointerEvents = "auto";
+    };
+    document.getElementById("arrowBtn").onclick=()=>{
+      erasing = false;
+      mode = 'arrow';
+      draw.style.pointerEvents = "auto";
     };
     
     // Função de download PNG
@@ -416,12 +546,10 @@
             tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
             tempCtx.drawImage(draw, 0, 0);
 
-            // Desenha os jogadores no tempCanvas
             let playersDrawn = 0;
             const totalPlayers = players.length;
 
             if (totalPlayers === 0) {
-                // Se não houver jogadores, baixe imediatamente
                 downloadFinalCanvas(tempCanvas);
                 return;
             }
@@ -429,13 +557,11 @@
             players.forEach(p => {
                 const img = new Image();
                 img.onload = () => {
-                    // Crie um canvas temporário para o jogador para garantir o fundo e o texto
                     const playerCanvas = document.createElement('canvas');
                     playerCanvas.width = p.el.offsetWidth;
                     playerCanvas.height = p.el.offsetHeight;
                     const playerCtx = playerCanvas.getContext('2d');
 
-                    // Desenha o círculo do jogador
                     playerCtx.beginPath();
                     playerCtx.arc(p.el.offsetWidth / 2, p.el.offsetHeight / 2, p.el.offsetWidth / 2 - 2, 0, Math.PI * 2);
                     playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
@@ -444,7 +570,6 @@
                     playerCtx.lineWidth = 2;
                     playerCtx.stroke();
 
-                    // Desenha o texto do jogador (GK, VL, PV)
                     playerCtx.font = "bold 14px Arial, sans-serif";
                     playerCtx.fillStyle = getComputedStyle(p.el).color;
                     playerCtx.textAlign = "center";
@@ -458,7 +583,6 @@
                         downloadFinalCanvas(tempCanvas);
                     }
                 };
-                // Use uma imagem transparente para carregar, o desenho será feito no canvas
                 img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
             });
         };
