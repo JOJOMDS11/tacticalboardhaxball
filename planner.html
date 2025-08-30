@@ -249,8 +249,8 @@
 
     <div class="discord-message">
       <p>
-        <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank" onclick="tracker.trackDiscordClick()">
-          ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.
+        <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank" onclick="trackDiscordClick()">
+          <span id="discordText">ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICIPAR DOS EVENTOS.</span>
         </a>
       </p>
     </div>
@@ -265,6 +265,117 @@
   </div>
 
   <script>
+    // Classe para rastrear estatísticas
+    class HaxballStatsTracker {
+      constructor() {
+        this.firebaseInitialized = false;
+        
+        // Configuração do Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
+          authDomain: "jojovius-f5de7.firebaseapp.com",
+          databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
+          projectId: "jojovius-f5de7",
+          storageBucket: "jojovius-f5de7.appspot.com",
+          messagingSenderId: "629248865232",
+          appId: "1:629248865232:web:4e74d888f57161cedfffd5"
+        };
+
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          this.db = firebase.database();
+          this.firebaseInitialized = true;
+          console.log('Firebase inicializado com sucesso');
+        } catch (error) {
+          console.error('Erro ao inicializar Firebase:', error);
+        }
+
+        this.counters = {
+          totalVisits: 'totalVisits',
+          todayVisits: 'todayVisits_' + new Date().toISOString().split('T')[0],
+          downloads: 'downloads',
+          drawActivations: 'drawActivations',
+          languageChanges: 'languageChanges',
+          discordClicks: 'discordClicks',
+          langPt: 'langPt',
+          langEn: 'langEn',
+          langTr: 'langTr'
+        };
+      }
+
+      async increment(key, amount = 1) {
+        if (!this.firebaseInitialized) {
+          console.warn('Firebase não inicializado, não é possível rastrear:', key);
+          return;
+        }
+        
+        try {
+          await this.db.ref(`stats/${key}`).transaction((current) => {
+            return (current || 0) + amount;
+          });
+          console.log(`Rastreado com sucesso: ${key}`);
+        } catch (error) {
+          console.error(`Erro ao rastrear ${key}:`, error);
+        }
+      }
+
+      async trackVisit() {
+        try {
+          await this.increment(this.counters.totalVisits);
+          await this.increment(this.counters.todayVisits);
+        } catch (error) {
+          console.error('Erro ao rastrear visita:', error);
+        }
+      }
+
+      async trackDownload() {
+        try {
+          await this.increment(this.counters.downloads);
+        } catch (error) {
+          console.error('Erro ao rastrear download:', error);
+        }
+      }
+
+      async trackDraw() {
+        try {
+          await this.increment(this.counters.drawActivations);
+        } catch (error) {
+          console.error('Erro ao rastrear ativação de desenho:', error);
+        }
+      }
+
+      async trackLanguageChange(lang) {
+        try {
+          await this.increment(this.counters.languageChanges);
+          if (lang === 'pt') await this.increment(this.counters.langPt);
+          if (lang === 'en') await this.increment(this.counters.langEn);
+          if (lang === 'tr') await this.increment(this.counters.langTr);
+        } catch (error) {
+          console.error('Erro ao rastrear mudança de idioma:', error);
+        }
+      }
+
+      async trackDiscordClick() {
+        try {
+          await this.increment(this.counters.discordClicks);
+        } catch (error) {
+          console.error('Erro ao rastrear clique no Discord:', error);
+        }
+      }
+    }
+
+    // Instância global do tracker
+    let tracker;
+
+    // Função global para rastrear cliques no Discord
+    function trackDiscordClick() {
+      if (tracker) {
+        tracker.trackDiscordClick();
+      }
+    }
+
     const board = document.getElementById('board');
     const draw = document.getElementById('drawLayer');
     const playersLayer = document.getElementById('players');
@@ -294,7 +405,7 @@
         arrowBtn: 'Seta',
         strokeSizeLabel: 'Tamanho do Traço',
         eraserSizeLabel: 'Tamanho da Borracha',
-        discordMessage: 'ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.',
+        discordMessage: 'ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICIPAR DOS EVENTOS.',
         creditsLabel: 'Feito por',
         helpProject: 'Ajude o projeto',
         comingSoon: '(Em breve novos modos)'
@@ -353,7 +464,7 @@
       document.getElementById('arrowBtn').textContent = translations[currentLang].arrowBtn;
       document.getElementById('strokeSizeLabel').textContent = translations[currentLang].strokeSizeLabel;
       document.getElementById('eraserSizeLabel').textContent = translations[currentLang].eraserSizeLabel;
-      document.querySelector('.discord-message a').textContent = translations[currentLang].discordMessage;
+      document.getElementById('discordText').textContent = translations[currentLang].discordMessage;
       document.getElementById('creditsLabel').textContent = translations[currentLang].creditsLabel;
       document.getElementById('helpProjectLabel').textContent = translations[currentLang].helpProject;
       document.getElementById('comingSoonLabel').textContent = translations[currentLang].comingSoon;
@@ -366,9 +477,21 @@
     }
 
     // Event listeners para as bandeiras
-    document.getElementById('flag-pt').addEventListener('click', () => { currentLang = 'pt'; updateTexts(); tracker.trackLanguageChange('pt'); });
-    document.getElementById('flag-en').addEventListener('click', () => { currentLang = 'en'; updateTexts(); tracker.trackLanguageChange('en'); });
-    document.getElementById('flag-tr').addEventListener('click', () => { currentLang = 'tr'; updateTexts(); tracker.trackLanguageChange('tr'); });
+    document.getElementById('flag-pt').addEventListener('click', () => { 
+      currentLang = 'pt'; 
+      updateTexts(); 
+      if (tracker) tracker.trackLanguageChange('pt'); 
+    });
+    document.getElementById('flag-en').addEventListener('click', () => { 
+      currentLang = 'en'; 
+      updateTexts(); 
+      if (tracker) tracker.trackLanguageChange('en'); 
+    });
+    document.getElementById('flag-tr').addEventListener('click', () => { 
+      currentLang = 'tr'; 
+      updateTexts(); 
+      if (tracker) tracker.trackLanguageChange('tr'); 
+    });
 
     function saveState() {
       if (history.length === maxHistory) {
@@ -603,7 +726,7 @@
       draw.style.pointerEvents = 'auto';
       updateActiveButtons('drawOnBtn');
       document.getElementById('lineBtn').classList.add('active');
-      tracker.trackDraw();  // Rastreia ativação de desenho
+      if (tracker) tracker.trackDraw();  // Rastreia ativação de desenho
     };
     document.getElementById('drawOffBtn').onclick=()=>{
       erasing = false;
@@ -654,7 +777,7 @@
     
     // Função de download PNG
     document.getElementById('downloadBtn').onclick=()=>{
-        tracker.trackDownload();  // Rastreia download
+        if (tracker) tracker.trackDownload();  // Rastreia download
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = board.clientWidth;
         tempCanvas.height = board.clientHeight;
@@ -716,57 +839,25 @@
         link.click();
     }
 
-    // Definição da classe HaxballStatsTracker (integração com Firebase)
-    class HaxballStatsTracker {
-      constructor() {
-        // Configuração do Firebase - SUBSTITUA PELOS SEUS DADOS REAIS!
-       const firebaseConfig = {
- apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.VITE_FIREBASE_DATABASE_URL,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VITE_FIREBASE_APP_ID
-};
-        this.app = firebase.initializeApp(firebaseConfig);
-        this.db = firebase.database();
-      }
+    // Inicialização quando a página carrega
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inicializa o tracker
+      tracker = new HaxballStatsTracker();
+      
+      // Espera um pouco para garantir que o Firebase está inicializado
+      setTimeout(async () => {
+        if (tracker) {
+          await tracker.trackVisit();
+        }
+      }, 1500);
 
-      trackVisit() {
-        const today = new Date().toISOString().split('T')[0];
-        this.db.ref('stats/totalVisits').transaction(current => (current || 0) + 1);
-        this.db.ref(`stats/visitsByDay/${today}`).transaction(current => (current || 0) + 1);
-      }
+      // Desativa o desenho por padrão e atualiza os textos
+      document.getElementById('drawOffBtn').click();
+      updateTexts();  // Atualiza os textos ao carregar a página
+    });
 
-      trackDownload() {
-        this.db.ref('stats/downloads').transaction(current => (current || 0) + 1);
-      }
-
-      trackDraw() {
-        this.db.ref('stats/drawActivations').transaction(current => (current || 0) + 1);
-      }
-
-      trackLanguageChange(lang) {
-        this.db.ref('stats/languageChanges').transaction(current => (current || 0) + 1);
-        this.db.ref(`stats/languages/${lang}`).transaction(current => (current || 0) + 1);
-      }
-
-      trackDiscordClick() {
-        this.db.ref('stats/discordClicks').transaction(current => (current || 0) + 1);
-      }
-    }
-
-    // Instancia o tracker
-    const tracker = new HaxballStatsTracker();
-
-    // Desativa o desenho por padrão e atualiza os textos inicialmente
-    document.getElementById('drawOffBtn').click();
-    updateTexts();  // Atualiza os textos ao carregar a página
-
-    // Rastreia a visita ao carregar a página
-    tracker.trackVisit();
+    // Torna a classe disponível globalmente
+    window.HaxballStatsTracker = HaxballStatsTracker;
   </script>
 </body>
 </html>
-
