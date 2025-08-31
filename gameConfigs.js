@@ -42,7 +42,7 @@ const gameConfigs = {
     }
   },
   '7x7': {
-    campo: {
+    futsal: {
       backgroundImage: 'https://i.imgur.com/dZgIa0e.png',
       players: [
         // Exemplo de formação 7x7
