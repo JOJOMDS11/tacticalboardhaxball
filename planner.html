@@ -210,7 +210,6 @@
   <div class="app">
     <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
     
-    <!-- Configurações de Jogo -->
     <div class="config-group">
       <label id="teamSizeLabel" for="teamSizeSelect">Tamanho do Time:</label>
       <select id="teamSizeSelect">
@@ -240,6 +239,7 @@
             <img src="https://flagcdn.com/br.svg" alt="Português" data-lang="pt" id="flag-pt">
             <img src="https://flagcdn.com/us.svg" alt="English" data-lang="en" id="flag-en">
             <img src="https://flagcdn.com/tr.svg" alt="Türkçe" data-lang="tr" id="flag-tr">
+            <img src="https://flagcdn.com/es.svg" alt="Español" data-lang="es" id="flag-es">
         </div>
       </div>
       <div class="shape-menu">
@@ -289,19 +289,31 @@
     </div>
   </div>
 
+  <script>
+    const netlifyEnv = {
+        apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
+        authDomain: "jojovius-f5de7.firebaseapp.com",
+        databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
+        projectId: "jojovius-f5de7",
+        storageBucket: "jojovius-f5de7.firebasestorage.app",
+        messagingSenderId: "629248865232",
+        appId: "1:629248865232:web:4e74d888f57161cedfffd5"
+    };
+  </script>
+
   <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
 
   <script>
-    // Configuração do Firebase
+    // Configuração do Firebase a partir das variáveis de ambiente
     const FIREBASE_CONFIG = {
-      apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
-      authDomain: "jojovius-f5de7.firebaseapp.com",
-      databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
-      projectId: "jojovius-f5de7",
-      storageBucket: "jojovius-f5de7.firebasestorage.app",
-      messagingSenderId: "629248865232",
-      appId: "1:629248865232:web:4e74d888f57161cedfffd5"
+      apiKey: netlifyEnv.apiKey,
+      authDomain: netlifyEnv.authDomain,
+      databaseURL: netlifyEnv.databaseURL,
+      projectId: netlifyEnv.projectId,
+      storageBucket: netlifyEnv.storageBucket,
+      messagingSenderId: netlifyEnv.messagingSenderId,
+      appId: netlifyEnv.appId
     };
 
     // Tracker de estatísticas com Firebase
@@ -310,12 +322,17 @@
         this.firebaseInitialized = false;
         
         try {
-          if (!firebase.apps.length) {
-            firebase.initializeApp(FIREBASE_CONFIG);
+          // Verifica se todas as chaves necessárias estão presentes
+          if (Object.values(FIREBASE_CONFIG).every(key => key)) {
+            if (!firebase.apps.length) {
+              firebase.initializeApp(FIREBASE_CONFIG);
+            }
+            this.db = firebase.database();
+            this.firebaseInitialized = true;
+            console.log('Firebase inicializado com sucesso');
+          } else {
+            console.warn('Configuração do Firebase incompleta. As estatísticas não serão rastreadas.');
           }
-          this.db = firebase.database();
-          this.firebaseInitialized = true;
-          console.log('Firebase inicializado com sucesso');
         } catch (error) {
           console.error('Erro ao inicializar Firebase:', error);
         }
@@ -330,7 +347,8 @@
           configChanges: 'configChanges',
           langPt: 'langPt',
           langEn: 'langEn',
-          langTr: 'langTr'
+          langTr: 'langTr',
+          langEs: 'langEs' // Adicionado para espanhol
         };
       }
 
@@ -382,6 +400,7 @@
           if (lang === 'pt') await this.increment(this.counters.langPt);
           if (lang === 'en') await this.increment(this.counters.langEn);
           if (lang === 'tr') await this.increment(this.counters.langTr);
+          if (lang === 'es') await this.increment(this.counters.langEs);
           console.log(`Mudança de idioma para ${lang} rastreada com sucesso`);
         } catch (error) {
           console.error('Erro ao rastrear mudança de idioma:', error);
@@ -529,6 +548,28 @@
         teamSizeLabel: "Takım Boyutu:",
         mapTypeLabel: "Harita Tipi:",
         currentModeLabel: "— 3x3 Futsal"
+      },
+      es: {
+        drawOnBtn: "Activar Dibujo",
+        drawOffBtn: "Desactivar Dibujo",
+        eraseBtn: "Goma",
+        clearBtn: "Limpiar",
+        colorLabel: "Color:",
+        downloadBtn: "Descargar PNG",
+        freeBtn: "Libre",
+        lineBtn: "Línea",
+        squareBtn: "Cuadrado",
+        triangleBtn: "Triángulo",
+        circleBtn: "Círculo",
+        arrowBtn: "Flecha",
+        strokeSizeLabel: "Grosor del Trazo:",
+        eraserSizeLabel: "Tamaño de la Goma:",
+        discordMessage: "ÚNETE A NUESTRO DISCORD AHORA PARA PARTICIPAR EN LOS EVENTOS.",
+        creditsLabel: "Hecho por:",
+        helpProject: "Ayuda al proyecto",
+        teamSizeLabel: "Tamaño del Equipo:",
+        mapTypeLabel: "Tipo de Mapa:",
+        currentModeLabel: "— 3x3 Futsal"
       }
     };
 
@@ -576,6 +617,11 @@
       currentLang = 'tr'; 
       updateTexts(); 
       statsTracker.trackLanguageChange('tr');
+    });
+    document.getElementById('flag-es').addEventListener('click', () => { 
+      currentLang = 'es'; 
+      updateTexts(); 
+      statsTracker.trackLanguageChange('es');
     });
 
     // Event listeners para configurações de jogo
