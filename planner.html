@@ -8,18 +8,18 @@
   <title>Quadro Tático Haxball 3x3 - Versão Final</title>
   <style>
     body {
-      margin: 0;
-      background: #1b1b1b;
-      color: #e5e7eb;
+      margin:0;
+      background:#1b1b1b;
+      color:#e5e7eb;
       font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:16px;
     }
     h1 {
-      font-size: 20px;
-      margin: 0 0 10px;
+      font-size:20px;
+      margin:0 0 10px;
       text-align: center;
       width: 100%;
       display: flex;
@@ -33,9 +33,9 @@
       color: #999;
       white-space: nowrap;
     }
-    .app { width: 100%; max-width: 1100px; }
+    .app { width:100%; max-width:1100px; }
     .toolbar {
-      margin-bottom: 10px;
+      margin-bottom:10px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -49,19 +49,19 @@
         align-items: center;
         gap: 8px;
     }
-    .toolbar button, .toolbar input[type=range] {
+    .toolbar button, .toolbar input[type="range"] {
       margin: 0;
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background: #2c2c2c;
-      color: white;
-      cursor: pointer;
+      padding:8px 12px;
+      border-radius:6px;
+      border:1px solid #444;
+      background:#2c2c2c;
+      color:white;
+      cursor:pointer;
     }
     .toolbar button {
       line-height: 1.2;
     }
-    .toolbar input[type=color] {
+    .toolbar input[type="color"] {
       width: 40px;
       height: 30px;
       border: 1px solid #444;
@@ -76,40 +76,40 @@
         white-space: nowrap;
     }
     .board-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-      border: 2px solid #444;
-      border-radius: 12px;
-      overflow: hidden;
-      background: url('https://i.imgur.com/UiOK7Gr.png') center / contain no-repeat;
+      position:relative;
+      width:100%;
+      aspect-ratio:16/9;
+      border:2px solid #444;
+      border-radius:12px;
+      overflow:hidden;
+      background:url('https://i.imgur.com/UiOK7Gr.png') center/contain no-repeat;
       background-color: #4a4a4a;
     }
-    canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    canvas { position:absolute; inset:0; width:100%; height:100%; }
     .players-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+      position:absolute;
+      inset:0;
+      pointer-events:none;
     }
     .player {
-      --size: 29px;
-      width: var(--size); height: var(--size);
-      position: absolute;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold; color: white;
-      cursor: grab;
-      border: 2px solid black;
-      pointer-events: auto;
+      --size:29px;
+      width:var(--size); height:var(--size);
+      position:absolute;
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:bold; color:white;
+      cursor:grab;
+      border:2px solid black;
+      pointer-events:auto;
     }
-    .red { background: #e53935; }
-    .blue { background: #1e88e5; }
+    .red { background:#e53935; }
+    .blue { background:#1e88e5; }
     .ball {
       --size: 10px;
       background: #B917FF;
       border: 2px solid black;
     }
-    .player.active { cursor: grabbing; }
+    .player:active { cursor:grabbing; }
 
     /* Estilo para a mensagem do Discord */
     .discord-message {
@@ -196,13 +196,10 @@
       height: 30px;
     }
   </style>
-  <!-- Adicione o SDK do Firebase via CDN (versão compatível para não-módulos) -->
-  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
 </head>
 <body>
   <div class="app">
-    <h1>Quadro Tático Haxball – 3x3 <span class="coming-soon" id="comingSoonLabel"></span></h1>
+    <h1>Quadro Tático Haxball — 3x3 <span class="coming-soon" id="comingSoonLabel"></span></h1>
     <div class="toolbar">
       <div class="button-group">
         <button id="drawOnBtn"></button>
@@ -219,6 +216,7 @@
         </div>
       </div>
       <div class="shape-menu">
+        <button id="freeBtn"></button>
         <button id="lineBtn"></button>
         <button id="squareBtn"></button>
         <button id="triangleBtn"></button>
@@ -237,11 +235,11 @@
         <h2 id="helpProjectLabel"></h2>
         <div class="links">
             <a href="https://livepix.gg/jojos" target="_blank">
-                <img src="https://logospng.org/wp-content/uploads/pix.png" alt="Doar com Pix">
+                <img src="https://logospng.org/wp-content/uploads/pix.png" alt="Doar com Pix" />
                 <span>PIX</span>
             </a>
             <a href="https://www.paypal.com/donate/?hosted_button_id=Q29M6AVCECRFN" target="_blank">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png" alt="Doar com PayPal">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png" alt="Doar com PayPal" />
                 <span>PAYPAL</span>
             </a>
         </div>
@@ -249,8 +247,8 @@
 
     <div class="discord-message">
       <p>
-        <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank" onclick="trackDiscordClick()">
-          <span id="discordText">ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICIPAR DOS EVENTOS.</span>
+        <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank">
+          ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.
         </a>
       </p>
     </div>
@@ -260,12 +258,15 @@
       <div class="players-layer" id="players"></div>
     </div>
     <div class="credits-message">
-      <span id="creditsLabel"></span> jojo discord:urser dranklean
+      <span id="creditsLabel"></span> jojo discordurser: dranklean
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+
   <script>
-    // Classe para rastrear estatísticas
+    // Inicializar o tracking de estatísticas
     class HaxballStatsTracker {
       constructor() {
         this.firebaseInitialized = false;
@@ -291,7 +292,7 @@
         } catch (error) {
           console.error('Erro ao inicializar Firebase:', error);
         }
-
+        
         this.counters = {
           totalVisits: 'totalVisits',
           todayVisits: 'todayVisits_' + new Date().toISOString().split('T')[0],
@@ -306,18 +307,16 @@
       }
 
       async increment(key, amount = 1) {
-        if (!this.firebaseInitialized) {
-          console.warn('Firebase não inicializado, não é possível rastrear:', key);
-          return;
-        }
-        
+        if (!this.firebaseInitialized) return 0;
         try {
           await this.db.ref(`stats/${key}`).transaction((current) => {
             return (current || 0) + amount;
           });
-          console.log(`Rastreado com sucesso: ${key}`);
+          const snapshot = await this.db.ref(`stats/${key}`).once('value');
+          return snapshot.val() || 0;
         } catch (error) {
-          console.error(`Erro ao rastrear ${key}:`, error);
+          console.error('Erro Firebase increment:', error);
+          return 0;
         }
       }
 
@@ -325,6 +324,7 @@
         try {
           await this.increment(this.counters.totalVisits);
           await this.increment(this.counters.todayVisits);
+          console.log('Visita rastreada com sucesso');
         } catch (error) {
           console.error('Erro ao rastrear visita:', error);
         }
@@ -333,6 +333,7 @@
       async trackDownload() {
         try {
           await this.increment(this.counters.downloads);
+          console.log('Download rastreado com sucesso');
         } catch (error) {
           console.error('Erro ao rastrear download:', error);
         }
@@ -341,6 +342,7 @@
       async trackDraw() {
         try {
           await this.increment(this.counters.drawActivations);
+          console.log('Ativação de desenho rastreada com sucesso');
         } catch (error) {
           console.error('Erro ao rastrear ativação de desenho:', error);
         }
@@ -352,6 +354,7 @@
           if (lang === 'pt') await this.increment(this.counters.langPt);
           if (lang === 'en') await this.increment(this.counters.langEn);
           if (lang === 'tr') await this.increment(this.counters.langTr);
+          console.log(`Mudança de idioma para ${lang} rastreada com sucesso`);
         } catch (error) {
           console.error('Erro ao rastrear mudança de idioma:', error);
         }
@@ -360,6 +363,7 @@
       async trackDiscordClick() {
         try {
           await this.increment(this.counters.discordClicks);
+          console.log('Clique no Discord rastreado com sucesso');
         } catch (error) {
           console.error('Erro ao rastrear clique no Discord:', error);
         }
@@ -367,86 +371,82 @@
     }
 
     // Instância global do tracker
-    let tracker;
+    const statsTracker = new HaxballStatsTracker();
 
-    // Função global para rastrear cliques no Discord
-    function trackDiscordClick() {
-      if (tracker) {
-        tracker.trackDiscordClick();
-      }
-    }
-
-    const board = document.getElementById('board');
-    const draw = document.getElementById('drawLayer');
-    const playersLayer = document.getElementById('players');
-    const ctx = draw.getContext('2d');
-    let mode = 'line';  // Modo inicial linha
+    const board = document.getElementById("board");
+    const draw = document.getElementById("drawLayer");
+    const playersLayer = document.getElementById("players");
+    const ctx = draw.getContext("2d");
+    let mode = 'line'; // Modo inicial: linha
     let drawing = false;
     let erasing = false;
     let last = null;
     let startPos = null;
     let history = [];
     const maxHistory = 10;
-    let currentLang = 'pt';  // Idioma padrão
+    let currentLang = 'pt'; // Idioma padrão
 
     // Objeto com as traduções
     const translations = {
       pt: {
-        drawOnBtn: 'Ativar Desenho',
-        drawOffBtn: 'Desativar Desenho',
-        eraseBtn: 'Borracha',
-        clearBtn: 'Limpar',
-        colorLabel: 'Cor',
-        downloadBtn: 'Baixar PNG',
-        lineBtn: 'Linha',
-        squareBtn: 'Quadrado',
-        triangleBtn: 'Triângulo',
-        circleBtn: 'Círculo',
-        arrowBtn: 'Seta',
-        strokeSizeLabel: 'Tamanho do Traço',
-        eraserSizeLabel: 'Tamanho da Borracha',
-        discordMessage: 'ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICIPAR DOS EVENTOS.',
-        creditsLabel: 'Feito por',
-        helpProject: 'Ajude o projeto',
-        comingSoon: '(Em breve novos modos)'
+        drawOnBtn: "Ativar Desenho",
+        drawOffBtn: "Desativar Desenho",
+        eraseBtn: "Borracha",
+        clearBtn: "Limpar",
+        colorLabel: "Cor:",
+        downloadBtn: "Baixar PNG",
+        freeBtn: "Livre",
+        lineBtn: "Linha",
+        squareBtn: "Quadrado",
+        triangleBtn: "Triângulo",
+        circleBtn: "Círculo",
+        arrowBtn: "Seta",
+        strokeSizeLabel: "Tamanho do Traço:",
+        eraserSizeLabel: "Tamanho da Borracha:",
+        discordMessage: "ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.",
+        creditsLabel: "Feito por:",
+        helpProject: "Ajude o projeto",
+        comingSoon: "(Em breve novos modos)"
       },
       en: {
-        drawOnBtn: 'Activate Draw',
-        drawOffBtn: 'Deactivate Draw',
-        eraseBtn: 'Eraser',
-        clearBtn: 'Clear',
-        colorLabel: 'Color',
-        downloadBtn: 'Download PNG',
-        lineBtn: 'Line',
-        squareBtn: 'Square',
-        triangleBtn: 'Triangle',
-        circleBtn: 'Circle',
-        arrowBtn: 'Arrow',
-        strokeSizeLabel: 'Stroke Size',
-        eraserSizeLabel: 'Eraser Size',
-        discordMessage: 'JOIN OUR DISCORD NOW TO PARTICIPATE IN EVENTS.',
-        creditsLabel: 'Made by',
-        helpProject: 'Help the project',
-        comingSoon: '(Coming soon new modes)'
+        drawOnBtn: "Activate Draw",
+        drawOffBtn: "Deactivate Draw",
+        eraseBtn: "Eraser",
+        clearBtn: "Clear",
+        colorLabel: "Color:",
+        downloadBtn: "Download PNG",
+        freeBtn: "Free",
+        lineBtn: "Line",
+        squareBtn: "Square",
+        triangleBtn: "Triangle",
+        circleBtn: "Circle",
+        arrowBtn: "Arrow",
+        strokeSizeLabel: "Stroke Size:",
+        eraserSizeLabel: "Eraser Size:",
+        discordMessage: "JOIN OUR DISCORD NOW TO PARTICIPATE IN EVENTS.",
+        creditsLabel: "Made by:",
+        helpProject: "Help the project",
+        comingSoon: "(Coming soon new modes)"
       },
       tr: {
-        drawOnBtn: 'Çizimi Etkinleştir',
-        drawOffBtn: 'Çizimi Devre Dışı Bırak',
-        eraseBtn: 'Silgi',
-        clearBtn: 'Temizle',
-        colorLabel: 'Renk',
-        downloadBtn: 'PNG İndir',
-        lineBtn: 'Çizgi',
-        squareBtn: 'Kare',
-        triangleBtn: 'Üçgen',
-        circleBtn: 'Çember',
-        arrowBtn: 'Ok',
-        strokeSizeLabel: 'Çizgi Kalınlığı',
-        eraserSizeLabel: 'Silgi Boyutu',
-        discordMessage: 'ETKİNLİKLERE KATILMAK İÇİN DISCORD\'UMUZA HEMEN KATILIN.',
-        creditsLabel: 'Yapılan',
-        helpProject: 'Projeye yardım et',
-        comingSoon: '(Yakında yeni modlar)'
+        drawOnBtn: "Çizimi Etkinleştir",
+        drawOffBtn: "Çizimi Devre Dışı Bırak",
+        eraseBtn: "Silgi",
+        clearBtn: "Temizle",
+        colorLabel: "Renk:",
+        downloadBtn: "PNG İndir",
+        freeBtn: "Serbest",
+        lineBtn: "Çizgi",
+        squareBtn: "Kare",
+        triangleBtn: "Üçgen",
+        circleBtn: "Çember",
+        arrowBtn: "Ok",
+        strokeSizeLabel: "Çizgi Kalınlığı:",
+        eraserSizeLabel: "Silgi Boyutu:",
+        discordMessage: "ETKİNLİKLERE KATILMAK İÇİN DISCORD'UMUZA HEMEN KATILIN.",
+        creditsLabel: "Yapılan:",
+        helpProject: "Projeye yardım et",
+        comingSoon: "(Yakında yeni modlar)"
       }
     };
 
@@ -457,6 +457,7 @@
       document.getElementById('clearBtn').textContent = translations[currentLang].clearBtn;
       document.getElementById('colorLabel').textContent = translations[currentLang].colorLabel;
       document.getElementById('downloadBtn').textContent = translations[currentLang].downloadBtn;
+      document.getElementById('freeBtn').textContent = translations[currentLang].freeBtn;
       document.getElementById('lineBtn').textContent = translations[currentLang].lineBtn;
       document.getElementById('squareBtn').textContent = translations[currentLang].squareBtn;
       document.getElementById('triangleBtn').textContent = translations[currentLang].triangleBtn;
@@ -464,7 +465,7 @@
       document.getElementById('arrowBtn').textContent = translations[currentLang].arrowBtn;
       document.getElementById('strokeSizeLabel').textContent = translations[currentLang].strokeSizeLabel;
       document.getElementById('eraserSizeLabel').textContent = translations[currentLang].eraserSizeLabel;
-      document.getElementById('discordText').textContent = translations[currentLang].discordMessage;
+      document.querySelector('.discord-message a').textContent = translations[currentLang].discordMessage;
       document.getElementById('creditsLabel').textContent = translations[currentLang].creditsLabel;
       document.getElementById('helpProjectLabel').textContent = translations[currentLang].helpProject;
       document.getElementById('comingSoonLabel').textContent = translations[currentLang].comingSoon;
@@ -476,25 +477,30 @@
       document.getElementById(`flag-${currentLang}`).classList.add('active');
     }
 
-    // Event listeners para as bandeiras
+    // Event listeners para as bandeiras com tracking
     document.getElementById('flag-pt').addEventListener('click', () => { 
       currentLang = 'pt'; 
       updateTexts(); 
-      if (tracker) tracker.trackLanguageChange('pt'); 
+      statsTracker.trackLanguageChange('pt');
     });
     document.getElementById('flag-en').addEventListener('click', () => { 
       currentLang = 'en'; 
       updateTexts(); 
-      if (tracker) tracker.trackLanguageChange('en'); 
+      statsTracker.trackLanguageChange('en');
     });
     document.getElementById('flag-tr').addEventListener('click', () => { 
       currentLang = 'tr'; 
       updateTexts(); 
-      if (tracker) tracker.trackLanguageChange('tr'); 
+      statsTracker.trackLanguageChange('tr');
+    });
+
+    // Tracking do Discord
+    document.querySelector('.discord-message a').addEventListener('click', () => {
+      statsTracker.trackDiscordClick();
     });
 
     function saveState() {
-      if (history.length === maxHistory) {
+      if (history.length >= maxHistory) {
         history.shift();
       }
       history.push(draw.toDataURL());
@@ -542,7 +548,7 @@
     ];
 
     players.forEach(p=>{
-      const el=document.createElement('div');
+      const el=document.createElement("div");
       el.className=`player ${p.team}`;
       el.textContent=p.id;
       el.dataset.uid = p.uid;
@@ -554,16 +560,16 @@
       const rect=board.getBoundingClientRect();
       players.forEach(p=>{
         const size = parseInt(getComputedStyle(p.el).getPropertyValue('--size'), 10);
-        p.el.style.left=(p.x*rect.width - size/2)+'px';
-        p.el.style.top=(p.y*rect.height - size/2)+'px';
+        p.el.style.left=(p.x*rect.width - size/2)+"px";
+        p.el.style.top=(p.y*rect.height - size/2)+"px";
       });
     }
     placePlayers();
-    window.addEventListener('resize',placePlayers);
+    window.addEventListener("resize",placePlayers);
 
     // Drag (arrastar) - SEMPRE ATIVO
     let drag=null;
-    board.addEventListener('pointerdown',e=>{
+    board.addEventListener("pointerdown",e=>{
       const t=e.target.closest('.player'); 
       if(!t) return;
       
@@ -577,7 +583,7 @@
       t.setPointerCapture(e.pointerId);
     });
 
-    window.addEventListener('pointermove',e=>{
+    window.addEventListener("pointermove",e=>{
       if(!drag) return;
       const rect=board.getBoundingClientRect();
       const size = parseInt(getComputedStyle(drag.p.el).getPropertyValue('--size'), 10);
@@ -596,7 +602,7 @@
       
       placePlayers();
     });
-    window.addEventListener('pointerup',()=>{ drag=null; });
+    window.addEventListener("pointerup",()=>{ drag=null; });
 
     // Drawing (desenho) - CONTROLADO PELOS BOTÕES
     function getPos(e){
@@ -614,9 +620,9 @@
             ctx.drawImage(lastState, 0, 0);
         }
 
-        ctx.strokeStyle = document.getElementById('colorPicker').value;
-        ctx.lineWidth = document.getElementById('sizePicker').value;
-        ctx.lineCap = 'round';
+        ctx.strokeStyle = document.getElementById("colorPicker").value;
+        ctx.lineWidth = document.getElementById("sizePicker").value;
+        ctx.lineCap = "round";
         ctx.beginPath();
 
         if (mode === 'line') {
@@ -663,19 +669,36 @@
       }
       if(mode === null) return;
       drawing = true; 
-      startPos = getPos(e); 
-      last = getPos(e);
+      
+      if(mode === 'free') {
+        last = getPos(e);
+        ctx.strokeStyle = document.getElementById("colorPicker").value;
+        ctx.lineWidth = document.getElementById("sizePicker").value;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(last.x, last.y);
+      } else {
+        startPos = getPos(e); 
+        last = getPos(e);
+      }
     }
     
     function moveDraw(e){
         if (!drawing) return;
+        
         if (erasing) {
             const pos = getPos(e);
-            ctx.lineWidth = document.getElementById('eraserSizePicker').value;
-            ctx.lineCap = 'round';
-            ctx.globalCompositeOperation = 'destination-out';
+            ctx.lineWidth = document.getElementById("eraserSizePicker").value;
+            ctx.lineCap = "round";
+            ctx.globalCompositeOperation = "destination-out";
             ctx.beginPath();
             ctx.moveTo(last.x, last.y);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            last = pos;
+        } else if (mode === 'free') {
+            const pos = getPos(e);
+            ctx.globalCompositeOperation = "source-over";
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
             last = pos;
@@ -683,23 +706,29 @@
             drawShape(e);
         }
     }
+    
     function endDraw(){ 
       if(drawing) {
         if (!erasing) {
-            drawShape(event);  // Desenha a forma final
-            saveState();  // Salva o estado
+            if (mode === 'free') {
+                // Para desenho livre, não precisa fazer nada especial
+            } else {
+                drawShape(event); // Desenha a forma final
+            }
+            saveState(); // Salva o estado
         }
         drawing = false; 
         last = null;
         startPos = null;
+        ctx.globalCompositeOperation = "source-over";
       }
     }
     
     // Apenas os listeners de desenho precisam ser ativados/desativados
-    draw.addEventListener('mousedown', startDraw);
-    draw.addEventListener('mousemove', moveDraw);
-    window.addEventListener('mouseup', endDraw);
-    draw.addEventListener('mouseleave', endDraw);
+    draw.addEventListener("mousedown", startDraw);
+    draw.addEventListener("mousemove", moveDraw);
+    window.addEventListener("mouseup", endDraw);
+    draw.addEventListener("mouseleave", endDraw);
     
     // Ctrl+Z para desfazer
     window.addEventListener('keydown', (e) => {
@@ -720,64 +749,71 @@
     }
 
     // Buttons
-    document.getElementById('drawOnBtn').onclick=()=>{
+    document.getElementById("drawOnBtn").onclick=()=>{
       erasing = false;
       mode = 'line';
-      draw.style.pointerEvents = 'auto';
+      draw.style.pointerEvents = "auto";
       updateActiveButtons('drawOnBtn');
       document.getElementById('lineBtn').classList.add('active');
-      if (tracker) tracker.trackDraw();  // Rastreia ativação de desenho
+      statsTracker.trackDraw();
     };
-    document.getElementById('drawOffBtn').onclick=()=>{
+    document.getElementById("drawOffBtn").onclick=()=>{
       erasing = false;
       mode = null;
-      draw.style.pointerEvents = 'none';
+      draw.style.pointerEvents = "none";
       updateActiveButtons('drawOffBtn');
     };
-    document.getElementById('eraseBtn').onclick=()=>{
+    document.getElementById("eraseBtn").onclick=()=>{
       erasing = true;
       mode = null;
-      draw.style.pointerEvents = 'auto';
+      draw.style.pointerEvents = "auto";
       updateActiveButtons('eraseBtn');
     };
-    document.getElementById('clearBtn').onclick=()=>{
+    document.getElementById("clearBtn").onclick=()=>{
       ctx.clearRect(0,0,draw.width,draw.height);
       history = [];
     };
-    document.getElementById('lineBtn').onclick=()=>{
+    document.getElementById("freeBtn").onclick=()=>{
+      erasing = false;
+      mode = 'free';
+      draw.style.pointerEvents = "auto";
+      updateActiveButtons('freeBtn');
+    };
+    document.getElementById("lineBtn").onclick=()=>{
       erasing = false;
       mode = 'line';
-      draw.style.pointerEvents = 'auto';
+      draw.style.pointerEvents = "auto";
       updateActiveButtons('lineBtn');
     };
-    document.getElementById('squareBtn').onclick=()=>{
+    document.getElementById("squareBtn").onclick=()=>{
       erasing = false;
       mode = 'square';
-      draw.style.pointerEvents = 'auto';
+      draw.style.pointerEvents = "auto";
       updateActiveButtons('squareBtn');
     };
-    document.getElementById('triangleBtn').onclick=()=>{
+    document.getElementById("triangleBtn").onclick=()=>{
       erasing = false;
       mode = 'triangle';
-      draw.style.pointerEvents = 'auto';
+      draw.style.pointerEvents = "auto";
       updateActiveButtons('triangleBtn');
     };
-    document.getElementById('circleBtn').onclick=()=>{
+    document.getElementById("circleBtn").onclick=()=>{
       erasing = false;
       mode = 'circle';
-      draw.style.pointerEvents = 'auto';
+      draw.style.pointerEvents = "auto";
       updateActiveButtons('circleBtn');
     };
-    document.getElementById('arrowBtn').onclick=()=>{
+    document.getElementById("arrowBtn").onclick=()=>{
       erasing = false;
       mode = 'arrow';
-      draw.style.pointerEvents = 'auto';
+      draw.style.pointerEvents = "auto";
       updateActiveButtons('arrowBtn');
     };
     
-    // Função de download PNG
-    document.getElementById('downloadBtn').onclick=()=>{
-        if (tracker) tracker.trackDownload();  // Rastreia download
+    // Função de download PNG com tracking
+    document.getElementById("downloadBtn").onclick=()=>{
+        statsTracker.trackDownload();
+        
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = board.clientWidth;
         tempCanvas.height = board.clientHeight;
@@ -813,10 +849,10 @@
                     playerCtx.lineWidth = 2;
                     playerCtx.stroke();
 
-                    playerCtx.font = 'bold 14px Arial, sans-serif';
+                    playerCtx.font = "bold 14px Arial, sans-serif";
                     playerCtx.fillStyle = getComputedStyle(p.el).color;
-                    playerCtx.textAlign = 'center';
-                    playerCtx.textBaseline = 'middle';
+                    playerCtx.textAlign = "center";
+                    playerCtx.textBaseline = "middle";
                     playerCtx.fillText(p.el.textContent, p.el.offsetWidth / 2, p.el.offsetHeight / 2);
 
                     tempCtx.drawImage(playerCanvas, p.el.offsetLeft, p.el.offsetTop);
@@ -826,7 +862,7 @@
                         downloadFinalCanvas(tempCanvas);
                     }
                 };
-                img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
             });
         };
         bgImage.src = 'https://i.imgur.com/UiOK7Gr.png';
@@ -839,26 +875,16 @@
         link.click();
     }
 
-    // Inicialização quando a página carrega
+    // Desativa o desenho por padrão e atualiza os textos inicialmente
+    document.getElementById("drawOffBtn").click();
+    updateTexts(); // Atualiza os textos ao carregar a página
+    
+    // Inicializa o tracking quando a página carrega
     document.addEventListener('DOMContentLoaded', () => {
-      // Inicializa o tracker
-      tracker = new HaxballStatsTracker();
-      
-      // Espera um pouco para garantir que o Firebase está inicializado
-      setTimeout(async () => {
-        if (tracker) {
-          await tracker.trackVisit();
-        }
-      }, 1500);
-
-      // Desativa o desenho por padrão e atualiza os textos
-      document.getElementById('drawOffBtn').click();
-      updateTexts();  // Atualiza os textos ao carregar a página
+      setTimeout(() => {
+        statsTracker.trackVisit();
+      }, 1000);
     });
-
-    // Torna a classe disponível globalmente
-    window.HaxballStatsTracker = HaxballStatsTracker;
   </script>
 </body>
 </html>
-
