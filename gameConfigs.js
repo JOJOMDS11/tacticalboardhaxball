@@ -48,19 +48,19 @@ const gameConfigs = {
         // Exemplo de formação 7x7
         { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5 },
         { uid: 2, id: 'LD', team: 'red', x: 0.2, y: 0.2 },
-        { uid: 3, id: 'VL', team: 'red', x: 0.15, y: 0.4 },
+        { uid: 3, id: 'PD', team: 'red', x: 0.35, y: 0.2 },
         { uid: 4, id: 'MC', team: 'red', x: 0.15, y: 0.6 },
         { uid: 5, id: 'LE', team: 'red', x: 0.2, y: 0.8 },
         { uid: 6, id: 'PV', team: 'red', x: 0.35, y: 0.5 },
-        { uid: 7, id: 'PD', team: 'red', x: 0.5, y: 0.5 },
+        { uid: 7, id: 'PE', team: 'red', x: 0.35, y: 0.8 },
         
         { uid: 8, id: 'GK', team: 'blue', x: 0.95, y: 0.5 },
         { uid: 9, id: 'LD', team: 'blue', x: 0.8, y: 0.2 },
-        { uid: 10, id: 'VL', team: 'blue', x: 0.85, y: 0.4 },
+        { uid: 10, id: 'PD', team: 'blue', x: 0.65, y: 0.2 },
         { uid: 11, id: 'MC', team: 'blue', x: 0.85, y: 0.6 },
         { uid: 12, id: 'LE', team: 'blue', x: 0.8, y: 0.8 },
         { uid: 13, id: 'PV', team: 'blue', x: 0.65, y: 0.5 },
-        { uid: 14, id: 'PD', team: 'blue', x: 0.5, y: 0.5 },
+        { uid: 14, id: 'PE', team: 'blue', x: 0.65, y: 0.8 },
         
         { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5 }
       ]
