@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Quadro Tático Haxball 3x3 - Versão Final</title>
+  <title>Quadro Tático Haxball - Versão Final</title>
   <style>
     body {
       margin:0;
@@ -28,11 +28,6 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-    .coming-soon {
-      font-size: 14px;
-      color: #999;
-      white-space: nowrap;
-    }
     .app { width:100%; max-width:1100px; }
     .toolbar {
       margin-bottom:10px;
@@ -40,16 +35,22 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
     }
-    .button-group, .size-group {
+    .button-group, .size-group, .config-group {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
         gap: 8px;
     }
-    .toolbar button, .toolbar input[type="range"] {
+    .config-group {
+        padding: 10px;
+        background: #2c2c2c;
+        border-radius: 8px;
+        border: 1px solid #444;
+    }
+    .toolbar button, .toolbar input[type="range"], .toolbar select {
       margin: 0;
       padding:8px 12px;
       border-radius:6px;
@@ -57,6 +58,9 @@
       background:#2c2c2c;
       color:white;
       cursor:pointer;
+    }
+    .toolbar select {
+      min-width: 120px;
     }
     .toolbar button {
       line-height: 1.2;
@@ -195,11 +199,34 @@
     .donations img {
       height: 30px;
     }
+    /* Estilo para opções desabilitadas */
+    .disabled-option {
+      color: #666 !important;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <h1>Quadro Tático Haxball — 3x3 <span class="coming-soon" id="comingSoonLabel"></span></h1>
+    <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
+    
+    <!-- Configurações de Jogo -->
+    <div class="config-group">
+      <label id="teamSizeLabel" for="teamSizeSelect">Tamanho do Time:</label>
+      <select id="teamSizeSelect">
+        <option value="3x3">3x3</option>
+        <option value="4x4" class="disabled-option">4x4 (Em breve)</option>
+        <option value="7x7" class="disabled-option">7x7 (Em breve)</option>
+      </select>
+      
+      <label id="mapTypeLabel" for="mapTypeSelect">Tipo de Mapa:</label>
+      <select id="mapTypeSelect">
+        <option value="futsal">Futsal</option>
+        <option value="campo" class="disabled-option">Campo (Em breve)</option>
+        <option value="hockey" class="disabled-option">Hockey (Em breve)</option>
+      </select>
+    </div>
+    
     <div class="toolbar">
       <div class="button-group">
         <button id="drawOnBtn"></button>
@@ -266,25 +293,25 @@
   <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
 
   <script>
-    // Inicializar o tracking de estatísticas
+    // Configuração do Firebase
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
+      authDomain: "jojovius-f5de7.firebaseapp.com",
+      databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
+      projectId: "jojovius-f5de7",
+      storageBucket: "jojovius-f5de7.firebasestorage.app",
+      messagingSenderId: "629248865232",
+      appId: "1:629248865232:web:4e74d888f57161cedfffd5"
+    };
+
+    // Tracker de estatísticas com Firebase
     class HaxballStatsTracker {
       constructor() {
         this.firebaseInitialized = false;
         
-    // Configuração do Firebase (usando variáveis de ambiente simuladas)
-    const FIREBASE_CONFIG = {
-      apiKey: process?.env?.VITE_FIREBASE_API_KEY || "your-api-key-here",
-      authDomain: process?.env?.VITE_FIREBASE_AUTH_DOMAIN || "your-domain.firebaseapp.com",
-      databaseURL: process?.env?.VITE_FIREBASE_DATABASE_URL || "https://your-domain-default-rtdb.firebaseio.com",
-      projectId: process?.env?.VITE_FIREBASE_PROJECT_ID || "your-project-id",
-      storageBucket: process?.env?.VITE_FIREBASE_STORAGE_BUCKET || "your-bucket.appspot.com",
-      messagingSenderId: process?.env?.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-      appId: process?.env?.VITE_FIREBASE_APP_ID || "1:123456789:web:your-app-id"
-    };
-
         try {
           if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+            firebase.initializeApp(FIREBASE_CONFIG);
           }
           this.db = firebase.database();
           this.firebaseInitialized = true;
@@ -300,6 +327,7 @@
           drawActivations: 'drawActivations',
           languageChanges: 'languageChanges',
           discordClicks: 'discordClicks',
+          configChanges: 'configChanges',
           langPt: 'langPt',
           langEn: 'langEn',
           langTr: 'langTr'
@@ -368,6 +396,16 @@
           console.error('Erro ao rastrear clique no Discord:', error);
         }
       }
+
+      async trackConfigChange(type, value) {
+        try {
+          await this.increment(this.counters.configChanges);
+          await this.increment(`${type}_${value}`);
+          console.log(`Configuração ${type} alterada para ${value}`);
+        } catch (error) {
+          console.error('Erro ao rastrear mudança de configuração:', error);
+        }
+      }
     }
 
     // Instância global do tracker
@@ -377,14 +415,52 @@
     const draw = document.getElementById("drawLayer");
     const playersLayer = document.getElementById("players");
     const ctx = draw.getContext("2d");
-    let mode = 'line'; // Modo inicial: linha
+    let mode = 'line';
     let drawing = false;
     let erasing = false;
     let last = null;
     let startPos = null;
     let history = [];
     const maxHistory = 10;
-    let currentLang = 'pt'; // Idioma padrão
+    let currentLang = 'pt';
+    let currentTeamSize = '3x3';
+    let currentMapType = 'futsal';
+
+    // Configurações de mapas e jogadores
+    const gameConfigs = {
+      '3x3': {
+        futsal: {
+          backgroundImage: 'https://i.imgur.com/UiOK7Gr.png',
+          players: [
+            {uid: 1, id:'GK',team:'red',x:0.1,y:0.5},
+            {uid: 2, id:'VL',team:'red',x:0.25,y:0.25},
+            {uid: 3, id:'PV',team:'red',x:0.25,y:0.75},
+            {uid: 4, id:'GK',team:'blue',x:0.9,y:0.5},
+            {uid: 5, id:'VL',team:'blue',x:0.75,y:0.25},
+            {uid: 6, id:'PV',team:'blue',x:0.75,y:0.75},
+            {uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5}
+          ]
+        }
+      },
+      '4x4': {
+        futsal: {
+          backgroundImage: 'https://i.imgur.com/UiOK7Gr.png', // Mesmo mapa por enquanto
+          players: [
+            {uid: 1, id:'GK',team:'red',x:0.1,y:0.5},
+            {uid: 2, id:'DEF',team:'red',x:0.3,y:0.3},
+            {uid: 3, id:'MID',team:'red',x:0.3,y:0.7},
+            {uid: 4, id:'ATT',team:'red',x:0.45,y:0.5},
+            {uid: 5, id:'GK',team:'blue',x:0.9,y:0.5},
+            {uid: 6, id:'DEF',team:'blue',x:0.7,y:0.3},
+            {uid: 7, id:'MID',team:'blue',x:0.7,y:0.7},
+            {uid: 8, id:'ATT',team:'blue',x:0.55,y:0.5},
+            {uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5}
+          ]
+        }
+      }
+    };
+
+    let players = gameConfigs[currentTeamSize][currentMapType].players;
 
     // Objeto com as traduções
     const translations = {
@@ -406,7 +482,9 @@
         discordMessage: "ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.",
         creditsLabel: "Feito por:",
         helpProject: "Ajude o projeto",
-        comingSoon: "(Em breve novos modos)"
+        teamSizeLabel: "Tamanho do Time:",
+        mapTypeLabel: "Tipo de Mapa:",
+        currentModeLabel: "— 3x3 Futsal"
       },
       en: {
         drawOnBtn: "Activate Draw",
@@ -426,7 +504,9 @@
         discordMessage: "JOIN OUR DISCORD NOW TO PARTICIPATE IN EVENTS.",
         creditsLabel: "Made by:",
         helpProject: "Help the project",
-        comingSoon: "(Coming soon new modes)"
+        teamSizeLabel: "Team Size:",
+        mapTypeLabel: "Map Type:",
+        currentModeLabel: "— 3x3 Futsal"
       },
       tr: {
         drawOnBtn: "Çizimi Etkinleştir",
@@ -446,7 +526,9 @@
         discordMessage: "ETKİNLİKLERE KATILMAK İÇİN DISCORD'UMUZA HEMEN KATILIN.",
         creditsLabel: "Yapılan:",
         helpProject: "Projeye yardım et",
-        comingSoon: "(Yakında yeni modlar)"
+        teamSizeLabel: "Takım Boyutu:",
+        mapTypeLabel: "Harita Tipi:",
+        currentModeLabel: "— 3x3 Futsal"
       }
     };
 
@@ -468,7 +550,9 @@
       document.querySelector('.discord-message a').textContent = translations[currentLang].discordMessage;
       document.getElementById('creditsLabel').textContent = translations[currentLang].creditsLabel;
       document.getElementById('helpProjectLabel').textContent = translations[currentLang].helpProject;
-      document.getElementById('comingSoonLabel').textContent = translations[currentLang].comingSoon;
+      document.getElementById('teamSizeLabel').textContent = translations[currentLang].teamSizeLabel;
+      document.getElementById('mapTypeLabel').textContent = translations[currentLang].mapTypeLabel;
+      document.getElementById('currentModeLabel').textContent = translations[currentLang].currentModeLabel;
 
       // Atualiza a classe 'active' das bandeiras
       document.querySelectorAll('.language-selector img').forEach(img => {
@@ -493,6 +577,65 @@
       updateTexts(); 
       statsTracker.trackLanguageChange('tr');
     });
+
+    // Event listeners para configurações de jogo
+    document.getElementById('teamSizeSelect').addEventListener('change', (e) => {
+      if (e.target.value === '3x3') {
+        changeGameConfig(e.target.value, currentMapType);
+        statsTracker.trackConfigChange('team_size', e.target.value);
+      } else {
+        // Resetar para 3x3 se selecionar opção não disponível
+        e.target.value = '3x3';
+        alert(currentLang === 'pt' ? 'Esta opção estará disponível em breve!' : 
+              currentLang === 'en' ? 'This option will be available soon!' : 
+              'Bu seçenek yakında kullanılabilir olacak!');
+      }
+    });
+
+    document.getElementById('mapTypeSelect').addEventListener('change', (e) => {
+      if (e.target.value === 'futsal') {
+        changeGameConfig(currentTeamSize, e.target.value);
+        statsTracker.trackConfigChange('map_type', e.target.value);
+      } else {
+        // Resetar para futsal se selecionar opção não disponível
+        e.target.value = 'futsal';
+        alert(currentLang === 'pt' ? 'Este mapa estará disponível em breve!' : 
+              currentLang === 'en' ? 'This map will be available soon!' : 
+              'Bu harita yakında kullanılabilir olacak!');
+      }
+    });
+
+    function changeGameConfig(teamSize, mapType) {
+      currentTeamSize = teamSize;
+      currentMapType = mapType;
+      
+      // Limpar jogadores atuais
+      playersLayer.innerHTML = '';
+      
+      // Obter nova configuração
+      const config = gameConfigs[teamSize][mapType];
+      players = config.players;
+      
+      // Atualizar fundo do board
+      board.style.backgroundImage = `url('${config.backgroundImage}')`;
+      
+      // Criar novos jogadores
+      players.forEach(p => {
+        const el = document.createElement("div");
+        el.className = `player ${p.team}`;
+        el.textContent = p.id;
+        el.dataset.uid = p.uid;
+        playersLayer.appendChild(el);
+        p.el = el;
+      });
+      
+      // Reposicionar jogadores
+      placePlayers();
+      
+      // Limpar canvas
+      ctx.clearRect(0, 0, draw.width, draw.height);
+      history = [];
+    }
 
     // Tracking do Discord
     document.querySelector('.discord-message a').addEventListener('click', () => {
@@ -536,17 +679,7 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Players
-    const players=[
-      {uid: 1, id:'GK',team:'red',x:0.1,y:0.5},
-      {uid: 2, id:'VL',team:'red',x:0.25,y:0.25},
-      {uid: 3, id:'PV',team:'red',x:0.25,y:0.75},
-      {uid: 4, id:'GK',team:'blue',x:0.9,y:0.5},
-      {uid: 5, id:'VL',team:'blue',x:0.75,y:0.25},
-      {uid: 6, id:'PV',team:'blue',x:0.75,y:0.75},
-      {uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5}
-    ];
-
+    // Inicializar jogadores
     players.forEach(p=>{
       const el=document.createElement("div");
       el.className=`player ${p.team}`;
@@ -604,7 +737,7 @@
     });
     window.addEventListener("pointerup",()=>{ drag=null; });
 
-    // Drawing (desenho) - CONTROLADO PELOS BOTÕES
+    // Drawing functions
     function getPos(e){
       const rect=draw.getBoundingClientRect();
       return {x:e.clientX-rect.left,y:e.clientY-rect.top};
@@ -613,7 +746,6 @@
     function drawShape(e) {
         const pos = getPos(e);
         ctx.clearRect(0, 0, draw.width, draw.height);
-        // Restaura o estado anterior do canvas
         if (history.length > 0) {
             const lastState = new Image();
             lastState.src = history[history.length - 1];
@@ -724,7 +856,7 @@
       }
     }
     
-    // Apenas os listeners de desenho precisam ser ativados/desativados
+    // Event listeners para desenho
     draw.addEventListener("mousedown", startDraw);
     draw.addEventListener("mousemove", moveDraw);
     window.addEventListener("mouseup", endDraw);
@@ -748,7 +880,7 @@
       }
     }
 
-    // Buttons
+    // Event listeners dos botões
     document.getElementById("drawOnBtn").onclick=()=>{
       erasing = false;
       mode = 'line';
@@ -865,26 +997,26 @@
                 img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
             });
         };
-        bgImage.src = 'https://i.imgur.com/UiOK7Gr.png';
+        
+        const config = gameConfigs[currentTeamSize][currentMapType];
+        bgImage.src = config.backgroundImage;
     };
 
     function downloadFinalCanvas(canvas) {
         const link = document.createElement('a');
-        link.download = 'quadro-tatico.png';
+        link.download = `quadro-tatico-${currentTeamSize}-${currentMapType}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
     }
 
-    // Desativa o desenho por padrão e atualiza os textos inicialmente
+    // Inicialização
     document.getElementById("drawOffBtn").click();
-    updateTexts(); // Atualiza os textos ao carregar a página
+    updateTexts();
     
-    // Inicializa o tracking quando a página carrega
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        statsTracker.trackVisit();
-      }, 1000);
-    });
+    // Rastrear visita após carregamento
+    setTimeout(() => {
+      statsTracker.trackVisit();
+    }, 1000);
   </script>
 </body>
 </html>
