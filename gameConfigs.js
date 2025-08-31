@@ -43,24 +43,24 @@ const gameConfigs = {
   },
   '7x7': {
     campo: {
-      backgroundImage: 'https://i.imgur.com/7v7_CAMPO.png',
+      backgroundImage: 'https://i.imgur.com/dZgIa0e.png',
       players: [
         // Exemplo de formação 7x7
         { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5 },
         { uid: 2, id: 'LD', team: 'red', x: 0.2, y: 0.2 },
-        { uid: 3, id: 'ZAG', team: 'red', x: 0.15, y: 0.4 },
-        { uid: 4, id: 'ZAG', team: 'red', x: 0.15, y: 0.6 },
+        { uid: 3, id: 'VL', team: 'red', x: 0.15, y: 0.4 },
+        { uid: 4, id: 'MC', team: 'red', x: 0.15, y: 0.6 },
         { uid: 5, id: 'LE', team: 'red', x: 0.2, y: 0.8 },
-        { uid: 6, id: 'VOL', team: 'red', x: 0.35, y: 0.5 },
-        { uid: 7, id: 'ATA', team: 'red', x: 0.5, y: 0.5 },
+        { uid: 6, id: 'PV', team: 'red', x: 0.35, y: 0.5 },
+        { uid: 7, id: 'PD', team: 'red', x: 0.5, y: 0.5 },
         
         { uid: 8, id: 'GK', team: 'blue', x: 0.95, y: 0.5 },
         { uid: 9, id: 'LD', team: 'blue', x: 0.8, y: 0.2 },
-        { uid: 10, id: 'ZAG', team: 'blue', x: 0.85, y: 0.4 },
-        { uid: 11, id: 'ZAG', team: 'blue', x: 0.85, y: 0.6 },
+        { uid: 10, id: 'VL', team: 'blue', x: 0.85, y: 0.4 },
+        { uid: 11, id: 'MC', team: 'blue', x: 0.85, y: 0.6 },
         { uid: 12, id: 'LE', team: 'blue', x: 0.8, y: 0.8 },
-        { uid: 13, id: 'VOL', team: 'blue', x: 0.65, y: 0.5 },
-        { uid: 14, id: 'ATA', team: 'blue', x: 0.5, y: 0.5 },
+        { uid: 13, id: 'PV', team: 'blue', x: 0.65, y: 0.5 },
+        { uid: 14, id: 'PD', team: 'blue', x: 0.5, y: 0.5 },
         
         { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5 }
       ]
