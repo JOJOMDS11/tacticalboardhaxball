@@ -1,4 +1,7 @@
-// Configuração do Firebase a partir das variáveis de ambiente
+// Importa as configurações dos jogos
+import gameConfigs from './gameConfigs.js';
+
+// Configuração do Firebase usando variáveis de ambiente do Netlify/Vite
 const FIREBASE_CONFIG = {
   apiKey: import.meta.env.VITE_API_KEY,
   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
@@ -16,7 +19,9 @@ class HaxballStatsTracker {
     
     try {
       // Verifica se todas as chaves necessárias estão presentes
-      if (Object.values(FIREBASE_CONFIG).every(key => key)) {
+      const hasAllKeys = Object.values(FIREBASE_CONFIG).every(key => key && key !== 'undefined');
+      
+      if (hasAllKeys && typeof firebase !== 'undefined') {
         if (!firebase.apps.length) {
           firebase.initializeApp(FIREBASE_CONFIG);
         }
@@ -24,7 +29,7 @@ class HaxballStatsTracker {
         this.firebaseInitialized = true;
         console.log('Firebase inicializado com sucesso');
       } else {
-        console.warn('Configuração do Firebase incompleta. As estatísticas não serão rastreadas.');
+        console.warn('Firebase não disponível ou configuração incompleta. Funcionando sem analytics.');
       }
     } catch (error) {
       console.error('Erro ao inicializar Firebase:', error);
@@ -41,7 +46,7 @@ class HaxballStatsTracker {
       langPt: 'langPt',
       langEn: 'langEn',
       langTr: 'langTr',
-      langEs: 'langEs' // Adicionado para espanhol
+      langEs: 'langEs'
     };
   }
 
@@ -138,40 +143,7 @@ let currentLang = 'pt';
 let currentTeamSize = '3x3';
 let currentMapType = 'futsal';
 
-// Configurações de mapas e jogadores
-const gameConfigs = {
-  '3x3': {
-    futsal: {
-      backgroundImage: 'https://i.imgur.com/UiOK7Gr.png',
-      players: [
-        {uid: 1, id:'GK',team:'red',x:0.1,y:0.5},
-        {uid: 2, id:'VL',team:'red',x:0.25,y:0.25},
-        {uid: 3, id:'PV',team:'red',x:0.25,y:0.75},
-        {uid: 4, id:'GK',team:'blue',x:0.9,y:0.5},
-        {uid: 5, id:'VL',team:'blue',x:0.75,y:0.25},
-        {uid: 6, id:'PV',team:'blue',x:0.75,y:0.75},
-        {uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5}
-      ]
-    }
-  },
-  '4x4': {
-    futsal: {
-      backgroundImage: 'https://i.imgur.com/UiOK7Gr.png', // Mesmo mapa por enquanto
-      players: [
-        {uid: 1, id:'GK',team:'red',x:0.1,y:0.5},
-        {uid: 2, id:'DEF',team:'red',x:0.3,y:0.3},
-        {uid: 3, id:'MID',team:'red',x:0.3,y:0.7},
-        {uid: 4, id:'ATT',team:'red',x:0.45,y:0.5},
-        {uid: 5, id:'GK',team:'blue',x:0.9,y:0.5},
-        {uid: 6, id:'DEF',team:'blue',x:0.7,y:0.3},
-        {uid: 7, id:'MID',team:'blue',x:0.7,y:0.7},
-        {uid: 8, id:'ATT',team:'blue',x:0.55,y:0.5},
-        {uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5}
-      ]
-    }
-  }
-};
-
+// Usar as configurações importadas
 let players = gameConfigs[currentTeamSize][currentMapType].players;
 
 // Objeto com as traduções
@@ -191,12 +163,13 @@ const translations = {
     arrowBtn: "Seta",
     strokeSizeLabel: "Tamanho do Traço:",
     eraserSizeLabel: "Tamanho da Borracha:",
-    discordMessage: "ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.",
+    discordMessage: "ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICIPAR DOS EVENTOS.",
     creditsLabel: "Feito por:",
     helpProject: "Ajude o projeto",
     teamSizeLabel: "Tamanho do Time:",
     mapTypeLabel: "Tipo de Mapa:",
-    currentModeLabel: "— 3x3 Futsal"
+    currentModeLabel: "— 3x3 Futsal",
+    comingSoon: "Em breve!"
   },
   en: {
     drawOnBtn: "Activate Draw",
@@ -218,7 +191,8 @@ const translations = {
     helpProject: "Help the project",
     teamSizeLabel: "Team Size:",
     mapTypeLabel: "Map Type:",
-    currentModeLabel: "— 3x3 Futsal"
+    currentModeLabel: "— 3x3 Futsal",
+    comingSoon: "Coming soon!"
   },
   tr: {
     drawOnBtn: "Çizimi Etkinleştir",
@@ -240,7 +214,8 @@ const translations = {
     helpProject: "Projeye yardım et",
     teamSizeLabel: "Takım Boyutu:",
     mapTypeLabel: "Harita Tipi:",
-    currentModeLabel: "— 3x3 Futsal"
+    currentModeLabel: "— 3x3 Futsal",
+    comingSoon: "Yakında!"
   },
   es: {
     drawOnBtn: "Activar Dibujo",
@@ -262,9 +237,271 @@ const translations = {
     helpProject: "Ayuda al proyecto",
     teamSizeLabel: "Tamaño del Equipo:",
     mapTypeLabel: "Tipo de Mapa:",
-    currentModeLabel: "— 3x3 Futsal"
+    currentModeLabel: "— 3x3 Futsal",
+    comingSoon: "¡Próximamente!"
   }
 };
+
+// Função para atualizar labels dinâmicos
+function startDraw(e){ 
+  if(erasing) {
+    drawing = true;
+    last = getPos(e);
+    return;
+  }
+  if(mode === null) return;
+  drawing = true; 
+  
+  if(mode === 'free') {
+    last = getPos(e);
+    ctx.strokeStyle = document.getElementById("colorPicker").value;
+    ctx.lineWidth = document.getElementById("sizePicker").value;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(last.x, last.y);
+  } else {
+    startPos = getPos(e); 
+    last = getPos(e);
+  }
+}
+
+function moveDraw(e){
+    if (!drawing) return;
+    
+    if (erasing) {
+        const pos = getPos(e);
+        ctx.lineWidth = document.getElementById("eraserSizePicker").value;
+        ctx.lineCap = "round";
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.beginPath();
+        ctx.moveTo(last.x, last.y);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        last = pos;
+    } else if (mode === 'free') {
+        const pos = getPos(e);
+        ctx.globalCompositeOperation = "source-over";
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        last = pos;
+    } else {
+        drawShape(e);
+    }
+}
+
+function endDraw(){ 
+  if(drawing) {
+    if (!erasing) {
+        if (mode === 'free') {
+            // Para desenho livre, não precisa fazer nada especial
+        } else {
+            drawShape(event); // Desenha a forma final
+        }
+        saveState(); // Salva o estado
+    }
+    drawing = false; 
+    last = null;
+    startPos = null;
+    ctx.globalCompositeOperation = "source-over";
+  }
+}
+
+// Event listeners para desenho
+draw.addEventListener("mousedown", startDraw);
+draw.addEventListener("mousemove", moveDraw);
+window.addEventListener("mouseup", endDraw);
+draw.addEventListener("mouseleave", endDraw);
+
+// Ctrl+Z para desfazer
+window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'z') {
+        e.preventDefault();
+        undo();
+    }
+});
+
+// Função para gerenciar o estado ativo dos botões
+function updateActiveButtons(activeButtonId) {
+  document.querySelectorAll('.shape-menu button, #drawOnBtn, #eraseBtn, #drawOffBtn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  if (activeButtonId) {
+    document.getElementById(activeButtonId).classList.add('active');
+  }
+}
+
+// Event listeners dos botões
+document.getElementById("drawOnBtn").onclick=()=>{
+  erasing = false;
+  mode = 'line';
+  draw.style.pointerEvents = "auto";
+  updateActiveButtons('drawOnBtn');
+  document.getElementById('lineBtn').classList.add('active');
+  statsTracker.trackDraw();
+};
+document.getElementById("drawOffBtn").onclick=()=>{
+  erasing = false;
+  mode = null;
+  draw.style.pointerEvents = "none";
+  updateActiveButtons('drawOffBtn');
+};
+document.getElementById("eraseBtn").onclick=()=>{
+  erasing = true;
+  mode = null;
+  draw.style.pointerEvents = "auto";
+  updateActiveButtons('eraseBtn');
+};
+document.getElementById("clearBtn").onclick=()=>{
+  ctx.clearRect(0,0,draw.width,draw.height);
+  history = [];
+};
+document.getElementById("freeBtn").onclick=()=>{
+  erasing = false;
+  mode = 'free';
+  draw.style.pointerEvents = "auto";
+  updateActiveButtons('freeBtn');
+};
+document.getElementById("lineBtn").onclick=()=>{
+  erasing = false;
+  mode = 'line';
+  draw.style.pointerEvents = "auto";
+  updateActiveButtons('lineBtn');
+};
+document.getElementById("squareBtn").onclick=()=>{
+  erasing = false;
+  mode = 'square';
+  draw.style.pointerEvents = "auto";
+  updateActiveButtons('squareBtn');
+};
+document.getElementById("triangleBtn").onclick=()=>{
+  erasing = false;
+  mode = 'triangle';
+  draw.style.pointerEvents = "auto";
+  updateActiveButtons('triangleBtn');
+};
+document.getElementById("circleBtn").onclick=()=>{
+  erasing = false;
+  mode = 'circle';
+  draw.style.pointerEvents = "auto";
+  updateActiveButtons('circleBtn');
+};
+document.getElementById("arrowBtn").onclick=()=>{
+  erasing = false;
+  mode = 'arrow';
+  draw.style.pointerEvents = "auto";
+  updateActiveButtons('arrowBtn');
+};
+
+// Função de download PNG com tracking
+document.getElementById("downloadBtn").onclick=()=>{
+    statsTracker.trackDownload();
+    
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = board.clientWidth;
+    tempCanvas.height = board.clientHeight;
+    const tempCtx = tempCanvas.getContext('2d');
+
+    const bgImage = new Image();
+    bgImage.crossOrigin = 'anonymous'; 
+    bgImage.onload = () => {
+        tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
+        tempCtx.drawImage(draw, 0, 0);
+
+        let playersDrawn = 0;
+        const totalPlayers = players.length;
+
+        if (totalPlayers === 0) {
+            downloadFinalCanvas(tempCanvas);
+            return;
+        }
+
+        players.forEach(p => {
+            const img = new Image();
+            img.onload = () => {
+                const playerCanvas = document.createElement('canvas');
+                playerCanvas.width = p.el.offsetWidth;
+                playerCanvas.height = p.el.offsetHeight;
+                const playerCtx = playerCanvas.getContext('2d');
+
+                playerCtx.beginPath();
+                playerCtx.arc(p.el.offsetWidth / 2, p.el.offsetHeight / 2, p.el.offsetWidth / 2 - 2, 0, Math.PI * 2);
+                playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
+                playerCtx.fill();
+                playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
+                playerCtx.lineWidth = 2;
+                playerCtx.stroke();
+
+                playerCtx.font = "bold 14px Arial, sans-serif";
+                playerCtx.fillStyle = getComputedStyle(p.el).color;
+                playerCtx.textAlign = "center";
+                playerCtx.textBaseline = "middle";
+                playerCtx.fillText(p.el.textContent, p.el.offsetWidth / 2, p.el.offsetHeight / 2);
+
+                tempCtx.drawImage(playerCanvas, p.el.offsetLeft, p.el.offsetTop);
+
+                playersDrawn++;
+                if (playersDrawn === totalPlayers) {
+                    downloadFinalCanvas(tempCanvas);
+                }
+            };
+            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        });
+    };
+    
+    const config = gameConfigs[currentTeamSize][currentMapType];
+    bgImage.src = config.backgroundImage;
+};
+
+function downloadFinalCanvas(canvas) {
+    const link = document.createElement('a');
+    link.download = `quadro-tatico-${currentTeamSize}-${currentMapType}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
+// Inicialização
+document.getElementById("drawOffBtn").click();
+populateSelects();
+updateTexts();
+
+// Rastrear visita após carregamento
+setTimeout(() => {
+  statsTracker.trackVisit();
+}, 1000); updateCurrentModeLabel() {
+  const teamSize = currentTeamSize;
+  const mapType = currentMapType.charAt(0).toUpperCase() + currentMapType.slice(1);
+  document.getElementById('currentModeLabel').textContent = `— ${teamSize} ${mapType}`;
+}
+
+// Função para popular os selects dinamicamente
+function populateSelects() {
+  const teamSizeSelect = document.getElementById('teamSizeSelect');
+  const mapTypeSelect = document.getElementById('mapTypeSelect');
+  
+  // Limpar selects
+  teamSizeSelect.innerHTML = '';
+  mapTypeSelect.innerHTML = '';
+  
+  // Popular team sizes
+  Object.keys(gameConfigs).forEach(teamSize => {
+    const option = document.createElement('option');
+    option.value = teamSize;
+    option.textContent = teamSize;
+    if (teamSize === currentTeamSize) option.selected = true;
+    teamSizeSelect.appendChild(option);
+  });
+  
+  // Popular map types baseado no team size atual
+  if (gameConfigs[currentTeamSize]) {
+    Object.keys(gameConfigs[currentTeamSize]).forEach(mapType => {
+      const option = document.createElement('option');
+      option.value = mapType;
+      option.textContent = mapType.charAt(0).toUpperCase() + mapType.slice(1);
+      if (mapType === currentMapType) option.selected = true;
+      mapTypeSelect.appendChild(option);
+    });
+  }
+}
 
 function updateTexts() {
   document.getElementById('drawOnBtn').textContent = translations[currentLang].drawOnBtn;
@@ -286,13 +523,15 @@ function updateTexts() {
   document.getElementById('helpProjectLabel').textContent = translations[currentLang].helpProject;
   document.getElementById('teamSizeLabel').textContent = translations[currentLang].teamSizeLabel;
   document.getElementById('mapTypeLabel').textContent = translations[currentLang].mapTypeLabel;
-  document.getElementById('currentModeLabel').textContent = translations[currentLang].currentModeLabel;
 
   // Atualiza a classe 'active' das bandeiras
   document.querySelectorAll('.language-selector img').forEach(img => {
       img.classList.remove('active');
   });
   document.getElementById(`flag-${currentLang}`).classList.add('active');
+  
+  // Atualiza o label do modo atual
+  updateCurrentModeLabel();
 }
 
 // Event listeners para as bandeiras com tracking
@@ -319,28 +558,34 @@ document.getElementById('flag-es').addEventListener('click', () => {
 
 // Event listeners para configurações de jogo
 document.getElementById('teamSizeSelect').addEventListener('change', (e) => {
-  if (e.target.value === '3x3') {
-    changeGameConfig(e.target.value, currentMapType);
-    statsTracker.trackConfigChange('team_size', e.target.value);
+  const newTeamSize = e.target.value;
+  
+  // Verificar se a configuração existe
+  if (gameConfigs[newTeamSize]) {
+    // Se o mapa atual não existir no novo team size, usar o primeiro disponível
+    const availableMaps = Object.keys(gameConfigs[newTeamSize]);
+    const newMapType = availableMaps.includes(currentMapType) ? currentMapType : availableMaps[0];
+    
+    changeGameConfig(newTeamSize, newMapType);
+    statsTracker.trackConfigChange('team_size', newTeamSize);
   } else {
-    // Resetar para 3x3 se selecionar opção não disponível
-    e.target.value = '3x3';
-    alert(currentLang === 'pt' ? 'Esta opção estará disponível em breve!' : 
-          currentLang === 'en' ? 'This option will be available soon!' : 
-          'Bu seçenek yakında kullanılabilir olacak!');
+    // Resetar se não existir
+    e.target.value = currentTeamSize;
+    alert(translations[currentLang].comingSoon);
   }
 });
 
 document.getElementById('mapTypeSelect').addEventListener('change', (e) => {
-  if (e.target.value === 'futsal') {
-    changeGameConfig(currentTeamSize, e.target.value);
-    statsTracker.trackConfigChange('map_type', e.target.value);
+  const newMapType = e.target.value;
+  
+  // Verificar se a configuração existe
+  if (gameConfigs[currentTeamSize] && gameConfigs[currentTeamSize][newMapType]) {
+    changeGameConfig(currentTeamSize, newMapType);
+    statsTracker.trackConfigChange('map_type', newMapType);
   } else {
-    // Resetar para futsal se selecionar opção não disponível
-    e.target.value = 'futsal';
-    alert(currentLang === 'pt' ? 'Este mapa estará disponível em breve!' : 
-          currentLang === 'en' ? 'This map will be available soon!' : 
-          'Bu harita yakında kullanılabilir olacak!');
+    // Resetar se não existir
+    e.target.value = currentMapType;
+    alert(translations[currentLang].comingSoon);
   }
 });
 
@@ -353,7 +598,7 @@ function changeGameConfig(teamSize, mapType) {
   
   // Obter nova configuração
   const config = gameConfigs[teamSize][mapType];
-  players = config.players;
+  players = [...config.players]; // Clone do array
   
   // Atualizar fundo do board
   board.style.backgroundImage = `url('${config.backgroundImage}')`;
@@ -374,6 +619,10 @@ function changeGameConfig(teamSize, mapType) {
   // Limpar canvas
   ctx.clearRect(0, 0, draw.width, draw.height);
   history = [];
+  
+  // Atualizar selects e labels
+  populateSelects();
+  updateCurrentModeLabel();
 }
 
 // Tracking do Discord
@@ -531,7 +780,6 @@ function drawShape(e) {
         ctx.fill();
     }
 }
-
 function startDraw(e){ 
   if(erasing) {
     drawing = true;
