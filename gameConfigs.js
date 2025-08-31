@@ -12,8 +12,8 @@ const gameConfigs = {
         { uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5 }
       ]
     },
-    campo: {
-      backgroundImage: 'https://i.imgur.com/CAMPO_URL.png', // URL do mapa campo
+    bigeasy: {
+      backgroundImage: 'https://i.imgur.com/rMetuYd.png', // URL do mapa campo
       players: [
         { uid: 1, id: 'GK', team: 'red', x: 0.1, y: 0.5 },
         { uid: 2, id: 'VL', team: 'red', x: 0.25, y: 0.25 },
