@@ -1,0 +1,297 @@
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7410324895176353"
+     crossorigin="anonymous"></script>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quadro Tático Haxball - Versão Final</title>
+  <style>
+    body {
+      margin:0;
+      background:#1b1b1b;
+      color:#e5e7eb;
+      font-family: Arial, sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:16px;
+    }
+    h1 {
+      font-size:20px;
+      margin:0 0 10px;
+      text-align: center;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .app { width:100%; max-width:1100px; }
+    .toolbar {
+      margin-bottom:10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .button-group, .size-group, .config-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+    .config-group {
+        padding: 10px;
+        background: #2c2c2c;
+        border-radius: 8px;
+        border: 1px solid #444;
+    }
+    .toolbar button, .toolbar input[type="range"], .toolbar select {
+      margin: 0;
+      padding:8px 12px;
+      border-radius:6px;
+      border:1px solid #444;
+      background:#2c2c2c;
+      color:white;
+      cursor:pointer;
+    }
+    .toolbar select {
+      min-width: 120px;
+    }
+    .toolbar button {
+      line-height: 1.2;
+    }
+    .toolbar input[type="color"] {
+      width: 40px;
+      height: 30px;
+      border: 1px solid #444;
+      padding: 0;
+      background: #2c2c2c;
+      cursor: pointer;
+    }
+    .toolbar label {
+        margin-right: 5px;
+        color: #e5e7eb;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+    .board-wrap {
+      position:relative;
+      width:100%;
+      aspect-ratio:16/9;
+      border:2px solid #444;
+      border-radius:12px;
+      overflow:hidden;
+      background:url('https://i.imgur.com/UiOK7Gr.png') center/contain no-repeat;
+      background-color: #4a4a4a;
+    }
+    canvas { position:absolute; inset:0; width:100%; height:100%; }
+    .players-layer {
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+    .player {
+      --size:29px;
+      width:var(--size); height:var(--size);
+      position:absolute;
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:bold; color:white;
+      cursor:grab;
+      border:2px solid black;
+      pointer-events:auto;
+    }
+    .red { background:#e53935; }
+    .blue { background:#1e88e5; }
+    .ball {
+      --size: 10px;
+      background: #B917FF;
+      border: 2px solid black;
+    }
+    .player:active { cursor:grabbing; }
+
+    /* Estilo para a mensagem do Discord */
+    .discord-message {
+        margin-top: 10px;
+        font-size: 16px;
+        text-align: center;
+        color: #e5e7eb;
+    }
+    .discord-message a {
+        color: #7289da; /* Cor azul do Discord */
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .discord-message a:hover {
+        text-decoration: underline;
+    }
+    /* Estilos para o seletor de idioma */
+    .language-selector {
+        display: flex;
+        align-items: center;
+        margin-left: 15px; /* Ajusta o espaçamento */
+        gap: 5px;
+    }
+    .language-selector img {
+        width: 30px;
+        height: 20px;
+        cursor: pointer;
+        border: 1px solid #444;
+        border-radius: 3px;
+    }
+    .language-selector img.active {
+        border: 2px solid #fff;
+    }
+    /* Estilos para o menu de formas */
+    .shape-menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        margin-top: 8px;
+    }
+    /* Novo estilo para o criador */
+    .credits-message {
+        margin-top: 10px;
+        font-size: 14px;
+        text-align: center;
+        color: #999;
+    }
+    /* Novo estilo para botões ativos */
+    .toolbar button.active {
+      background: #B917FF;
+      border: 1px solid #B917FF;
+      box-shadow: 0 0 5px #B917FF;
+    }
+    .donations {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .donations h2 {
+      font-size: 18px;
+      margin: 0;
+      color: #e5e7eb;
+      text-align: center;
+    }
+    .donations .links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .donations a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #e5e7eb;
+      font-weight: bold;
+    }
+    .donations img {
+      height: 30px;
+    }
+    /* Estilo para opções desabilitadas */
+    .disabled-option {
+      color: #666 !important;
+      font-style: italic;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-DGuQM-AH.js"></script>
+</head>
+<body>
+  <div class="app">
+    <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
+    
+    <div class="config-group">
+      <label id="teamSizeLabel" for="teamSizeSelect">Tamanho do Time:</label>
+      <select id="teamSizeSelect">
+        <option value="3x3">3x3</option>
+        <option value="4x4" class="disabled-option">4x4 (Em breve)</option>
+        <option value="7x7" class="disabled-option">7x7 (Em breve)</option>
+      </select>
+      
+      <label id="mapTypeLabel" for="mapTypeSelect">Tipo de Mapa:</label>
+      <select id="mapTypeSelect">
+        <option value="futsal">Futsal</option>
+        <option value="campo" class="disabled-option">Campo (Em breve)</option>
+        <option value="hockey" class="disabled-option">Hockey (Em breve)</option>
+      </select>
+    </div>
+    
+    <div class="toolbar">
+      <div class="button-group">
+        <button id="drawOnBtn"></button>
+        <button id="drawOffBtn"></button>
+        <button id="eraseBtn"></button>
+        <button id="clearBtn"></button>
+        <label id="colorLabel" for="colorPicker"></label>
+        <input type="color" id="colorPicker" value="#ffffff">
+        <button id="downloadBtn"></button>
+        <div class="language-selector">
+            <img src="https://flagcdn.com/br.svg" alt="Português" data-lang="pt" id="flag-pt">
+            <img src="https://flagcdn.com/us.svg" alt="English" data-lang="en" id="flag-en">
+            <img src="https://flagcdn.com/tr.svg" alt="Türkçe" data-lang="tr" id="flag-tr">
+            <img src="https://flagcdn.com/es.svg" alt="Español" data-lang="es" id="flag-es">
+        </div>
+      </div>
+      <div class="shape-menu">
+        <button id="freeBtn"></button>
+        <button id="lineBtn"></button>
+        <button id="squareBtn"></button>
+        <button id="triangleBtn"></button>
+        <button id="circleBtn"></button>
+        <button id="arrowBtn"></button>
+      </div>
+      <div class="size-group">
+        <label id="strokeSizeLabel" for="sizePicker"></label>
+        <input type="range" id="sizePicker" min="2" max="20" value="4">
+        <label id="eraserSizeLabel" for="eraserSizePicker"></label>
+        <input type="range" id="eraserSizePicker" min="2" max="50" value="20">
+      </div>
+    </div>
+    
+    <div class="donations">
+        <h2 id="helpProjectLabel"></h2>
+        <div class="links">
+            <a href="https://livepix.gg/jojos" target="_blank">
+                <img src="https://logospng.org/wp-content/uploads/pix.png" alt="Doar com Pix" />
+                <span>PIX</span>
+            </a>
+            <a href="https://www.paypal.com/donate/?hosted_button_id=Q29M6AVCECRFN" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png" alt="Doar com PayPal" />
+                <span>PAYPAL</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="discord-message">
+      <p>
+        <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank">
+          ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.
+        </a>
+      </p>
+    </div>
+
+    <div class="board-wrap" id="board">
+      <canvas id="drawLayer"></canvas>
+      <div class="players-layer" id="players"></div>
+    </div>
+    <div class="credits-message">
+      <span id="creditsLabel"></span> jojo discordurser: dranklean
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+
+</body>
+</html>

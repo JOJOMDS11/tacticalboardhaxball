@@ -1,0 +1,24 @@
+{
+  "name": "tacticalboardhaxball",
+  "version": "1.0.0",
+  "description": "link: https://haxballboard.netlify.app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JOJOMDS11/tacticalboardhaxball.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JOJOMDS11/tacticalboardhaxball/issues"
+  },
+  "homepage": "https://github.com/JOJOMDS11/tacticalboardhaxball#readme",
+  "devDependencies": {
+    "vite": "^7.1.3"
+  }
+}
