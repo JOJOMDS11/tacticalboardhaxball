@@ -199,11 +199,6 @@
     .donations img {
       height: 30px;
     }
-    /* Estilo para opções desabilitadas */
-    .disabled-option {
-      color: #666 !important;
-      font-style: italic;
-    }
   </style>
 </head>
 <body>
@@ -213,16 +208,12 @@
     <div class="config-group">
       <label id="teamSizeLabel" for="teamSizeSelect">Tamanho do Time:</label>
       <select id="teamSizeSelect">
-        <option value="3x3">3x3</option>
-        <option value="4x4" class="disabled-option">4x4 (Em breve)</option>
-        <option value="7x7" class="disabled-option">7x7 (Em breve)</option>
+        <!-- Será populado dinamicamente pelo JavaScript -->
       </select>
       
       <label id="mapTypeLabel" for="mapTypeSelect">Tipo de Mapa:</label>
       <select id="mapTypeSelect">
-        <option value="futsal">Futsal</option>
-        <option value="campo" class="disabled-option">Campo (Em breve)</option>
-        <option value="hockey" class="disabled-option">Hockey (Em breve)</option>
+        <!-- Será populado dinamicamente pelo JavaScript -->
       </select>
     </div>
     
@@ -275,7 +266,7 @@
     <div class="discord-message">
       <p>
         <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank">
-          ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.
+          ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICIPAR DOS EVENTOS.
         </a>
       </p>
     </div>
@@ -289,8 +280,25 @@
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+  <!-- Firebase Scripts - Carregamento condicional -->
+  <script>
+    // Verificar se Firebase deve ser carregado
+    const shouldLoadFirebase = import.meta.env.VITE_API_KEY && import.meta.env.VITE_API_KEY !== 'undefined';
+    
+    if (shouldLoadFirebase) {
+      // Carregar Firebase apenas se as variáveis estiverem configuradas
+      const firebaseAppScript = document.createElement('script');
+      firebaseAppScript.src = 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js';
+      firebaseAppScript.onload = () => {
+        const firebaseDatabaseScript = document.createElement('script');
+        firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js';
+        document.head.appendChild(firebaseDatabaseScript);
+      };
+      document.head.appendChild(firebaseAppScript);
+    } else {
+      console.log('Firebase não configurado - rodando sem analytics');
+    }
+  </script>
   <script type="module" src="/main.js"></script>
 
 </body>
