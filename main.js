@@ -243,231 +243,7 @@ const translations = {
 };
 
 // Função para atualizar labels dinâmicos
-function startDraw(e){ 
-  if(erasing) {
-    drawing = true;
-    last = getPos(e);
-    return;
-  }
-  if(mode === null) return;
-  drawing = true; 
-  
-  if(mode === 'free') {
-    last = getPos(e);
-    ctx.strokeStyle = document.getElementById("colorPicker").value;
-    ctx.lineWidth = document.getElementById("sizePicker").value;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(last.x, last.y);
-  } else {
-    startPos = getPos(e); 
-    last = getPos(e);
-  }
-}
-
-function moveDraw(e){
-    if (!drawing) return;
-    
-    if (erasing) {
-        const pos = getPos(e);
-        ctx.lineWidth = document.getElementById("eraserSizePicker").value;
-        ctx.lineCap = "round";
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.beginPath();
-        ctx.moveTo(last.x, last.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-        last = pos;
-    } else if (mode === 'free') {
-        const pos = getPos(e);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-        last = pos;
-    } else {
-        drawShape(e);
-    }
-}
-
-function endDraw(){ 
-  if(drawing) {
-    if (!erasing) {
-        if (mode === 'free') {
-            // Para desenho livre, não precisa fazer nada especial
-        } else {
-            drawShape(event); // Desenha a forma final
-        }
-        saveState(); // Salva o estado
-    }
-    drawing = false; 
-    last = null;
-    startPos = null;
-    ctx.globalCompositeOperation = "source-over";
-  }
-}
-
-// Event listeners para desenho
-draw.addEventListener("mousedown", startDraw);
-draw.addEventListener("mousemove", moveDraw);
-window.addEventListener("mouseup", endDraw);
-draw.addEventListener("mouseleave", endDraw);
-
-// Ctrl+Z para desfazer
-window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'z') {
-        e.preventDefault();
-        undo();
-    }
-});
-
-// Função para gerenciar o estado ativo dos botões
-function updateActiveButtons(activeButtonId) {
-  document.querySelectorAll('.shape-menu button, #drawOnBtn, #eraseBtn, #drawOffBtn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  if (activeButtonId) {
-    document.getElementById(activeButtonId).classList.add('active');
-  }
-}
-
-// Event listeners dos botões
-document.getElementById("drawOnBtn").onclick=()=>{
-  erasing = false;
-  mode = 'line';
-  draw.style.pointerEvents = "auto";
-  updateActiveButtons('drawOnBtn');
-  document.getElementById('lineBtn').classList.add('active');
-  statsTracker.trackDraw();
-};
-document.getElementById("drawOffBtn").onclick=()=>{
-  erasing = false;
-  mode = null;
-  draw.style.pointerEvents = "none";
-  updateActiveButtons('drawOffBtn');
-};
-document.getElementById("eraseBtn").onclick=()=>{
-  erasing = true;
-  mode = null;
-  draw.style.pointerEvents = "auto";
-  updateActiveButtons('eraseBtn');
-};
-document.getElementById("clearBtn").onclick=()=>{
-  ctx.clearRect(0,0,draw.width,draw.height);
-  history = [];
-};
-document.getElementById("freeBtn").onclick=()=>{
-  erasing = false;
-  mode = 'free';
-  draw.style.pointerEvents = "auto";
-  updateActiveButtons('freeBtn');
-};
-document.getElementById("lineBtn").onclick=()=>{
-  erasing = false;
-  mode = 'line';
-  draw.style.pointerEvents = "auto";
-  updateActiveButtons('lineBtn');
-};
-document.getElementById("squareBtn").onclick=()=>{
-  erasing = false;
-  mode = 'square';
-  draw.style.pointerEvents = "auto";
-  updateActiveButtons('squareBtn');
-};
-document.getElementById("triangleBtn").onclick=()=>{
-  erasing = false;
-  mode = 'triangle';
-  draw.style.pointerEvents = "auto";
-  updateActiveButtons('triangleBtn');
-};
-document.getElementById("circleBtn").onclick=()=>{
-  erasing = false;
-  mode = 'circle';
-  draw.style.pointerEvents = "auto";
-  updateActiveButtons('circleBtn');
-};
-document.getElementById("arrowBtn").onclick=()=>{
-  erasing = false;
-  mode = 'arrow';
-  draw.style.pointerEvents = "auto";
-  updateActiveButtons('arrowBtn');
-};
-
-// Função de download PNG com tracking
-document.getElementById("downloadBtn").onclick=()=>{
-    statsTracker.trackDownload();
-    
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = board.clientWidth;
-    tempCanvas.height = board.clientHeight;
-    const tempCtx = tempCanvas.getContext('2d');
-
-    const bgImage = new Image();
-    bgImage.crossOrigin = 'anonymous'; 
-    bgImage.onload = () => {
-        tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
-        tempCtx.drawImage(draw, 0, 0);
-
-        let playersDrawn = 0;
-        const totalPlayers = players.length;
-
-        if (totalPlayers === 0) {
-            downloadFinalCanvas(tempCanvas);
-            return;
-        }
-
-        players.forEach(p => {
-            const img = new Image();
-            img.onload = () => {
-                const playerCanvas = document.createElement('canvas');
-                playerCanvas.width = p.el.offsetWidth;
-                playerCanvas.height = p.el.offsetHeight;
-                const playerCtx = playerCanvas.getContext('2d');
-
-                playerCtx.beginPath();
-                playerCtx.arc(p.el.offsetWidth / 2, p.el.offsetHeight / 2, p.el.offsetWidth / 2 - 2, 0, Math.PI * 2);
-                playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
-                playerCtx.fill();
-                playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
-                playerCtx.lineWidth = 2;
-                playerCtx.stroke();
-
-                playerCtx.font = "bold 14px Arial, sans-serif";
-                playerCtx.fillStyle = getComputedStyle(p.el).color;
-                playerCtx.textAlign = "center";
-                playerCtx.textBaseline = "middle";
-                playerCtx.fillText(p.el.textContent, p.el.offsetWidth / 2, p.el.offsetHeight / 2);
-
-                tempCtx.drawImage(playerCanvas, p.el.offsetLeft, p.el.offsetTop);
-
-                playersDrawn++;
-                if (playersDrawn === totalPlayers) {
-                    downloadFinalCanvas(tempCanvas);
-                }
-            };
-            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-        });
-    };
-    
-    const config = gameConfigs[currentTeamSize][currentMapType];
-    bgImage.src = config.backgroundImage;
-};
-
-function downloadFinalCanvas(canvas) {
-    const link = document.createElement('a');
-    link.download = `quadro-tatico-${currentTeamSize}-${currentMapType}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-}
-
-// Inicialização
-document.getElementById("drawOffBtn").click();
-populateSelects();
-updateTexts();
-
-// Rastrear visita após carregamento
-setTimeout(() => {
-  statsTracker.trackVisit();
-}, 1000); updateCurrentModeLabel() {
+function updateCurrentModeLabel() {
   const teamSize = currentTeamSize;
   const mapType = currentMapType.charAt(0).toUpperCase() + currentMapType.slice(1);
   document.getElementById('currentModeLabel').textContent = `— ${teamSize} ${mapType}`;
@@ -780,6 +556,7 @@ function drawShape(e) {
         ctx.fill();
     }
 }
+
 function startDraw(e){ 
   if(erasing) {
     drawing = true;
@@ -939,7 +716,6 @@ document.getElementById("downloadBtn").onclick=()=>{
     const tempCtx = tempCanvas.getContext('2d');
 
     const bgImage = new Image();
-    bgImage.crossOrigin = 'anonymous'; 
     bgImage.onload = () => {
         tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
         tempCtx.drawImage(draw, 0, 0);
@@ -998,9 +774,11 @@ function downloadFinalCanvas(canvas) {
 
 // Inicialização
 document.getElementById("drawOffBtn").click();
+populateSelects();
 updateTexts();
 
 // Rastrear visita após carregamento
 setTimeout(() => {
   statsTracker.trackVisit();
-}, 1000);
+}, 1000);Image.crossOrigin = 'anonymous'; 
+    bg
