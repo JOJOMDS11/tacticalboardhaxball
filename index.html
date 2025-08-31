@@ -199,7 +199,7 @@
 </head>
 <body>
   <div class="app">
-    <h1>Quadro Tático Haxball – 3x3 <span class="coming-soon" id="comingSoonLabel"></span></h1>
+    <h1>Quadro Tático Haxball — 3x3 <span class="coming-soon" id="comingSoonLabel"></span></h1>
     <div class="toolbar">
       <div class="button-group">
         <button id="drawOnBtn"></button>
@@ -216,6 +216,7 @@
         </div>
       </div>
       <div class="shape-menu">
+        <button id="freeBtn"></button>
         <button id="lineBtn"></button>
         <button id="squareBtn"></button>
         <button id="triangleBtn"></button>
@@ -261,7 +262,117 @@
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+
   <script>
+    // Inicializar o tracking de estatísticas
+    class HaxballStatsTracker {
+      constructor() {
+        this.firebaseInitialized = false;
+        
+        // Configuração do Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
+          authDomain: "jojovius-f5de7.firebaseapp.com",
+          databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
+          projectId: "jojovius-f5de7",
+          storageBucket: "jojovius-f5de7.appspot.com",
+          messagingSenderId: "629248865232",
+          appId: "1:629248865232:web:4e74d888f57161cedfffd5"
+        };
+
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          this.db = firebase.database();
+          this.firebaseInitialized = true;
+          console.log('Firebase inicializado com sucesso');
+        } catch (error) {
+          console.error('Erro ao inicializar Firebase:', error);
+        }
+        
+        this.counters = {
+          totalVisits: 'totalVisits',
+          todayVisits: 'todayVisits_' + new Date().toISOString().split('T')[0],
+          downloads: 'downloads',
+          drawActivations: 'drawActivations',
+          languageChanges: 'languageChanges',
+          discordClicks: 'discordClicks',
+          langPt: 'langPt',
+          langEn: 'langEn',
+          langTr: 'langTr'
+        };
+      }
+
+      async increment(key, amount = 1) {
+        if (!this.firebaseInitialized) return 0;
+        try {
+          await this.db.ref(`stats/${key}`).transaction((current) => {
+            return (current || 0) + amount;
+          });
+          const snapshot = await this.db.ref(`stats/${key}`).once('value');
+          return snapshot.val() || 0;
+        } catch (error) {
+          console.error('Erro Firebase increment:', error);
+          return 0;
+        }
+      }
+
+      async trackVisit() {
+        try {
+          await this.increment(this.counters.totalVisits);
+          await this.increment(this.counters.todayVisits);
+          console.log('Visita rastreada com sucesso');
+        } catch (error) {
+          console.error('Erro ao rastrear visita:', error);
+        }
+      }
+
+      async trackDownload() {
+        try {
+          await this.increment(this.counters.downloads);
+          console.log('Download rastreado com sucesso');
+        } catch (error) {
+          console.error('Erro ao rastrear download:', error);
+        }
+      }
+
+      async trackDraw() {
+        try {
+          await this.increment(this.counters.drawActivations);
+          console.log('Ativação de desenho rastreada com sucesso');
+        } catch (error) {
+          console.error('Erro ao rastrear ativação de desenho:', error);
+        }
+      }
+
+      async trackLanguageChange(lang) {
+        try {
+          await this.increment(this.counters.languageChanges);
+          if (lang === 'pt') await this.increment(this.counters.langPt);
+          if (lang === 'en') await this.increment(this.counters.langEn);
+          if (lang === 'tr') await this.increment(this.counters.langTr);
+          console.log(`Mudança de idioma para ${lang} rastreada com sucesso`);
+        } catch (error) {
+          console.error('Erro ao rastrear mudança de idioma:', error);
+        }
+      }
+
+      async trackDiscordClick() {
+        try {
+          await this.increment(this.counters.discordClicks);
+          console.log('Clique no Discord rastreado com sucesso');
+        } catch (error) {
+          console.error('Erro ao rastrear clique no Discord:', error);
+        }
+      }
+    }
+
+    // Instância global do tracker
+    const statsTracker = new HaxballStatsTracker();
+
     const board = document.getElementById("board");
     const draw = document.getElementById("drawLayer");
     const playersLayer = document.getElementById("players");
@@ -284,6 +395,7 @@
         clearBtn: "Limpar",
         colorLabel: "Cor:",
         downloadBtn: "Baixar PNG",
+        freeBtn: "Livre",
         lineBtn: "Linha",
         squareBtn: "Quadrado",
         triangleBtn: "Triângulo",
@@ -303,6 +415,7 @@
         clearBtn: "Clear",
         colorLabel: "Color:",
         downloadBtn: "Download PNG",
+        freeBtn: "Free",
         lineBtn: "Line",
         squareBtn: "Square",
         triangleBtn: "Triangle",
@@ -322,6 +435,7 @@
         clearBtn: "Temizle",
         colorLabel: "Renk:",
         downloadBtn: "PNG İndir",
+        freeBtn: "Serbest",
         lineBtn: "Çizgi",
         squareBtn: "Kare",
         triangleBtn: "Üçgen",
@@ -343,6 +457,7 @@
       document.getElementById('clearBtn').textContent = translations[currentLang].clearBtn;
       document.getElementById('colorLabel').textContent = translations[currentLang].colorLabel;
       document.getElementById('downloadBtn').textContent = translations[currentLang].downloadBtn;
+      document.getElementById('freeBtn').textContent = translations[currentLang].freeBtn;
       document.getElementById('lineBtn').textContent = translations[currentLang].lineBtn;
       document.getElementById('squareBtn').textContent = translations[currentLang].squareBtn;
       document.getElementById('triangleBtn').textContent = translations[currentLang].triangleBtn;
@@ -355,7 +470,6 @@
       document.getElementById('helpProjectLabel').textContent = translations[currentLang].helpProject;
       document.getElementById('comingSoonLabel').textContent = translations[currentLang].comingSoon;
 
-
       // Atualiza a classe 'active' das bandeiras
       document.querySelectorAll('.language-selector img').forEach(img => {
           img.classList.remove('active');
@@ -363,10 +477,27 @@
       document.getElementById(`flag-${currentLang}`).classList.add('active');
     }
 
-    // Event listeners para as bandeiras
-    document.getElementById('flag-pt').addEventListener('click', () => { currentLang = 'pt'; updateTexts(); });
-    document.getElementById('flag-en').addEventListener('click', () => { currentLang = 'en'; updateTexts(); });
-    document.getElementById('flag-tr').addEventListener('click', () => { currentLang = 'tr'; updateTexts(); });
+    // Event listeners para as bandeiras com tracking
+    document.getElementById('flag-pt').addEventListener('click', () => { 
+      currentLang = 'pt'; 
+      updateTexts(); 
+      statsTracker.trackLanguageChange('pt');
+    });
+    document.getElementById('flag-en').addEventListener('click', () => { 
+      currentLang = 'en'; 
+      updateTexts(); 
+      statsTracker.trackLanguageChange('en');
+    });
+    document.getElementById('flag-tr').addEventListener('click', () => { 
+      currentLang = 'tr'; 
+      updateTexts(); 
+      statsTracker.trackLanguageChange('tr');
+    });
+
+    // Tracking do Discord
+    document.querySelector('.discord-message a').addEventListener('click', () => {
+      statsTracker.trackDiscordClick();
+    });
 
     function saveState() {
       if (history.length >= maxHistory) {
@@ -538,12 +669,23 @@
       }
       if(mode === null) return;
       drawing = true; 
-      startPos = getPos(e); 
-      last = getPos(e);
+      
+      if(mode === 'free') {
+        last = getPos(e);
+        ctx.strokeStyle = document.getElementById("colorPicker").value;
+        ctx.lineWidth = document.getElementById("sizePicker").value;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(last.x, last.y);
+      } else {
+        startPos = getPos(e); 
+        last = getPos(e);
+      }
     }
     
     function moveDraw(e){
         if (!drawing) return;
+        
         if (erasing) {
             const pos = getPos(e);
             ctx.lineWidth = document.getElementById("eraserSizePicker").value;
@@ -554,19 +696,31 @@
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
             last = pos;
+        } else if (mode === 'free') {
+            const pos = getPos(e);
+            ctx.globalCompositeOperation = "source-over";
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            last = pos;
         } else {
             drawShape(e);
         }
     }
+    
     function endDraw(){ 
       if(drawing) {
         if (!erasing) {
-            drawShape(event); // Desenha a forma final
+            if (mode === 'free') {
+                // Para desenho livre, não precisa fazer nada especial
+            } else {
+                drawShape(event); // Desenha a forma final
+            }
             saveState(); // Salva o estado
         }
         drawing = false; 
         last = null;
         startPos = null;
+        ctx.globalCompositeOperation = "source-over";
       }
     }
     
@@ -601,6 +755,7 @@
       draw.style.pointerEvents = "auto";
       updateActiveButtons('drawOnBtn');
       document.getElementById('lineBtn').classList.add('active');
+      statsTracker.trackDraw();
     };
     document.getElementById("drawOffBtn").onclick=()=>{
       erasing = false;
@@ -617,6 +772,12 @@
     document.getElementById("clearBtn").onclick=()=>{
       ctx.clearRect(0,0,draw.width,draw.height);
       history = [];
+    };
+    document.getElementById("freeBtn").onclick=()=>{
+      erasing = false;
+      mode = 'free';
+      draw.style.pointerEvents = "auto";
+      updateActiveButtons('freeBtn');
     };
     document.getElementById("lineBtn").onclick=()=>{
       erasing = false;
@@ -649,8 +810,10 @@
       updateActiveButtons('arrowBtn');
     };
     
-    // Função de download PNG
+    // Função de download PNG com tracking
     document.getElementById("downloadBtn").onclick=()=>{
+        statsTracker.trackDownload();
+        
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = board.clientWidth;
         tempCanvas.height = board.clientHeight;
@@ -712,10 +875,16 @@
         link.click();
     }
 
-
     // Desativa o desenho por padrão e atualiza os textos inicialmente
-    drawOffBtn.click();
+    document.getElementById("drawOffBtn").click();
     updateTexts(); // Atualiza os textos ao carregar a página
+    
+    // Inicializa o tracking quando a página carrega
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        statsTracker.trackVisit();
+      }, 1000);
+    });
   </script>
 </body>
 </html>
