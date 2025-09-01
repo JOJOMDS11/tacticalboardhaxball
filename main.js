@@ -2,14 +2,14 @@
 import gameConfigs from './gameConfigs.js';
 
 // Configuração do Firebase usando variáveis de ambiente do Netlify/Vite
-const FIREBASE_CONFIG = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_DATABASE_URL,
-  projectId: import.meta.env.VITE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_APP_ID
+    const netlifyEnv = {
+        apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
+        authDomain: "jojovius-f5de7.firebaseapp.com",
+        databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
+        projectId: "jojovius-f5de7",
+        storageBucket: "jojovius-f5de7.firebasestorage.app",
+        messagingSenderId: "629248865232",
+        appId: "1:629248865232:web:4e74d888f57161cedfffd5"
 };
 
 // Tracker de estatísticas com Firebase
