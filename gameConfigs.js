@@ -39,8 +39,7 @@ const gameConfigs = {
         { uid: 8, id: 'PV', team: 'blue', x: 0.55, y: 0.5 },
         { uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5 }
    ]
-    }
-   '4x4': {
+    },
     bigeasy: {
       backgroundImage: 'https://i.imgur.com/dZgIa0e.png',
       players: [
@@ -56,8 +55,7 @@ const gameConfigs = {
       ]
     }
   },
-
-  '7x7': {
+ '7x7': {
     futsal: {
       backgroundImage: 'https://i.imgur.com/n56z593.png',
       players: [
