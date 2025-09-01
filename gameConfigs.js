@@ -41,7 +41,7 @@ const gameConfigs = {
    ]
     },
     bigeasy: {
-      backgroundImage: 'https://i.imgur.com/dZgIa0e.png',
+      backgroundImage: 'https://i.imgur.com/rMetuYd.png',
       players: [
         { uid: 1, id: 'GK', team: 'red', x: 0.1, y: 0.5 },
         { uid: 2, id: 'VL', team: 'red', x: 0.3, y: 0.3 },
