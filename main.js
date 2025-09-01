@@ -1,7 +1,88 @@
-// Importa as configurações dos jogos
-import gameConfigs from './gameConfigs.js';
+// Configurações dos jogos (movido para dentro do arquivo para evitar problemas de importação)
+const gameConfigs = {
+  '3x3': {
+    futsal: {
+      backgroundImage: 'https://i.imgur.com/UiOK7Gr.png',
+      players: [
+        { uid: 1, id: 'GK', team: 'red', x: 0.1, y: 0.5, size: 29 },
+        { uid: 2, id: 'VL', team: 'red', x: 0.25, y: 0.25, size: 29 },
+        { uid: 3, id: 'PV', team: 'red', x: 0.25, y: 0.75, size: 29 },
+        { uid: 4, id: 'GK', team: 'blue', x: 0.9, y: 0.5, size: 29 },
+        { uid: 5, id: 'VL', team: 'blue', x: 0.75, y: 0.25, size: 29 },
+        { uid: 6, id: 'PV', team: 'blue', x: 0.75, y: 0.75, size: 29 },
+        { uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5, size: 12 }
+      ]
+    },
+    bigeasy: {
+      backgroundImage: 'https://i.imgur.com/rMetuYd.png',
+      players: [
+        { uid: 1, id: 'GK', team: 'red', x: 0.1, y: 0.5, size: 29 },
+        { uid: 2, id: 'VL', team: 'red', x: 0.25, y: 0.25, size: 29 },
+        { uid: 3, id: 'PV', team: 'red', x: 0.25, y: 0.75, size: 29 },
+        { uid: 4, id: 'GK', team: 'blue', x: 0.9, y: 0.5, size: 29 },
+        { uid: 5, id: 'VL', team: 'blue', x: 0.75, y: 0.25, size: 29 },
+        { uid: 6, id: 'PV', team: 'blue', x: 0.75, y: 0.75, size: 29 },
+        { uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5, size: 12 }
+      ]
+    }
+  },
+  '4x4': {
+    futsal: {
+      backgroundImage: 'https://i.imgur.com/dZgIa0e.png',
+      players: [
+        { uid: 1, id: 'GK', team: 'red', x: 0.1, y: 0.5, size: 29 },
+        { uid: 2, id: 'VL', team: 'red', x: 0.3, y: 0.3, size: 29 },
+        { uid: 3, id: 'MC', team: 'red', x: 0.3, y: 0.7, size: 29 },
+        { uid: 4, id: 'PV', team: 'red', x: 0.45, y: 0.5, size: 29 },
+        { uid: 5, id: 'GK', team: 'blue', x: 0.9, y: 0.5, size: 29 },
+        { uid: 6, id: 'VL', team: 'blue', x: 0.7, y: 0.3, size: 29 },
+        { uid: 7, id: 'MC', team: 'blue', x: 0.7, y: 0.7, size: 29 },
+        { uid: 8, id: 'PV', team: 'blue', x: 0.55, y: 0.5, size: 29 },
+        { uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5, size: 12 }
+      ]
+    },
+    bigeasy: {
+      backgroundImage: 'https://i.imgur.com/rMetuYd.png',
+      players: [
+        { uid: 1, id: 'GK', team: 'red', x: 0.1, y: 0.5, size: 29 },
+        { uid: 2, id: 'VL', team: 'red', x: 0.3, y: 0.3, size: 29 },
+        { uid: 3, id: 'MC', team: 'red', x: 0.3, y: 0.7, size: 29 },
+        { uid: 4, id: 'PV', team: 'red', x: 0.45, y: 0.5, size: 29 },
+        { uid: 5, id: 'GK', team: 'blue', x: 0.9, y: 0.5, size: 29 },
+        { uid: 6, id: 'VL', team: 'blue', x: 0.7, y: 0.3, size: 29 },
+        { uid: 7, id: 'MC', team: 'blue', x: 0.7, y: 0.7, size: 29 },
+        { uid: 8, id: 'PV', team: 'blue', x: 0.55, y: 0.5, size: 29 },
+        { uid: 10, id: '', team: 'ball', x: 0.5, y: 0.5, size: 12 }
+      ]
+    }
+  },
+  '7x7': {
+    futsal: {
+      backgroundImage: 'https://i.imgur.com/n56z593.png',
+      players: [
+        { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5, size: 25 },
+        { uid: 2, id: 'LD', team: 'red', x: 0.2, y: 0.2, size: 25 },
+        { uid: 3, id: 'PD', team: 'red', x: 0.35, y: 0.2, size: 25 },
+        { uid: 4, id: 'MC', team: 'red', x: 0.15, y: 0.6, size: 25 },
+        { uid: 5, id: 'LE', team: 'red', x: 0.2, y: 0.8, size: 25 },
+        { uid: 6, id: 'PV', team: 'red', x: 0.35, y: 0.5, size: 25 },
+        { uid: 7, id: 'PE', team: 'red', x: 0.35, y: 0.8, size: 25 },
+        
+        { uid: 8, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 25 },
+        { uid: 9, id: 'LD', team: 'blue', x: 0.8, y: 0.2, size: 25 },
+        { uid: 10, id: 'PD', team: 'blue', x: 0.65, y: 0.2, size: 25 },
+        { uid: 11, id: 'MC', team: 'blue', x: 0.85, y: 0.6, size: 25 },
+        { uid: 12, id: 'LE', team: 'blue', x: 0.8, y: 0.8, size: 25 },
+        { uid: 13, id: 'PV', team: 'blue', x: 0.65, y: 0.5, size: 25 },
+        { uid: 14, id: 'PE', team: 'blue', x: 0.65, y: 0.8, size: 25 },
+        
+        { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
+      ]
+    }
+  }
+};
 
-// Configuração do Firebase - CORRIGIDA
+// Configuração do Firebase
 const FIREBASE_CONFIG = {
     apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
     authDomain: "jojovius-f5de7.firebaseapp.com",
@@ -18,7 +99,6 @@ class HaxballStatsTracker {
     this.firebaseInitialized = false;
     
     try {
-      // Verifica se todas as chaves necessárias estão presentes
       const hasAllKeys = Object.values(FIREBASE_CONFIG).every(key => key && key !== 'undefined');
       
       if (hasAllKeys && typeof firebase !== 'undefined') {
@@ -143,8 +223,8 @@ let currentLang = 'pt';
 let currentTeamSize = '3x3';
 let currentMapType = 'futsal';
 
-// Usar as configurações importadas
-let players = gameConfigs[currentTeamSize][currentMapType].players;
+// Usar as configurações
+let players = [...gameConfigs[currentTeamSize][currentMapType].players];
 
 // Objeto com as traduções
 const translations = {
@@ -242,23 +322,19 @@ const translations = {
   }
 };
 
-// Função para atualizar labels dinâmicos
 function updateCurrentModeLabel() {
   const teamSize = currentTeamSize;
   const mapType = currentMapType.charAt(0).toUpperCase() + currentMapType.slice(1);
   document.getElementById('currentModeLabel').textContent = `— ${teamSize} ${mapType}`;
 }
 
-// Função para popular os selects dinamicamente
 function populateSelects() {
   const teamSizeSelect = document.getElementById('teamSizeSelect');
   const mapTypeSelect = document.getElementById('mapTypeSelect');
   
-  // Limpar selects
   teamSizeSelect.innerHTML = '';
   mapTypeSelect.innerHTML = '';
   
-  // Popular team sizes
   Object.keys(gameConfigs).forEach(teamSize => {
     const option = document.createElement('option');
     option.value = teamSize;
@@ -267,7 +343,6 @@ function populateSelects() {
     teamSizeSelect.appendChild(option);
   });
   
-  // Popular map types baseado no team size atual
   if (gameConfigs[currentTeamSize]) {
     Object.keys(gameConfigs[currentTeamSize]).forEach(mapType => {
       const option = document.createElement('option');
@@ -300,17 +375,15 @@ function updateTexts() {
   document.getElementById('teamSizeLabel').textContent = translations[currentLang].teamSizeLabel;
   document.getElementById('mapTypeLabel').textContent = translations[currentLang].mapTypeLabel;
 
-  // Atualiza a classe 'active' das bandeiras
   document.querySelectorAll('.language-selector img').forEach(img => {
       img.classList.remove('active');
   });
   document.getElementById(`flag-${currentLang}`).classList.add('active');
   
-  // Atualiza o label do modo atual
   updateCurrentModeLabel();
 }
 
-// Event listeners para as bandeiras com tracking
+// Event listeners para as bandeiras
 document.getElementById('flag-pt').addEventListener('click', () => { 
   currentLang = 'pt'; 
   updateTexts(); 
@@ -336,16 +409,13 @@ document.getElementById('flag-es').addEventListener('click', () => {
 document.getElementById('teamSizeSelect').addEventListener('change', (e) => {
   const newTeamSize = e.target.value;
   
-  // Verificar se a configuração existe
   if (gameConfigs[newTeamSize]) {
-    // Se o mapa atual não existir no novo team size, usar o primeiro disponível
     const availableMaps = Object.keys(gameConfigs[newTeamSize]);
     const newMapType = availableMaps.includes(currentMapType) ? currentMapType : availableMaps[0];
     
     changeGameConfig(newTeamSize, newMapType);
     statsTracker.trackConfigChange('team_size', newTeamSize);
   } else {
-    // Resetar se não existir
     e.target.value = currentTeamSize;
     alert(translations[currentLang].comingSoon);
   }
@@ -354,12 +424,10 @@ document.getElementById('teamSizeSelect').addEventListener('change', (e) => {
 document.getElementById('mapTypeSelect').addEventListener('change', (e) => {
   const newMapType = e.target.value;
   
-  // Verificar se a configuração existe
   if (gameConfigs[currentTeamSize] && gameConfigs[currentTeamSize][newMapType]) {
     changeGameConfig(currentTeamSize, newMapType);
     statsTracker.trackConfigChange('map_type', newMapType);
   } else {
-    // Resetar se não existir
     e.target.value = currentMapType;
     alert(translations[currentLang].comingSoon);
   }
@@ -369,39 +437,33 @@ function changeGameConfig(teamSize, mapType) {
   currentTeamSize = teamSize;
   currentMapType = mapType;
   
-  // Limpar jogadores atuais
   playersLayer.innerHTML = '';
   
-  // Obter nova configuração
   const config = gameConfigs[teamSize][mapType];
-  players = [...config.players]; // Clone do array
+  players = [...config.players];
   
-  // Atualizar fundo do board
   board.style.backgroundImage = `url('${config.backgroundImage}')`;
   
-  // Criar novos jogadores
   players.forEach(p => {
     const el = document.createElement("div");
     el.className = `player ${p.team}`;
     el.textContent = p.id;
     el.dataset.uid = p.uid;
+    // Aplicar o tamanho personalizado do gameConfig
+    el.style.setProperty('--size', `${p.size}px`);
     playersLayer.appendChild(el);
     p.el = el;
   });
   
-  // Reposicionar jogadores
   placePlayers();
   
-  // Limpar canvas
   ctx.clearRect(0, 0, draw.width, draw.height);
   history = [];
   
-  // Atualizar selects e labels
   populateSelects();
   updateCurrentModeLabel();
 }
 
-// Tracking do Discord
 document.querySelector('.discord-message a').addEventListener('click', () => {
   statsTracker.trackDiscordClick();
 });
@@ -449,6 +511,8 @@ players.forEach(p=>{
   el.className=`player ${p.team}`;
   el.textContent=p.id;
   el.dataset.uid = p.uid;
+  // Aplicar tamanho personalizado
+  el.style.setProperty('--size', `${p.size}px`);
   playersLayer.appendChild(el);
   p.el=el;
 });
@@ -456,7 +520,7 @@ players.forEach(p=>{
 function placePlayers(){
   const rect=board.getBoundingClientRect();
   players.forEach(p=>{
-    const size = parseInt(getComputedStyle(p.el).getPropertyValue('--size'), 10);
+    const size = p.size || 29; // Usar tamanho do config ou padrão
     p.el.style.left=(p.x*rect.width - size/2)+"px";
     p.el.style.top=(p.y*rect.height - size/2)+"px";
   });
@@ -464,7 +528,7 @@ function placePlayers(){
 placePlayers();
 window.addEventListener("resize",placePlayers);
 
-// Drag (arrastar) - SEMPRE ATIVO
+// Sistema de drag
 let drag=null;
 board.addEventListener("pointerdown",e=>{
   const t=e.target.closest('.player'); 
@@ -475,7 +539,7 @@ board.addEventListener("pointerdown",e=>{
   const p = players.find(pp=>pp.uid == uniqueId);
   if (!p) return;
 
-  const size = parseInt(getComputedStyle(t).getPropertyValue('--size'), 10);
+  const size = p.size || 29;
   drag={p,offsetX:e.clientX-rect.left-(p.x*rect.width),offsetY:e.clientY-rect.top-(p.y*rect.height)};
   t.setPointerCapture(e.pointerId);
 });
@@ -483,12 +547,11 @@ board.addEventListener("pointerdown",e=>{
 window.addEventListener("pointermove",e=>{
   if(!drag) return;
   const rect=board.getBoundingClientRect();
-  const size = parseInt(getComputedStyle(drag.p.el).getPropertyValue('--size'), 10);
+  const size = drag.p.size || 29;
   
   drag.p.x = (e.clientX - rect.left - drag.offsetX) / rect.width;
   drag.p.y = (e.clientY - rect.top - drag.offsetY) / rect.height;
 
-  // Lógica de fixação para não permitir que o jogador saia do campo
   const minX = (size / 2) / rect.width;
   const maxX = 1 - (size / 2) / rect.width;
   const minY = (size / 2) / rect.height;
@@ -501,7 +564,7 @@ window.addEventListener("pointermove",e=>{
 });
 window.addEventListener("pointerup",()=>{ drag=null; });
 
-// Drawing functions
+// Funções de desenho
 function getPos(e){
   const rect=draw.getBoundingClientRect();
   return {x:e.clientX-rect.left,y:e.clientY-rect.top};
@@ -732,18 +795,32 @@ document.getElementById("downloadBtn").onclick=()=>{
         players.forEach(p => {
             const img = new Image();
             img.onload = () => {
+                const playerSize = p.size || 29;
                 const playerCanvas = document.createElement('canvas');
-                playerCanvas.width = p.el.offsetWidth;
-                playerCanvas.height = p.el.offsetHeight;
+                playerCanvas.width = playerSize;
+                playerCanvas.height = playerSize;
                 const playerCtx = playerCanvas.getContext('2d');
 
-                playerCtx.font = "bold 14px Arial, sans-serif";
-                playerCtx.fillStyle = getComputedStyle(p.el).color;
-                playerCtx.textAlign = "center";
-                playerCtx.textBaseline = "middle";
-                playerCtx.fillText(p.el.textContent, p.el.offsetWidth / 2, p.el.offsetHeight / 2);
+                playerCtx.beginPath();
+                playerCtx.arc(playerSize / 2, playerSize / 2, playerSize / 2 - 2, 0, Math.PI * 2);
+                playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
+                playerCtx.fill();
+                playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
+                playerCtx.lineWidth = 2;
+                playerCtx.stroke();
 
-                tempCtx.drawImage(playerCanvas, p.el.offsetLeft, p.el.offsetTop);
+                if (p.id) { // Só desenha texto se não for a bola
+                    playerCtx.font = `bold ${Math.max(10, playerSize * 0.4)}px Arial, sans-serif`;
+                    playerCtx.fillStyle = getComputedStyle(p.el).color;
+                    playerCtx.textAlign = "center";
+                    playerCtx.textBaseline = "middle";
+                    playerCtx.fillText(p.el.textContent, playerSize / 2, playerSize / 2);
+                }
+
+                const rect = board.getBoundingClientRect();
+                const x = p.x * rect.width - playerSize / 2;
+                const y = p.y * rect.height - playerSize / 2;
+                tempCtx.drawImage(playerCanvas, x, y);
 
                 playersDrawn++;
                 if (playersDrawn === totalPlayers) {
@@ -773,12 +850,4 @@ updateTexts();
 // Rastrear visita após carregamento
 setTimeout(() => {
   statsTracker.trackVisit();
-}, 1000);.beginPath();
-                playerCtx.arc(p.el.offsetWidth / 2, p.el.offsetHeight / 2, p.el.offsetWidth / 2 - 2, 0, Math.PI * 2);
-                playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
-                playerCtx.fill();
-                playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
-                playerCtx.lineWidth = 2;
-                playerCtx.stroke();
-
-                playerCtx
+}, 1000);
