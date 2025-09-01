@@ -1,15 +1,15 @@
 // Importa as configurações dos jogos
 import gameConfigs from './gameConfigs.js';
 
-// Configuração do Firebase usando variáveis de ambiente do Netlify/Vite
-    const FIREBASE_CONFIG = {
-        apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
-        authDomain: "jojovius-f5de7.firebaseapp.com",
-        databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
-        projectId: "jojovius-f5de7",
-        storageBucket: "jojovius-f5de7.firebasestorage.app",
-        messagingSenderId: "629248865232",
-        appId: "1:629248865232:web:4e74d888f57161cedfffd5"
+// Configuração do Firebase - CORRIGIDA
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
+    authDomain: "jojovius-f5de7.firebaseapp.com",
+    databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
+    projectId: "jojovius-f5de7",
+    storageBucket: "jojovius-f5de7.appspot.com",
+    messagingSenderId: "629248865232",
+    appId: "1:629248865232:web:4e74d888f57161cedfffd5"
 };
 
 // Tracker de estatísticas com Firebase
@@ -716,6 +716,7 @@ document.getElementById("downloadBtn").onclick=()=>{
     const tempCtx = tempCanvas.getContext('2d');
 
     const bgImage = new Image();
+    bgImage.crossOrigin = 'anonymous';
     bgImage.onload = () => {
         tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
         tempCtx.drawImage(draw, 0, 0);
@@ -735,14 +736,6 @@ document.getElementById("downloadBtn").onclick=()=>{
                 playerCanvas.width = p.el.offsetWidth;
                 playerCanvas.height = p.el.offsetHeight;
                 const playerCtx = playerCanvas.getContext('2d');
-
-                playerCtx.beginPath();
-                playerCtx.arc(p.el.offsetWidth / 2, p.el.offsetHeight / 2, p.el.offsetWidth / 2 - 2, 0, Math.PI * 2);
-                playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
-                playerCtx.fill();
-                playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
-                playerCtx.lineWidth = 2;
-                playerCtx.stroke();
 
                 playerCtx.font = "bold 14px Arial, sans-serif";
                 playerCtx.fillStyle = getComputedStyle(p.el).color;
@@ -780,5 +773,12 @@ updateTexts();
 // Rastrear visita após carregamento
 setTimeout(() => {
   statsTracker.trackVisit();
-}, 1000);Image.crossOrigin = 'anonymous'; 
-    bg
+}, 1000);.beginPath();
+                playerCtx.arc(p.el.offsetWidth / 2, p.el.offsetHeight / 2, p.el.offsetWidth / 2 - 2, 0, Math.PI * 2);
+                playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
+                playerCtx.fill();
+                playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
+                playerCtx.lineWidth = 2;
+                playerCtx.stroke();
+
+                playerCtx
