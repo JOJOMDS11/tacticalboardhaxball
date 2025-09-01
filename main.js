@@ -2,7 +2,7 @@
 import gameConfigs from './gameConfigs.js';
 
 // Configuração do Firebase usando variáveis de ambiente do Netlify/Vite
-    const netlifyEnv = {
+    const FIREBASE_CONFIG = {
         apiKey: "AIzaSyD2StS7Gz-ikxyt8kc0cSRzF_e7eL3FeiM",
         authDomain: "jojovius-f5de7.firebaseapp.com",
         databaseURL: "https://jojovius-f5de7-default-rtdb.firebaseio.com",
