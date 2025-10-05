@@ -312,6 +312,8 @@ let shadowEnabled = true;
 // Sistema de duas cores para desenho
 let primaryColor = '#B917FF';
 let secondaryColor = '#ff0000';
+let redShadowColor = '#ff4444';
+let blueShadowColor = '#4444ff';
 
 // Usar as configurações
 let players = [...gameConfigs[currentTeamSize][currentMapType].players];
@@ -590,31 +592,64 @@ document.getElementById('mapTypeSelect').addEventListener('change', (e) => {
 function changeGameConfig(teamSize, mapType) {
   currentTeamSize = teamSize;
   currentMapType = mapType;
-  
+
+  // Exibir seletores de formação apenas para x11
+  const formationSelectors = document.getElementById('formationSelectors');
+  if (teamSize === '11x11') {
+    formationSelectors.style.display = 'flex';
+  } else {
+    formationSelectors.style.display = 'none';
+  }
+
   playersLayer.innerHTML = '';
-  
-  const config = gameConfigs[teamSize][mapType];
+  let config = gameConfigs[teamSize][mapType];
   players = [...config.players];
-  
+
+  // Se x11, aplicar formação customizada se selecionada
+  if (teamSize === '11x11') {
+    const redFormation = document.getElementById('redFormationSelect').value;
+    const blueFormation = document.getElementById('blueFormationSelect').value;
+    // Atualiza jogadores red
+    let redPlayers = x11Formations[redFormation].red.map((p, i) => ({
+      uid: i+1,
+      id: p.id,
+      team: 'red',
+      x: p.x,
+      y: p.y,
+      size: 22
+    }));
+    // Atualiza jogadores blue
+    let bluePlayers = x11Formations[blueFormation].blue.map((p, i) => ({
+      uid: i+12,
+      id: p.id,
+      team: 'blue',
+      x: p.x,
+      y: p.y,
+      size: 22
+    }));
+    // Bola
+    let ball = { uid: 23, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 };
+    players = [...redPlayers, ...bluePlayers, ball];
+  }
+
   board.style.backgroundImage = `url('${config.backgroundImage}')`;
-  
+
   players.forEach(p => {
     const el = document.createElement("div");
     el.className = `player ${p.team}`;
     el.textContent = p.id;
     el.dataset.uid = p.uid;
-    // Aplicar o tamanho personalizado do gameConfig
     el.style.setProperty('--size', `${p.size}px`);
     playersLayer.appendChild(el);
     p.el = el;
   });
-  
+
   placePlayers();
-  
+
   ctx.clearRect(0, 0, draw.width, draw.height);
   history = [];
-  shadows = []; // Limpar shadows também ao mudar configuração
-  
+  shadows = [];
+
   populateSelects();
   updateCurrentModeLabel();
 }
@@ -850,7 +885,8 @@ function drawShadows() {
     const endY = shadow.endY * rect.height;
     
     // Desenhar linha de movimento
-    ctx.strokeStyle = '#ffff00';
+    const lineColor = shadow.playerTeam === 'red' ? redShadowColor : shadow.playerTeam === 'blue' ? blueShadowColor : '#ffff00';
+    ctx.strokeStyle = lineColor;
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
@@ -867,7 +903,8 @@ function drawShadows() {
     // Círculo do player shadow
     ctx.beginPath();
     ctx.arc(endX, endY, shadowSize / 2 - 2, 0, Math.PI * 2);
-    ctx.fillStyle = shadow.playerTeam === 'red' ? '#e53935' : shadow.playerTeam === 'blue' ? '#1e88e5' : '#B917FF';
+    const shadowFillColor = shadow.playerTeam === 'red' ? redShadowColor : shadow.playerTeam === 'blue' ? blueShadowColor : '#B917FF';
+    ctx.fillStyle = shadowFillColor;
     ctx.fill();
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 2;
@@ -1128,6 +1165,12 @@ document.getElementById("primaryColorPicker").addEventListener('change', (e) => 
 });
 document.getElementById("secondaryColorPicker").addEventListener('change', (e) => {
   secondaryColor = e.target.value;
+});
+document.getElementById("redShadowColorPicker").addEventListener('change', (e) => {
+  redShadowColor = e.target.value;
+});
+document.getElementById("blueShadowColorPicker").addEventListener('change', (e) => {
+  blueShadowColor = e.target.value;
 });
 
 // Event listener para botão de tips
