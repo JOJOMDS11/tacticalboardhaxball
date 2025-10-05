@@ -237,141 +237,23 @@ const gameConfigs = {
   }
 };
 
-// Sistema de contador de visitantes real e sincronizado
-class RealVisitorCounter {
+// Classe simples para compatibilidade (hitwebcounter usado no HTML)
+class SimpleTracker {
   constructor() {
-    this.visits = 0;
-    this.apiUrl = 'https://visitor-badge-reloaded.herokuapp.com/badge?page_id=tacticalboardhaxball.visits';
-    this.backupApiUrl = 'https://hits.sh/tacticalboardhaxball.github.io';
-    this.initCounter();
-  }
-
-  async initCounter() {
-    try {
-      // Tentar API principal (Visitor Badge)
-      await this.fetchFromVisitorBadge();
-      
-      // Atualizar contador a cada 15 segundos
-      setInterval(() => this.refreshCount(), 15000);
-      
-    } catch (error) {
-      console.log('API principal falhou, tentando backup:', error);
-      await this.tryBackupAPI();
-    }
-  }
-
-  async fetchFromVisitorBadge() {
-    try {
-      // Esta API incrementa automaticamente a cada chamada única
-      const response = await fetch(this.apiUrl, {
-        method: 'GET',
-        cache: 'no-cache'
-      });
-      
-      if (response.ok) {
-        // Extrair número do badge SVG
-        const svgText = await response.text();
-        const match = svgText.match(/>(\d+)</);
-        
-        if (match && match[1]) {
-          this.visits = parseInt(match[1]);
-          this.updateViewerDisplay();
-          console.log('Contador atualizado via Visitor Badge:', this.visits);
-          return true;
-        }
-      }
-      throw new Error('Visitor Badge API falhou');
-    } catch (error) {
-      console.log('Erro no Visitor Badge:', error);
-      throw error;
-    }
-  }
-
-  async tryBackupAPI() {
-    try {
-      // API backup: hits.sh
-      const response = await fetch(this.backupApiUrl + '.json', {
-        method: 'GET',
-        cache: 'no-cache'
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data && data.total) {
-          this.visits = data.total;
-          this.updateViewerDisplay();
-          console.log('Contador atualizado via hits.sh:', this.visits);
-          return;
-        }
-      }
-      
-      // Se todas as APIs falharam, usar contador simples mas realista
-      this.initSimpleCounter();
-      
-    } catch (error) {
-      console.log('API backup falhou:', error);
-      this.initSimpleCounter();
-    }
-  }
-
-  async refreshCount() {
-    try {
-      // Não incrementar, apenas buscar valor atual
-      const response = await fetch(this.apiUrl, {
-        method: 'GET',
-        cache: 'no-cache'
-      });
-      
-      if (response.ok) {
-        const svgText = await response.text();
-        const match = svgText.match(/>(\d+)</);
-        
-        if (match && match[1]) {
-          const newCount = parseInt(match[1]);
-          if (newCount !== this.visits) {
-            this.visits = newCount;
-            this.updateViewerDisplay();
-            console.log('Contador sincronizado:', this.visits);
-          }
-        }
-      }
-    } catch (error) {
-      console.log('Erro ao atualizar contador:', error);
-    }
-  }
-
-  initSimpleCounter() {
-    // Contador local apenas como último recurso
-    let stored = localStorage.getItem('simple_counter');
-    if (!stored) {
-      stored = 500; // Começar de onde parou
-    }
-    stored = parseInt(stored) + 1;
-    localStorage.setItem('simple_counter', stored);
-    this.visits = stored;
-    this.updateViewerDisplay();
-    console.log('Usando contador local simples:', this.visits);
-  }
-
-  updateViewerDisplay() {
-    const viewerElement = document.getElementById('viewerCount');
-    if (viewerElement) {
-      const label = translations[currentLang]?.viewerCount || 'Visitantes';
-      viewerElement.textContent = `${label}: ${this.visits}`;
-    }
+    console.log('Usando hitwebcounter para contagem de visitantes');
   }
 
   // Métodos para compatibilidade
   async trackVisit() { }
   async trackDownload() { }
   async trackDraw() { }
-  async trackLanguageChange() { this.updateViewerDisplay(); }
+  async trackLanguageChange() { }
   async trackDiscordClick() { }
   async trackConfigChange() { }
 }
 
 // Instância global do tracker
-const statsTracker = new RealVisitorCounter();
+const statsTracker = new SimpleTracker();
 
 const board = document.getElementById("board");
 const draw = document.getElementById("drawLayer");
@@ -1164,41 +1046,76 @@ window.addEventListener('keydown', (e) => {
         undo();
     }
     
-    // Ctrl+D para ativar modo de desenho (padrão do Photoshop para brush tool)
+    // Ctrl+D para toggle modo de desenho (padrão do Photoshop para brush tool)
     if (e.ctrlKey && (e.key === 'd' || e.key === 'D')) {
         e.preventDefault();
-        activateDrawMode();
+        toggleDrawMode();
     }
     
-    // Ctrl+S para ativar modo shadow (similar ao Photoshop para shadow/effects)
+    // Ctrl+S para toggle modo shadow (similar ao Photoshop para shadow/effects)
     if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
         e.preventDefault();
-        activateShadowMode();
+        toggleShadowMode();
+    }
+    
+    // Ctrl+Shift+C para limpar tudo (desenhos + shadows)
+    if (e.ctrlKey && e.shiftKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        clearEverything();
     }
 });
 
-// Função para ativar modo de desenho (desativa shadow)
-function activateDrawMode() {
-    shadowsEnabled = false; // Desativa shadow
-    erasing = false;
-    mode = 'line';
-    draw.style.pointerEvents = "auto";
-    updateActiveButtons('drawOnBtn');
+// Função para toggle modo de desenho
+function toggleDrawMode() {
+    if (mode !== null && !erasing) {
+        // Desenho está ativo, desativar
+        mode = null;
+        erasing = false;
+        draw.style.pointerEvents = "none";
+        updateActiveButtons('drawOffBtn');
+        console.log('Modo de desenho desativado (Ctrl+D)');
+    } else {
+        // Desenho não está ativo, ativar e desativar shadow
+        shadowsEnabled = false;
+        erasing = false;
+        mode = 'line';
+        draw.style.pointerEvents = "auto";
+        updateActiveButtons('drawOnBtn');
+        document.getElementById("lineBtn").classList.add('active');
+        console.log('Modo de desenho ativado (Ctrl+D)');
+        statsTracker.trackDraw();
+    }
     updateTexts();
-    document.getElementById("lineBtn").classList.add('active');
-    console.log('Modo de desenho ativado (Ctrl+D)');
-    statsTracker.trackDraw();
 }
 
-// Função para ativar modo shadow (desativa desenho)
-function activateShadowMode() {
-    shadowsEnabled = true; // Ativa shadow
-    erasing = false;
-    mode = null; // Desativa desenho
-    draw.style.pointerEvents = "none";
-    updateActiveButtons('toggleShadowBtn');
+// Função para toggle modo shadow
+function toggleShadowMode() {
+    if (shadowsEnabled) {
+        // Shadow está ativo, desativar
+        shadowsEnabled = false;
+        console.log('Modo shadow desativado (Ctrl+S)');
+    } else {
+        // Shadow não está ativo, ativar e desativar desenho
+        shadowsEnabled = true;
+        erasing = false;
+        mode = null;
+        draw.style.pointerEvents = "none";
+        updateActiveButtons('toggleShadowBtn');
+        console.log('Modo shadow ativado (Ctrl+S)');
+    }
     updateTexts();
-    console.log('Modo shadow ativado (Ctrl+S)');
+}
+
+// Função para limpar tudo (desenhos + shadows)
+function clearEverything() {
+    // Limpar desenhos
+    ctx.clearRect(0, 0, draw.width, draw.height);
+    history = [];
+    
+    // Limpar shadows
+    shadows = [];
+    
+    console.log('Tudo limpo: desenhos e shadows (Ctrl+Shift+C)');
 }
 
 // Função para mostrar mensagens de conflito entre modos
@@ -1796,7 +1713,7 @@ document.getElementById("drawOnBtn").onclick=()=>{
     showModeConflictMessage('drawBlocked');
     return;
   }
-  activateDrawMode(); // Usa nova função que desativa shadow automaticamente
+  toggleDrawMode(); // Usa função toggle
 };
 document.getElementById("drawOffBtn").onclick=()=>{
   erasing = false;
@@ -1871,10 +1788,10 @@ document.getElementById("blueShadowColorPicker").addEventListener('change', (e) 
 // Event listener para botão de tips
 document.getElementById("tipsBtn").onclick=()=>{
   const tips = {
-    pt: "💡 DICAS:\n\n• Ctrl+Z: Desfazer última ação\n• Ctrl+D: Ativar modo desenho (desativa shadow)\n• Ctrl+S: Ativar modo shadow (desativa desenho)\n• Botão Esquerdo: Desenhar com cor primária\n• Botão Direito: Desenhar com cor secundária\n• Ative sombra e segure o jogador com botão direito e arraste para criar um rastro de movimento\n• Use 'Limpar Shadows' para remover todas as setas de movimento",
-    en: "💡 TIPS:\n\n• Ctrl+Z: Undo last action\n• Ctrl+D: Activate draw mode (disables shadow)\n• Ctrl+S: Activate shadow mode (disables drawing)\n• Left Click: Draw with primary color\n• Right Click: Draw with secondary color\n• Activate shadow and hold the player with right mouse button and drag to create a movement trail\n• Use 'Clear Shadows' to remove all movement arrows",
-    tr: "💡 İPUÇLARI:\n\n• Ctrl+Z: Son işlemi geri al\n• Ctrl+D: Çizim modunu etkinleştir (gölgeyi devre dışı bırak)\n• Ctrl+S: Gölge modunu etkinleştir (çizimi devre dışı bırak)\n• Sol Tık: Birincil renkle çiz\n• Sağ Tık: İkincil renkle çiz\n• Gölgeyi etkinleştirip oyuncuya sağ tıkla ve sürükle, hareket izi oluştur\n• Tüm hareket oklarını kaldırmak için 'Gölgeleri Temizle' kullanın",
-    es: "💡 CONSEJOS:\n\n• Ctrl+Z: Deshacer última acción\n• Ctrl+D: Activar modo dibujo (desactiva sombra)\n• Ctrl+S: Activar modo sombra (desactiva dibujo)\n• Clic Izquierdo: Dibujar con color primario\n• Clic Derecho: Dibujar con color secundario\n• Activa sombra y mantén el jugador con botón derecho y arrastra para crear una estela de movimiento\n• Usa 'Limpiar Sombras' para eliminar todas las flechas de movimiento"
+    pt: "💡 DICAS:\n\n• Ctrl+Z: Desfazer última ação\n• Ctrl+D: Ativar/Desativar modo desenho\n• Ctrl+S: Ativar/Desativar modo shadow\n• Ctrl+Shift+C: Limpar tudo (desenhos + shadows)\n• Botão Esquerdo: Desenhar com cor primária\n• Botão Direito: Desenhar com cor secundária\n• Ative sombra e segure o jogador com botão direito e arraste para criar um rastro de movimento",
+    en: "💡 TIPS:\n\n• Ctrl+Z: Undo last action\n• Ctrl+D: Toggle draw mode\n• Ctrl+S: Toggle shadow mode\n• Ctrl+Shift+C: Clear everything (drawings + shadows)\n• Left Click: Draw with primary color\n• Right Click: Draw with secondary color\n• Activate shadow and hold the player with right mouse button and drag to create a movement trail",
+    tr: "💡 İPUÇLARI:\n\n• Ctrl+Z: Son işlemi geri al\n• Ctrl+D: Çizim modunu aç/kapat\n• Ctrl+S: Gölge modunu aç/kapat\n• Ctrl+Shift+C: Her şeyi temizle (çizimler + gölgeler)\n• Sol Tık: Birincil renkle çiz\n• Sağ Tık: İkincil renkle çiz\n• Gölgeyi etkinleştirip oyuncuya sağ tıkla ve sürükle, hareket izi oluştur",
+    es: "💡 CONSEJOS:\n\n• Ctrl+Z: Deshacer última acción\n• Ctrl+D: Activar/Desactivar modo dibujo\n• Ctrl+S: Activar/Desactivar modo sombra\n• Ctrl+Shift+C: Limpiar todo (dibujos + sombras)\n• Clic Izquierdo: Dibujar con color primario\n• Clic Derecho: Dibujar con color secundario\n• Activa sombra y mantén el jugador con botón derecho y arrastra para crear una estela de movimiento"
   };
   alert(tips[currentLang]);
 };
@@ -1886,7 +1803,7 @@ document.getElementById("toggleShadowBtn").onclick=()=>{
     showModeConflictMessage('shadowBlocked');
     return;
   }
-  activateShadowMode(); // Usa nova função que desativa desenho automaticamente
+  toggleShadowMode(); // Usa função toggle
 };
 
 // Função de download PNG com tracking
