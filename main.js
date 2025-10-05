@@ -78,6 +78,120 @@ const gameConfigs = {
         
         { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
       ]
+    },
+    bigeasy: {
+      backgroundImage: 'https://i.imgur.com/rMetuYd.png',
+      players: [
+        { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5, size: 25 },
+        { uid: 2, id: 'LD', team: 'red', x: 0.2, y: 0.2, size: 25 },
+        { uid: 3, id: 'PD', team: 'red', x: 0.35, y: 0.2, size: 25 },
+        { uid: 4, id: 'MC', team: 'red', x: 0.15, y: 0.6, size: 25 },
+        { uid: 5, id: 'LE', team: 'red', x: 0.2, y: 0.8, size: 25 },
+        { uid: 6, id: 'PV', team: 'red', x: 0.35, y: 0.5, size: 25 },
+        { uid: 7, id: 'PE', team: 'red', x: 0.35, y: 0.8, size: 25 },
+        
+        { uid: 8, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 25 },
+        { uid: 9, id: 'LD', team: 'blue', x: 0.8, y: 0.2, size: 25 },
+        { uid: 10, id: 'PD', team: 'blue', x: 0.65, y: 0.2, size: 25 },
+        { uid: 11, id: 'MC', team: 'blue', x: 0.85, y: 0.6, size: 25 },
+        { uid: 12, id: 'LE', team: 'blue', x: 0.8, y: 0.8, size: 25 },
+        { uid: 13, id: 'PV', team: 'blue', x: 0.65, y: 0.5, size: 25 },
+        { uid: 14, id: 'PE', team: 'blue', x: 0.65, y: 0.8, size: 25 },
+        
+        { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
+      ]
+    }
+  },
+  '11x11': {
+    futsal: {
+      backgroundImage: 'https://i.imgur.com/TMJUugB.png',
+      players: [
+        // Time Vermelho (Formação 4-4-2)
+        { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5, size: 22 },
+        
+        // Defesa
+        { uid: 2, id: 'LE', team: 'red', x: 0.2, y: 0.15, size: 22 },
+        { uid: 3, id: 'ZAG', team: 'red', x: 0.2, y: 0.35, size: 22 },
+        { uid: 4, id: 'ZAG', team: 'red', x: 0.2, y: 0.65, size: 22 },
+        { uid: 5, id: 'LD', team: 'red', x: 0.2, y: 0.85, size: 22 },
+        
+        // Meio-campo
+        { uid: 6, id: 'VOL', team: 'red', x: 0.35, y: 0.25, size: 22 },
+        { uid: 7, id: 'MC', team: 'red', x: 0.35, y: 0.5, size: 22 },
+        { uid: 8, id: 'MC', team: 'red', x: 0.35, y: 0.75, size: 22 },
+        { uid: 9, id: 'MEI', team: 'red', x: 0.5, y: 0.5, size: 22 },
+        
+        // Ataque
+        { uid: 10, id: 'ATA', team: 'red', x: 0.65, y: 0.35, size: 22 },
+        { uid: 11, id: 'ATA', team: 'red', x: 0.65, y: 0.65, size: 22 },
+        
+        // Time Azul (Formação 4-4-2)
+        { uid: 12, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 22 },
+        
+        // Defesa
+        { uid: 13, id: 'LE', team: 'blue', x: 0.8, y: 0.15, size: 22 },
+        { uid: 14, id: 'ZAG', team: 'blue', x: 0.8, y: 0.35, size: 22 },
+        { uid: 15, id: 'ZAG', team: 'blue', x: 0.8, y: 0.65, size: 22 },
+        { uid: 16, id: 'LD', team: 'blue', x: 0.8, y: 0.85, size: 22 },
+        
+        // Meio-campo
+        { uid: 17, id: 'VOL', team: 'blue', x: 0.65, y: 0.25, size: 22 },
+        { uid: 18, id: 'MC', team: 'blue', x: 0.65, y: 0.5, size: 22 },
+        { uid: 19, id: 'MC', team: 'blue', x: 0.65, y: 0.75, size: 22 },
+        { uid: 20, id: 'MEI', team: 'blue', x: 0.5, y: 0.5, size: 22 },
+        
+        // Ataque
+        { uid: 21, id: 'ATA', team: 'blue', x: 0.35, y: 0.35, size: 22 },
+        { uid: 22, id: 'ATA', team: 'blue', x: 0.35, y: 0.65, size: 22 },
+        
+        // Bola
+        { uid: 23, id: '', team: 'ball', x: 0.5, y: 0.5, size: 8 }
+      ]
+    },
+    realsoccer: {
+      backgroundImage: 'https://i.imgur.com/VJ0hQX5.png',
+      players: [
+        // Time Vermelho (Formação 4-3-3)
+        { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5, size: 22 },
+        
+        // Defesa
+        { uid: 2, id: 'LE', team: 'red', x: 0.18, y: 0.15, size: 22 },
+        { uid: 3, id: 'ZAG', team: 'red', x: 0.18, y: 0.35, size: 22 },
+        { uid: 4, id: 'ZAG', team: 'red', x: 0.18, y: 0.65, size: 22 },
+        { uid: 5, id: 'LD', team: 'red', x: 0.18, y: 0.85, size: 22 },
+        
+        // Meio-campo
+        { uid: 6, id: 'VOL', team: 'red', x: 0.32, y: 0.5, size: 22 },
+        { uid: 7, id: 'MC', team: 'red', x: 0.42, y: 0.3, size: 22 },
+        { uid: 8, id: 'MC', team: 'red', x: 0.42, y: 0.7, size: 22 },
+        
+        // Ataque
+        { uid: 9, id: 'PE', team: 'red', x: 0.58, y: 0.2, size: 22 },
+        { uid: 10, id: 'ATA', team: 'red', x: 0.65, y: 0.5, size: 22 },
+        { uid: 11, id: 'PD', team: 'red', x: 0.58, y: 0.8, size: 22 },
+        
+        // Time Azul (Formação 4-3-3)
+        { uid: 12, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 22 },
+        
+        // Defesa
+        { uid: 13, id: 'LE', team: 'blue', x: 0.82, y: 0.15, size: 22 },
+        { uid: 14, id: 'ZAG', team: 'blue', x: 0.82, y: 0.35, size: 22 },
+        { uid: 15, id: 'ZAG', team: 'blue', x: 0.82, y: 0.65, size: 22 },
+        { uid: 16, id: 'LD', team: 'blue', x: 0.82, y: 0.85, size: 22 },
+        
+        // Meio-campo
+        { uid: 17, id: 'VOL', team: 'blue', x: 0.68, y: 0.5, size: 22 },
+        { uid: 18, id: 'MC', team: 'blue', x: 0.58, y: 0.3, size: 22 },
+        { uid: 19, id: 'MC', team: 'blue', x: 0.58, y: 0.7, size: 22 },
+        
+        // Ataque
+        { uid: 20, id: 'PE', team: 'blue', x: 0.42, y: 0.2, size: 22 },
+        { uid: 21, id: 'ATA', team: 'blue', x: 0.35, y: 0.5, size: 22 },
+        { uid: 22, id: 'PD', team: 'blue', x: 0.42, y: 0.8, size: 22 },
+        
+        // Bola
+        { uid: 23, id: '', team: 'ball', x: 0.5, y: 0.5, size: 8 }
+      ]
     }
   }
 };
