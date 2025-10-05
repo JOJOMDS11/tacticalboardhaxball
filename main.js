@@ -239,71 +239,26 @@ const gameConfigs = {
 
 // Classe simples para compatibilidade (hitwebcounter usado no HTML)
 class SimpleTracker {
+
   constructor() {
-    console.log('Usando hitwebcounter para contagem de visitantes');
-    this.initCounter();
+    this.updateGlobalCounter();
   }
 
-  // Inicializar contador com múltiplas opções
-  async initCounter() {
+  async updateGlobalCounter() {
     const counterDisplay = document.getElementById('counterDisplay');
-    if (counterDisplay) {
-      // Tentar múltiplas opções de contador
-      const count = await this.tryMultipleCounters();
-      counterDisplay.textContent = count.toLocaleString();
-    }
-  }
-
-  async tryMultipleCounters() {
+    if (!counterDisplay) return;
     try {
-      // Opção 1: Tentar uma API simples de contador
-      const response = await fetch('https://api.countapi.xyz/hit/jojohaxball.netlify.app/visits');
+      // Incrementa contador global
+      const response = await fetch('/.netlify/functions/visitor-counter', { method: 'POST' });
       if (response.ok) {
         const data = await response.json();
-        console.log('Contador API funcionando:', data.value);
-        return data.value;
+        counterDisplay.textContent = data.count.toLocaleString();
+      } else {
+        counterDisplay.textContent = 'Erro';
       }
-    } catch (error) {
-      console.log('Contador API falhou, tentando alternativa');
+    } catch (err) {
+      counterDisplay.textContent = 'Erro';
     }
-
-    try {
-      // Opção 2: Tentar hitwebcounter como imagem
-      const img = new Image();
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = 'https://hitwebcounter.com/counter/counter.php?page=21445755&style=0034&nbdigits=5&type=page&initCount=100';
-      });
-      console.log('Hitwebcounter funcionando');
-      return this.getStoredCount() + 1;
-    } catch (error) {
-      console.log('Hitwebcounter bloqueado, usando contador local');
-    }
-
-    // Opção 3: Contador local com incremento inteligente
-    return this.getLocalCounter();
-  }
-
-  getStoredCount() {
-    return parseInt(localStorage.getItem('visitorCount') || '150');
-  }
-
-  getLocalCounter() {
-    let count = this.getStoredCount();
-    
-    // Verificar se é uma nova sessão
-    const lastVisit = localStorage.getItem('lastVisit');
-    const now = Date.now();
-    const oneHour = 60 * 60 * 1000;
-    
-    if (!lastVisit || (now - parseInt(lastVisit)) > oneHour) {
-      count++;
-      localStorage.setItem('visitorCount', count.toString());
-      localStorage.setItem('lastVisit', now.toString());
-    }
-    
-    return count;
   }
 
   // Métodos para compatibilidade
@@ -313,7 +268,7 @@ class SimpleTracker {
   async trackLanguageChange() { }
   async trackDiscordClick() { }
   async trackConfigChange() { }
-  updateViewerDisplay() { } // Método vazio para compatibilidade
+  updateViewerDisplay() { }
 }
 
 // Instância global do tracker
@@ -1969,31 +1924,13 @@ function downloadFinalCanvas(canvas) {
 class ContentManager {
   constructor() {
     // Hash da senha 'jojos13' usando SHA-256 simples
-    this.adminPasswordHash = 'a8b2c1d4e5f6789012345678901234567890abcdef';
+  this.adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '';
     this.videos = JSON.parse(localStorage.getItem('videos') || '[]');
     this.tutorials = JSON.parse(localStorage.getItem('tutorials') || '[]');
     this.initContent();
   }
 
-  // Função simples de hash (não é criptograficamente segura, mas melhor que texto puro)
-  simpleHash(str) {
-    let hash = 0;
-    if (str.length === 0) return hash;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Converter para 32-bit
-    }
-    return Math.abs(hash).toString(16);
-  }
 
-  // Verificar senha
-  verifyPassword(password) {
-    const inputHash = this.simpleHash(password);
-    // Hash da senha correta 'jojos13'
-    const correctHash = this.simpleHash('jojos13');
-    return inputHash === correctHash;
-  }
 
   initContent() {
     this.loadPublicVideos();
@@ -2003,7 +1940,7 @@ class ContentManager {
   // Autenticação para Videos
   authenticateVideos() {
     const password = document.getElementById('videosPassword').value;
-    if (this.verifyPassword(password)) {
+    if (password === this.adminPassword) {
       document.getElementById('videosLoginForm').style.display = 'none';
       document.getElementById('videosAdminPanel').style.display = 'block';
       this.loadAdminVideos();
@@ -2015,7 +1952,7 @@ class ContentManager {
   // Autenticação para Tutorials
   authenticateTutorials() {
     const password = document.getElementById('tutorialsPassword').value;
-    if (this.verifyPassword(password)) {
+    if (password === this.adminPassword) {
       document.getElementById('tutorialsLoginForm').style.display = 'none';
       document.getElementById('tutorialsAdminPanel').style.display = 'block';
       this.loadAdminTutorials();
