@@ -78,28 +78,6 @@ const gameConfigs = {
         
         { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
       ]
-    },
-    bigeasy: {
-      backgroundImage: 'https://i.imgur.com/rMetuYd.png',
-      players: [
-        { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5, size: 25 },
-        { uid: 2, id: 'LD', team: 'red', x: 0.2, y: 0.2, size: 25 },
-        { uid: 3, id: 'PD', team: 'red', x: 0.35, y: 0.2, size: 25 },
-        { uid: 4, id: 'MC', team: 'red', x: 0.15, y: 0.6, size: 25 },
-        { uid: 5, id: 'LE', team: 'red', x: 0.2, y: 0.8, size: 25 },
-        { uid: 6, id: 'PV', team: 'red', x: 0.35, y: 0.5, size: 25 },
-        { uid: 7, id: 'PE', team: 'red', x: 0.35, y: 0.8, size: 25 },
-        
-        { uid: 8, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 25 },
-        { uid: 9, id: 'LD', team: 'blue', x: 0.8, y: 0.2, size: 25 },
-        { uid: 10, id: 'PD', team: 'blue', x: 0.65, y: 0.2, size: 25 },
-        { uid: 11, id: 'MC', team: 'blue', x: 0.85, y: 0.6, size: 25 },
-        { uid: 12, id: 'LE', team: 'blue', x: 0.8, y: 0.8, size: 25 },
-        { uid: 13, id: 'PV', team: 'blue', x: 0.65, y: 0.5, size: 25 },
-        { uid: 14, id: 'PE', team: 'blue', x: 0.65, y: 0.8, size: 25 },
-        
-        { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
-      ]
     }
   },
   '11x11': {
@@ -1085,10 +1063,10 @@ document.getElementById("secondaryColorPicker").addEventListener('change', (e) =
 // Event listener para botão de tips
 document.getElementById("tipsBtn").onclick=()=>{
   const tips = {
-    pt: "💡 DICAS:\n\n• Ctrl+Z: Desfazer última ação\n• Botão Esquerdo: Desenhar com cor primária\n• Botão Direito: Desenhar com cor secundária\n• Botão Direito no Jogador + Arrastar: Criar shadow de movimento\n• Use 'Limpar Shadows' para remover todas as setas de movimento",
-    en: "💡 TIPS:\n\n• Ctrl+Z: Undo last action\n• Left Click: Draw with primary color\n• Right Click: Draw with secondary color\n• Right Click on Player + Drag: Create movement shadow\n• Use 'Clear Shadows' to remove all movement arrows",
-    tr: "💡 İPUÇLARI:\n\n• Ctrl+Z: Son işlemi geri al\n• Sol Tık: Birincil renkle çiz\n• Sağ Tık: İkincil renkle çiz\n• Oyuncuya Sağ Tık + Sürükle: Hareket gölgesi oluştur\n• Tüm hareket oklarını kaldırmak için 'Gölgeleri Temizle' kullanın",
-    es: "💡 CONSEJOS:\n\n• Ctrl+Z: Deshacer última acción\n• Clic Izquierdo: Dibujar con color primario\n• Clic Derecho: Dibujar con color secundario\n• Clic Derecho en Jugador + Arrastrar: Crear sombra de movimiento\n• Usa 'Limpiar Sombras' para eliminar todas las flechas de movimiento"
+    pt: "💡 DICAS:\n\n• Ctrl+Z: Desfazer última ação\n• Botão Esquerdo: Desenhar com cor primária\n• Botão Direito: Desenhar com cor secundária\n• Ative sombra e segure o jogador com botão direito e arraste para criar um rastro de movimento\n• Use 'Limpar Shadows' para remover todas as setas de movimento",
+    en: "💡 TIPS:\n\n• Ctrl+Z: Undo last action\n• Left Click: Draw with primary color\n• Right Click: Draw with secondary color\n• Activate shadow and hold the player with right mouse button and drag to create a movement trail\n• Use 'Clear Shadows' to remove all movement arrows",
+    tr: "💡 İPUÇLARI:\n\n• Ctrl+Z: Son işlemi geri al\n• Sol Tık: Birincil renkle çiz\n• Sağ Tık: İkincil renkle çiz\n• Gölgeyi etkinleştirip oyuncuya sağ tıkla ve sürükle, hareket izi oluştur\n• Tüm hareket oklarını kaldırmak için 'Gölgeleri Temizle' kullanın",
+    es: "💡 CONSEJOS:\n\n• Ctrl+Z: Deshacer última acción\n• Clic Izquierdo: Dibujar con color primario\n• Clic Derecho: Dibujar con color secundario\n• Activa sombra y mantén el jugador con botón derecho y arrastra para crear una estela de movimiento\n• Usa 'Limpiar Sombras' para eliminar todas las flechas de movimiento"
   };
   alert(tips[currentLang]);
 };
