@@ -237,69 +237,29 @@ const gameConfigs = {
   }
 };
 
-// Sistema de contador de visitantes real
-class RealVisitorCounter {
+// Sistema de contador simples estilo blogger
+class SimpleVisitorCounter {
   constructor() {
-    this.namespace = 'tacticalboardhaxball';
-    this.key = 'visitors';
     this.visits = 0;
     this.initCounter();
   }
 
-  async initCounter() {
-    try {
-      // Tentar incrementar o contador real via API
-      const response = await fetch(`https://api.countapi.xyz/hit/${this.namespace}/${this.key}`);
-      const data = await response.json();
-      
-      if (data && data.value) {
-        this.visits = data.value;
-      } else {
-        throw new Error('API response invalid');
-      }
-      
-      this.updateViewerDisplay();
-      
-      // Atualizar contador a cada 30 segundos
-      setInterval(() => this.fetchCurrentCount(), 30000);
-      
-    } catch (error) {
-      console.log('API indisponível, usando contador local:', error);
-      // Fallback: usar localStorage como contador local
-      this.initLocalCounter();
-    }
-  }
-
-  async fetchCurrentCount() {
-    try {
-      const response = await fetch(`https://api.countapi.xyz/get/${this.namespace}/${this.key}`);
-      const data = await response.json();
-      
-      if (data && data.value) {
-        this.visits = data.value;
-        this.updateViewerDisplay();
-      }
-    } catch (error) {
-      console.log('Erro ao buscar contador atualizado:', error);
-    }
-  }
-
-  initLocalCounter() {
-    // Contador local como fallback
-    let localVisits = localStorage.getItem('local_visitor_count');
+  initCounter() {
+    // Contador simples que funciona offline
+    let totalVisits = localStorage.getItem('blog_visitor_count');
     
-    if (!localVisits) {
-      // Começar com um número realista baseado na data
+    if (!totalVisits) {
+      // Começar com base realista
       const today = new Date();
       const daysSinceStart = Math.floor((today - new Date('2024-01-01')) / (1000 * 60 * 60 * 24));
-      localVisits = Math.floor(daysSinceStart * 15 + Math.random() * 500);
+      totalVisits = Math.floor(daysSinceStart * 12 + 4500); // Base realista
     }
     
-    // Incrementar visita atual
-    localVisits = parseInt(localVisits) + 1;
-    localStorage.setItem('local_visitor_count', localVisits);
+    // Incrementar visita
+    totalVisits = parseInt(totalVisits) + 1;
+    localStorage.setItem('blog_visitor_count', totalVisits);
     
-    this.visits = localVisits;
+    this.visits = totalVisits;
     this.updateViewerDisplay();
   }
 
@@ -321,7 +281,7 @@ class RealVisitorCounter {
 }
 
 // Instância global do tracker
-const statsTracker = new RealVisitorCounter();
+const statsTracker = new SimpleVisitorCounter();
 
 const board = document.getElementById("board");
 const draw = document.getElementById("drawLayer");
@@ -353,8 +313,8 @@ let shadowEnabled = true;
 // Sistema de duas cores para desenho
 let primaryColor = '#B917FF';
 let secondaryColor = '#ff0000';
-let redShadowColor = '#ff4444';
-let blueShadowColor = '#4444ff';
+let redShadowColor = '#ff0000';
+let blueShadowColor = '#0000ff';
 
 // Usar as configurações
 let players = [...gameConfigs[currentTeamSize][currentMapType].players];
@@ -1530,7 +1490,7 @@ class HBR2ReplayPlayer {
       // Desenhar jogador
       this.ctx.beginPath();
       this.ctx.arc(x, y, 18, 0, Math.PI * 2);
-      this.ctx.fillStyle = player.team === 1 ? '#ff4444' : '#4444ff';
+      this.ctx.fillStyle = player.team === 1 ? '#ff0000' : '#0000ff';
       this.ctx.fill();
       
       // Borda
@@ -1682,6 +1642,13 @@ document.getElementById("drawOnBtn").onclick=()=>{
   erasing = false;
   mode = 'line';
   draw.style.pointerEvents = "auto";
+  
+  // Desabilitar sombra quando desenho ativo
+  if (shadowEnabled) {
+    shadowEnabled = false;
+    updateTexts();
+  }
+  
   updateActiveButtons('drawOnBtn');
   document.getElementById('lineBtn').classList.add('active');
   statsTracker.trackDraw();
@@ -1768,6 +1735,15 @@ document.getElementById("tipsBtn").onclick=()=>{
 // Event listener para botão de toggle shadow
 document.getElementById("toggleShadowBtn").onclick=()=>{
   shadowEnabled = !shadowEnabled;
+  
+  // Desabilitar desenho quando sombra ativa
+  if (shadowEnabled && mode !== null) {
+    mode = null;
+    erasing = false;
+    draw.style.pointerEvents = "none";
+    updateActiveButtons('drawOffBtn');
+  }
+  
   updateTexts(); // Atualizar texto do botão
 };
 
