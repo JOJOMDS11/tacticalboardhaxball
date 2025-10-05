@@ -315,7 +315,7 @@ let secondaryColor = '#ff0000';
 let redShadowColor = '#ff4444';
 let blueShadowColor = '#4444ff';
 
-// Sistema de Replay HBR2
+// Sistema de Replay HBR2 - Estilo The Hax
 let replayData = null;
 let replayFrames = [];
 let currentFrame = 0;
@@ -328,6 +328,12 @@ let replayPlayersLayer = null;
 let analysisMode = false;
 let gameStartTime = 0;
 let gameDuration = 0;
+let isPausedForTactics = false;
+let tacticalDrawings = [];
+let draggingPlayer = null;
+let mouseDownPos = null;
+let replayPlayers = [];
+let replayBall = null;
 
 // Usar as configurações
 let players = [...gameConfigs[currentTeamSize][currentMapType].players];
@@ -1200,41 +1206,44 @@ function setupReplayEventListeners() {
   });
 }
 
-// Processar arquivo de replay
+// Processar arquivo de replay HBR2
 function processReplayFile(file) {
   const reader = new FileReader();
+  
   reader.onload = function(e) {
     try {
-      // Simular processamento de HBR2 real
-      // Em implementação real, seria necessário parser completo do formato binário
-      const mockReplay = generateFullMatchReplay();
+      // Parse do arquivo HBR2 (simulação)
+      const mockReplay = generateMockReplayData(file.name);
       
       replayData = mockReplay;
       replayFrames = mockReplay.frames;
       gameDuration = mockReplay.duration;
+      gameStartTime = Date.now();
       currentFrame = 0;
+      isPausedForTactics = false;
+      tacticalDrawings = [];
       
-      // Mostrar campo de replay
-      document.getElementById('replayField').style.display = 'block';
+      // Inicializar canvas do replay
+      initReplayCanvas();
       
-      // Configurar timeline
-      const timeline = document.getElementById('replayTimeline');
-      timeline.max = 100;
-      timeline.value = 0;
-      
-      // Mostrar informações do jogo
-      updateGameInfo();
+      // Configurar controles
+      setupReplayControls();
       
       // Mostrar primeiro frame
       showReplayFrame(0);
       
-      alert(`🎉 Replay carregado com sucesso!\\n⏱️ Duração: ${formatGameTime(gameDuration)}\\n👥 ${mockReplay.players.length} jogadores\\n🏟️ Mapa: ${mockReplay.stadium}`);
+      // Atualizar interface
+      updateReplayUI();
+      
+      console.log('Replay carregado:', mockReplay.matchInfo);
+      alert(`🎉 Replay carregado estilo The Hax!\\n⏱️ Duração: ${formatGameTime(gameDuration)}\\n👥 ${mockReplay.players.length} jogadores\\n� Clique ▶️ para reproduzir ou ⏸️ para pausar e desenhar`);
       
     } catch (error) {
       console.error('Erro ao processar replay:', error);
-      alert('❌ Erro ao carregar replay. Verifique se o arquivo é um .hbr2 válido.');
+      alert('Erro ao carregar replay. Verifique se o arquivo está correto.');
     }
   };
+  
   reader.readAsArrayBuffer(file);
 }
 
@@ -1328,85 +1337,142 @@ function generateGameEvents(time, frame) {
 }
 
 // Mostrar frame específico do replay
+// Mostrar frame específico do replay
 function showReplayFrame(frameIndex) {
-  if (!replayFrames[frameIndex] || !replayCanvas || !replayPlayersLayer) return;
+  if (!replayFrames[frameIndex] || !replayCanvas || !replayCtx) return;
   
   const frame = replayFrames[frameIndex];
   currentFrame = frameIndex;
   
-  // Limpar jogadores
-  replayPlayersLayer.innerHTML = '';
+  // Limpar canvas
+  replayCtx.clearRect(0, 0, replayCanvas.width, replayCanvas.height);
   
-  // Atualizar dimensões do canvas
-  const rect = replayCanvas.parentElement.getBoundingClientRect();
-  replayCanvas.width = rect.width;
-  replayCanvas.height = rect.height;
+  // Desenhar campo
+  drawReplayField();
   
-  // Criar jogadores
+  // Desenhar bola
+  if (frame.ball) {
+    drawReplayBall(frame.ball);
+  }
+  
+  // Desenhar jogadores
   frame.players.forEach(player => {
-    const playerEl = document.createElement('div');
-    playerEl.className = `player ${player.team}`;
-    playerEl.textContent = player.name.substring(0, 3);
-    playerEl.dataset.playerId = player.id;
-    playerEl.style.setProperty('--size', '29px');
-    
-    // Posicionar
-    const x = player.x * rect.width;
-    const y = player.y * rect.height;
-    playerEl.style.left = `${x - 14.5}px`;
-    playerEl.style.top = `${y - 14.5}px`;
-    
-    // Permitir arrastar em modo análise
-    if (analysisMode) {
-      playerEl.style.pointerEvents = 'auto';
-      playerEl.style.cursor = 'grab';
-      makePlayerDraggable(playerEl);
-    }
-    
-    replayPlayersLayer.appendChild(playerEl);
+    drawReplayPlayer(player);
   });
   
-  // Criar bola
-  const ballEl = document.createElement('div');
-  ballEl.className = 'player ball';
-  ballEl.style.setProperty('--size', '12px');
-  const ballX = frame.ball.x * rect.width;
-  const ballY = frame.ball.y * rect.height;
-  ballEl.style.left = `${ballX - 6}px`;
-  ballEl.style.top = `${ballY - 6}px`;
-  replayPlayersLayer.appendChild(ballEl);
-  
-  // Atualizar UI
-  updateReplayUI(frame);
-}
-
-function updateReplayUI(frame) {
-  // Atualizar timeline
-  const progress = (currentFrame / (replayFrames.length - 1)) * 100;
-  document.getElementById('replayTimeline').value = progress;
-  
-  // Atualizar tempo
-  document.getElementById('currentTime').textContent = formatGameTime(frame.time);
-  document.getElementById('totalTime').textContent = formatGameTime(gameDuration);
+  // Desenhar elementos táticos se em modo pausa
+  if (isPausedForTactics) {
+    drawTacticalElements();
+  }
   
   // Atualizar informações do jogo
-  updateGameInfo(frame);
+  updateReplayInfo(frame);
 }
 
-function updateGameInfo(frame = null) {
-  const gameInfo = document.getElementById('gameInfo');
-  if (frame) {
-    gameInfo.innerHTML = `
-      🏟️ ${replayData.stadium} | 
-      🔴 ${frame.score.red} - ${frame.score.blue} 🔵 | 
-      👥 ${replayData.players.length} jogadores
-    `;
-  } else {
-    gameInfo.textContent = 'Replay carregado - Use os controles para reproduzir';
+// Desenhar campo do replay
+function drawReplayField() {
+  if (!replayCtx) return;
+  
+  // Fundo verde
+  replayCtx.fillStyle = '#4a9';
+  replayCtx.fillRect(0, 0, replayCanvas.width, replayCanvas.height);
+  
+  // Linhas do campo
+  replayCtx.strokeStyle = '#fff';
+  replayCtx.lineWidth = 2;
+  
+  // Bordas
+  replayCtx.strokeRect(10, 10, replayCanvas.width - 20, replayCanvas.height - 20);
+  
+  // Linha central
+  replayCtx.beginPath();
+  replayCtx.moveTo(replayCanvas.width / 2, 10);
+  replayCtx.lineTo(replayCanvas.width / 2, replayCanvas.height - 10);
+  replayCtx.stroke();
+  
+  // Círculo central
+  replayCtx.beginPath();
+  replayCtx.arc(replayCanvas.width / 2, replayCanvas.height / 2, 50, 0, 2 * Math.PI);
+  replayCtx.stroke();
+  
+  // Áreas
+  const areaWidth = 80;
+  const areaHeight = 120;
+  const areaY = (replayCanvas.height - areaHeight) / 2;
+  
+  // Área esquerda
+  replayCtx.strokeRect(10, areaY, areaWidth, areaHeight);
+  
+  // Área direita
+  replayCtx.strokeRect(replayCanvas.width - 10 - areaWidth, areaY, areaWidth, areaHeight);
+}
+
+// Desenhar jogador no replay
+function drawReplayPlayer(player) {
+  if (!replayCtx) return;
+  
+  const x = (player.x / 100) * replayCanvas.width;
+  const y = (player.y / 100) * replayCanvas.height;
+  const radius = 12;
+  
+  // Cor do time
+  const color = player.team === 'red' ? '#ff4444' : '#4444ff';
+  
+  // Círculo do jogador
+  replayCtx.fillStyle = color;
+  replayCtx.beginPath();
+  replayCtx.arc(x, y, radius, 0, 2 * Math.PI);
+  replayCtx.fill();
+  
+  // Borda
+  replayCtx.strokeStyle = '#fff';
+  replayCtx.lineWidth = 2;
+  replayCtx.stroke();
+  
+  // Nome/número
+  replayCtx.fillStyle = '#fff';
+  replayCtx.font = 'bold 10px Arial';
+  replayCtx.textAlign = 'center';
+  replayCtx.fillText(player.name.substring(0, 3), x, y + 3);
+}
+
+// Desenhar bola no replay
+function drawReplayBall(ball) {
+  if (!replayCtx) return;
+  
+  const x = (ball.x / 100) * replayCanvas.width;
+  const y = (ball.y / 100) * replayCanvas.height;
+  const radius = 6;
+  
+  // Círculo da bola
+  replayCtx.fillStyle = '#fff';
+  replayCtx.beginPath();
+  replayCtx.arc(x, y, radius, 0, 2 * Math.PI);
+  replayCtx.fill();
+  
+  // Borda preta
+  replayCtx.strokeStyle = '#000';
+  replayCtx.lineWidth = 1;
+  replayCtx.stroke();
+}
+
+// Atualizar informações do replay
+function updateReplayInfo(frame) {
+  const timeDisplay = document.getElementById('replayTime');
+  const scoreDisplay = document.getElementById('replayScore');
+  
+  if (timeDisplay && frame.time !== undefined) {
+    const minutes = Math.floor(frame.time / 60);
+    const seconds = Math.floor(frame.time % 60);
+    timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+  
+  if (scoreDisplay && frame.score) {
+    scoreDisplay.textContent = `${frame.score.red} - ${frame.score.blue}`;
   }
 }
 
-// Controles de reprodução
+// Controles de reprodução (antigos - serão removidos gradualmente)
 function playReplay() {
   if (isReplayPlaying || !replayFrames.length) return;
   
@@ -1675,6 +1741,318 @@ function downloadFinalCanvas(canvas) {
     link.href = canvas.toDataURL('image/png');
     link.click();
 }
+
+// ===== SISTEMA DE REPLAY ESTILO THE HAX =====
+
+// Inicializar canvas do replay
+function initReplayCanvas() {
+  replayCanvas = document.getElementById('replayCanvas');
+  replayCtx = replayCanvas.getContext('2d');
+  
+  if (!replayCanvas || !replayCtx) {
+    console.error('Canvas do replay não encontrado');
+    return;
+  }
+  
+  // Configurar tamanho
+  replayCanvas.width = 800;
+  replayCanvas.height = 400;
+  
+  // Adicionar eventos de mouse para interação tática
+  replayCanvas.addEventListener('mousedown', handleReplayMouseDown);
+  replayCanvas.addEventListener('mousemove', handleReplayMouseMove);
+  replayCanvas.addEventListener('mouseup', handleReplayMouseUp);
+  replayCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
+  
+  console.log('Canvas do replay inicializado com interação tática');
+}
+
+// Configurar controles do replay
+function setupReplayControls() {
+  const playBtn = document.getElementById('playReplayBtn');
+  const pauseBtn = document.getElementById('pauseReplayBtn');
+  const timeline = document.getElementById('replayTimeline');
+  const speedSelect = document.getElementById('replaySpeed');
+  
+  if (playBtn) {
+    playBtn.onclick = () => {
+      if (!isReplayPlaying) {
+        startReplayPlayback();
+      }
+    };
+  }
+  
+  if (pauseBtn) {
+    pauseBtn.onclick = () => {
+      pauseReplayForTactics();
+    };
+  }
+  
+  if (timeline) {
+    timeline.oninput = (e) => {
+      const progress = parseFloat(e.target.value);
+      seekToFrame(progress);
+    };
+  }
+  
+  if (speedSelect) {
+    speedSelect.onchange = (e) => {
+      playbackSpeed = parseFloat(e.target.value);
+    };
+  }
+}
+
+// Iniciar reprodução do replay
+function startReplayPlayback() {
+  if (isReplayPlaying || !replayFrames.length) return;
+  
+  isReplayPlaying = true;
+  isPausedForTactics = false;
+  
+  // Limpar desenhos táticos quando retomar
+  tacticalDrawings = [];
+  
+  replayInterval = setInterval(() => {
+    if (currentFrame < replayFrames.length - 1) {
+      currentFrame++;
+      showReplayFrame(currentFrame);
+      updateReplayTimeline();
+    } else {
+      // Fim do replay
+      stopReplayPlayback();
+    }
+  }, 100 / playbackSpeed); // 10 FPS base
+  
+  updatePlaybackButtons();
+}
+
+// Pausar replay para modo tático
+function pauseReplayForTactics() {
+  if (!isReplayPlaying) return;
+  
+  stopReplayPlayback();
+  isPausedForTactics = true;
+  
+  // Ativar modo tático
+  enableTacticalMode();
+  
+  updatePlaybackButtons();
+}
+
+// Parar reprodução
+function stopReplayPlayback() {
+  isReplayPlaying = false;
+  if (replayInterval) {
+    clearInterval(replayInterval);
+    replayInterval = null;
+  }
+  updatePlaybackButtons();
+}
+
+// Pular para frame específico
+function seekToFrame(progress) {
+  if (!replayFrames.length) return;
+  
+  const targetFrame = Math.floor(progress * (replayFrames.length - 1));
+  currentFrame = Math.max(0, Math.min(targetFrame, replayFrames.length - 1));
+  
+  showReplayFrame(currentFrame);
+  updateReplayTimeline();
+}
+
+// Ativar modo tático
+function enableTacticalMode() {
+  // Ativar cursors e interações
+  replayCanvas.style.cursor = 'grab';
+  
+  // Mostrar indicação visual
+  drawTacticalModeIndicator();
+}
+
+// Eventos de mouse para interação tática
+function handleReplayMouseDown(e) {
+  if (!isPausedForTactics) return;
+  
+  const rect = replayCanvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  mouseDownPos = { x, y };
+  
+  if (e.button === 0) { // Botão esquerdo - arrastar jogador
+    draggingPlayer = findPlayerAtPosition(x, y);
+    if (draggingPlayer) {
+      replayCanvas.style.cursor = 'grabbing';
+    }
+  } else if (e.button === 2) { // Botão direito - desenhar
+    startTacticalDrawing(x, y);
+  }
+}
+
+function handleReplayMouseMove(e) {
+  if (!isPausedForTactics) return;
+  
+  const rect = replayCanvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  if (draggingPlayer && mouseDownPos) {
+    // Atualizar posição do jogador
+    const frame = replayFrames[currentFrame];
+    if (frame) {
+      const player = frame.players.find(p => p.id === draggingPlayer.id);
+      if (player) {
+        player.x = (x / replayCanvas.width) * 100;
+        player.y = (y / replayCanvas.height) * 100;
+        showReplayFrame(currentFrame); // Redesenhar
+      }
+    }
+  }
+  
+  // Atualizar cursor baseado na posição
+  const playerAtPos = findPlayerAtPosition(x, y);
+  replayCanvas.style.cursor = playerAtPos ? 'grab' : 'crosshair';
+}
+
+function handleReplayMouseUp(e) {
+  if (!isPausedForTactics) return;
+  
+  draggingPlayer = null;
+  mouseDownPos = null;
+  replayCanvas.style.cursor = 'grab';
+}
+
+// Encontrar jogador na posição
+function findPlayerAtPosition(x, y) {
+  const frame = replayFrames[currentFrame];
+  if (!frame) return null;
+  
+  const tolerance = 15; // pixels
+  
+  for (const player of frame.players) {
+    const playerX = (player.x / 100) * replayCanvas.width;
+    const playerY = (player.y / 100) * replayCanvas.height;
+    
+    const distance = Math.sqrt(
+      Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)
+    );
+    
+    if (distance <= tolerance) {
+      return player;
+    }
+  }
+  
+  return null;
+}
+
+// Iniciar desenho tático
+function startTacticalDrawing(x, y) {
+  const drawing = {
+    type: 'line',
+    points: [{ x, y }],
+    color: '#ffff00',
+    width: 3
+  };
+  
+  tacticalDrawings.push(drawing);
+}
+
+// Desenhar indicador de modo tático
+function drawTacticalModeIndicator() {
+  if (!replayCtx) return;
+  
+  replayCtx.save();
+  replayCtx.fillStyle = 'rgba(255, 255, 0, 0.1)';
+  replayCtx.fillRect(0, 0, replayCanvas.width, replayCanvas.height);
+  
+  // Texto indicativo
+  replayCtx.fillStyle = '#ffff00';
+  replayCtx.font = 'bold 16px Arial';
+  replayCtx.textAlign = 'center';
+  replayCtx.fillText('MODO TÁTICO - Arraste jogadores ou desenhe', replayCanvas.width / 2, 25);
+  
+  replayCtx.restore();
+}
+
+// Renderizar desenhos táticos
+function drawTacticalElements() {
+  if (!replayCtx) return;
+  
+  // Desenhar indicador de modo tático
+  if (isPausedForTactics) {
+    drawTacticalModeIndicator();
+  }
+  
+  // Desenhar linhas táticas
+  tacticalDrawings.forEach(drawing => {
+    if (drawing.type === 'line' && drawing.points.length > 1) {
+      replayCtx.save();
+      replayCtx.strokeStyle = drawing.color;
+      replayCtx.lineWidth = drawing.width;
+      replayCtx.beginPath();
+      replayCtx.moveTo(drawing.points[0].x, drawing.points[0].y);
+      
+      for (let i = 1; i < drawing.points.length; i++) {
+        replayCtx.lineTo(drawing.points[i].x, drawing.points[i].y);
+      }
+      
+      replayCtx.stroke();
+      replayCtx.restore();
+    }
+  });
+}
+
+// Atualizar timeline do replay
+function updateReplayTimeline() {
+  const timeline = document.getElementById('replayTimeline');
+  if (timeline && replayFrames.length > 0) {
+    const progress = currentFrame / (replayFrames.length - 1);
+    timeline.value = progress;
+  }
+}
+
+// Atualizar botões de reprodução
+function updatePlaybackButtons() {
+  const playBtn = document.getElementById('playReplayBtn');
+  const pauseBtn = document.getElementById('pauseReplayBtn');
+  
+  if (playBtn && pauseBtn) {
+    playBtn.style.display = isReplayPlaying ? 'none' : 'inline-block';
+    pauseBtn.style.display = isReplayPlaying ? 'inline-block' : 'none';
+  }
+  
+  // Atualizar texto do botão de pausa baseado no estado
+  if (pauseBtn) {
+    pauseBtn.textContent = isPausedForTactics ? '▶️ Continuar' : '⏸️ Pausar';
+  }
+}
+
+// Atualizar interface do replay
+function updateReplayUI() {
+  updateReplayTimeline();
+  updatePlaybackButtons();
+  
+  // Mostrar controles
+  const controls = document.getElementById('replayControls');
+  if (controls) {
+    controls.style.display = 'block';
+  }
+}
+
+// Limpar desenhos táticos
+function clearTacticalDrawings() {
+  tacticalDrawings = [];
+  if (currentFrame >= 0) {
+    showReplayFrame(currentFrame);
+  }
+}
+
+// Gerar dados mock do replay para teste
+function generateMockReplayData(filename) {
+  return generateFullMatchReplay();
+}
+
+// ===== FIM DO SISTEMA DE REPLAY =====
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
