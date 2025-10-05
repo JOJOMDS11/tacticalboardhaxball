@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3CJLXN9K95"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-3CJLXN9K95');
+  </script>
+  
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7410324895176353"
      crossorigin="anonymous"></script>
 <meta name="google-adsense-account" content="ca-pub-7410324895176353">
@@ -387,6 +397,48 @@
       text-decoration: underline;
     }
     
+    /* Estilo "Em breve" */
+    .coming-soon-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+      padding: 40px;
+    }
+    .coming-soon-message {
+      text-align: center;
+      background: #2c2c2c;
+      padding: 40px;
+      border-radius: 15px;
+      border: 2px solid #444;
+      max-width: 600px;
+    }
+    .coming-soon-message h2 {
+      color: #e5e7eb;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    .coming-soon-badge {
+      background: #B917FF;
+      color: white;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-size: 20px;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    .coming-soon-message p {
+      color: #e5e7eb;
+      margin: 15px 0;
+      font-size: 16px;
+    }
+    .features-list p {
+      color: #B917FF;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    
     /* Timeline com eventos */
     .timeline-container {
       position: relative;
@@ -439,14 +491,126 @@
       border-radius: 3px;
       cursor: pointer;
     }
+    
+    /* Discord de Torneios */
+    .discord-tournament {
+      text-align: center;
+      margin: 20px 0;
+      padding: 15px;
+      background: linear-gradient(135deg, #5865f2, #7289da);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+    }
+    .discord-link {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+    .discord-link:hover {
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
+      transform: scale(1.05);
+    }
+    
+    /* Estilos para novas abas */
+    .stream-container, .videos-container, .tutorials-container, .shop-container {
+      padding: 20px;
+      text-align: center;
+    }
+    .stream-embed {
+      width: 100%;
+      height: 500px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .login-form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 30px;
+      background: #2d2d2d;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .login-form input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: #1b1b1b;
+      border: 1px solid #444;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+    }
+    .login-form button {
+      width: 100%;
+      padding: 12px;
+      background: #B917FF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .login-form button:hover {
+      background: #9614d9;
+    }
+    .admin-panel {
+      background: #2d2d2d;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    .content-list {
+      display: grid;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .content-item {
+      background: #1b1b1b;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #B917FF;
+    }
+    .shop-link {
+      display: inline-block;
+      padding: 20px 40px;
+      background: linear-gradient(135deg, #B917FF, #9614d9);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(185, 23, 255, 0.3);
+      transition: all 0.3s ease;
+    }
+    .shop-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(185, 23, 255, 0.4);
+    }
   </style>
-  <script type="module" crossorigin src="/assets/main-DNUzAsVC.js"></script>
+  <script type="module" crossorigin src="/assets/main-DNHnVzpG.js"></script>
 </head>
 <body>
   <div class="app">
     <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
     <div class="viewer-counter">
-      <span id="viewerCount">Carregando visitantes...</span>
+      <!-- hitwebcounter Code START -->
+      <a href="https://www.hitwebcounter.com/" target="_blank">
+        <img src="https://hitwebcounter.com/counter/counter.php?page=21445755&style=0034&nbdigits=5&type=page&initCount=100" title="Visitantes" Alt="Visitantes" border="0" />
+      </a>
+      <!-- hitwebcounter Code END -->
+    </div>
+    
+    <!-- Discord de Torneios -->
+    <div class="discord-tournament">
+      <a href="https://discord.gg/YGKxAc7sZf" target="_blank" class="discord-link">
+        🎮 NOSSO DISCORD DE TORNEIOS TIME FECHADO (SOMENTE BRASIL) 🇧🇷
+      </a>
     </div>
     
     <!-- Sistema de Abas -->
@@ -454,6 +618,10 @@
       <div class="tabs">
         <button class="tab active" data-tab="tactical">Quadro Tático</button>
         <button class="tab" data-tab="replay">Reprodutor de Replay</button>
+        <button class="tab" data-tab="stream">Stream</button>
+        <button class="tab" data-tab="videos">Vídeos</button>
+        <button class="tab" data-tab="tutorials">Tutoriais/Dicas</button>
+        <button class="tab" data-tab="shop">Loja</button>
       </div>
     </div>
     
@@ -483,10 +651,16 @@
         <input type="color" id="primaryColorPicker" value="#B917FF">
         <label id="secondaryColorLabel" for="secondaryColorPicker"></label>
         <input type="color" id="secondaryColorPicker" value="#ff0000">
-        <label for="blueShadowColorPicker">Shadow Blue:</label>
-        <input type="color" id="blueShadowColorPicker" value="#4444ff">
-        <label for="redShadowColorPicker">Shadow Red:</label>
-        <input type="color" id="redShadowColorPicker" value="#ff4444">
+        <div style="display: flex; gap: 10px; align-items: center; margin: 5px 0;">
+          <div style="display: flex; align-items: center; gap: 5px;">
+            <label for="redShadowColorPicker">Shadow Red:</label>
+            <input type="color" id="redShadowColorPicker" value="#ff4444">
+          </div>
+          <div style="display: flex; align-items: center; gap: 5px;">
+            <label for="blueShadowColorPicker">Shadow Blue:</label>
+            <input type="color" id="blueShadowColorPicker" value="#4444ff">
+          </div>
+        </div>
         <button id="downloadBtn"></button>
         <button id="tipsBtn"></button>
         <div class="language-selector">
@@ -566,51 +740,118 @@
     
     <!-- Aba Reprodutor de Replay -->
     <div id="replay-tab" class="tab-content">
-      <div class="replay-container">
-        <div class="upload-area" id="uploadArea">
-          <div class="upload-content">
-            <h2>📁 Upload do Seu Replay HBR2</h2>
-            <p>Arraste e solte seu arquivo .hbr2 aqui ou clique para selecionar</p>
-            <input type="file" id="hbr2FileInput" accept=".hbr2" style="display: none;">
-            <button id="selectFileBtn">Selecionar Arquivo</button>
+      <div class="coming-soon-container">
+        <div class="coming-soon-message">
+          <h2>🎬 Reprodutor de Replay HBR2</h2>
+          <div class="coming-soon-badge">Em breve!</div>
+          <p>Estamos trabalhando para trazer o melhor reprodutor de replays do Haxball.</p>
+          <div class="features-list">
+            <p>🔜 Upload de arquivos .hbr2</p>
+            <p>🔜 Análise completa de partidas</p>
+            <p>🔜 Timeline com eventos de gol</p>
+            <p>🔜 Ferramentas de desenho avançadas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Aba Stream -->
+    <div id="stream-tab" class="tab-content">
+      <div class="stream-container">
+        <h2>🔴 LIVE STREAM - JP HAXBALL</h2>
+        <iframe 
+          class="stream-embed"
+          src="https://player.twitch.tv/?channel=jphmdx&parent=tacticalboardhaxball.netlify.app&muted=false"
+          allowfullscreen>
+        </iframe>
+        <p style="margin-top: 15px; color: #aaa;">
+          Acompanhe nossas lives de Haxball ao vivo! 🎮
+        </p>
+      </div>
+    </div>
+    
+    <!-- Aba Videos -->
+    <div id="videos-tab" class="tab-content">
+      <div class="videos-container">
+        <div id="videosLoginForm" class="login-form">
+          <h3>🔐 Acesso Administrativo</h3>
+          <p>Digite a senha para gerenciar vídeos:</p>
+          <input type="password" id="videosPassword" placeholder="Senha de administrador">
+          <button onclick="authenticateVideos()">Entrar</button>
+        </div>
+        
+        <div id="videosAdminPanel" class="admin-panel" style="display: none;">
+          <h2>📹 Gerenciamento de Vídeos</h2>
+          <div style="margin-bottom: 20px;">
+            <input type="text" id="videoTitle" placeholder="Título do vídeo" style="width: 100%; margin: 5px 0; padding: 10px;">
+            <input type="url" id="videoUrl" placeholder="URL do YouTube (https://www.youtube.com/watch?v=...)" style="width: 100%; margin: 5px 0; padding: 10px;">
+            <button onclick="addVideo()" style="padding: 10px 20px; background: #B917FF; color: white; border: none; border-radius: 6px;">Adicionar Vídeo</button>
+          </div>
+          
+          <div class="content-list" id="videosList">
+            <!-- Vídeos serão carregados aqui -->
           </div>
         </div>
         
-        <div class="replay-player" id="replayPlayer" style="display: none;">
-          <div class="replay-info">
-            <h3 id="replayTitle">Carregando replay...</h3>
-            <div class="replay-details">
-              <span id="replayDuration">Duração: --:--</span>
-              <span id="replayPlayers">Jogadores: --</span>
-              <span id="replayMap">Mapa: --</span>
-            </div>
+        <div id="videosPublicView">
+          <h2>📹 Vídeos JP Haxball</h2>
+          <div class="content-list" id="publicVideosList">
+            <!-- Vídeos públicos serão mostrados aqui -->
           </div>
-          
-          <div class="replay-controls">
-            <button id="playPauseBtn">▶️ Play</button>
-            <button id="stopBtn">⏹️ Stop</button>
-            <input type="range" id="timelineSlider" min="0" max="100" value="0">
-            <span id="timeDisplay">00:00 / 00:00</span>
-          </div>
-          
-          <div class="replay-canvas-container">
-            <canvas id="replayCanvas"></canvas>
-            <canvas id="replayDrawLayer"></canvas>
-          </div>
-          
-          <div class="replay-toolbar">
-            <button id="replayDrawBtn">✏️ Desenhar</button>
-            <button id="replayEraseBtn">🧽 Borracha</button>
-            <button id="replayClearBtn">🗑️ Limpar</button>
-            <input type="color" id="replayColorPicker" value="#ff0000">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Aba Tutorials/Dicas -->
+    <div id="tutorials-tab" class="tab-content">
+      <div class="tutorials-container">
+        <div id="tutorialsLoginForm" class="login-form">
+          <h3>🔐 Acesso Administrativo</h3>
+          <p>Digite a senha para gerenciar tutoriais:</p>
+          <input type="password" id="tutorialsPassword" placeholder="Senha de administrador">
+          <button onclick="authenticateTutorials()">Entrar</button>
         </div>
         
-        <!-- Créditos e informações do Replay Player -->
-        <div class="replay-credits">
-          <p><strong>Reprodutor de Replay HBR2</strong></p>
-          <p>📁 Carregue arquivos .hbr2 • ⏸️ Pause para desenhar • 🎨 Ferramentas de análise</p>
-          <p>Baseado no <a href="https://haxball-replay-analyzer.github.io" target="_blank">Haxball Replay Analyzer</a></p>
-          <p style="font-size: 12px; color: #999;">Créditos: haxball-replay-analyzer.github.io</p>
+        <div id="tutorialsAdminPanel" class="admin-panel" style="display: none;">
+          <h2>📚 Gerenciamento de Tutoriais/Dicas</h2>
+          <div style="margin-bottom: 20px;">
+            <input type="text" id="tutorialTitle" placeholder="Título do tutorial" style="width: 100%; margin: 5px 0; padding: 10px;">
+            <textarea id="tutorialContent" placeholder="Conteúdo do tutorial (suporta HTML básico)" style="width: 100%; height: 150px; margin: 5px 0; padding: 10px;"></textarea>
+            <button onclick="addTutorial()" style="padding: 10px 20px; background: #B917FF; color: white; border: none; border-radius: 6px;">Adicionar Tutorial</button>
+          </div>
+          
+          <div class="content-list" id="tutorialsList">
+            <!-- Tutoriais serão carregados aqui -->
+          </div>
+        </div>
+        
+        <div id="tutorialsPublicView">
+          <h2>📚 Tutoriais e Dicas Haxball</h2>
+          <div class="content-list" id="publicTutorialsList">
+            <!-- Tutoriais públicos serão mostrados aqui -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Aba Shop -->
+    <div id="shop-tab" class="tab-content">
+      <div class="shop-container">
+        <h2>🛒 Loja JP Haxball</h2>
+        <p style="margin: 20px 0; color: #aaa;">
+          Confira nossos produtos exclusivos para Haxball!
+        </p>
+        
+        <a href="https://jojovendas.vercel.app" target="_blank" class="shop-link">
+          🛍️ Visitar Loja Completa
+        </a>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #2d2d2d; border-radius: 12px;">
+          <h3>✨ Produtos em Destaque</h3>
+          <p>🎮 Skins personalizadas para Haxball</p>
+          <p>🏆 Pacotes de treinamento exclusivos</p>
+          <p>📋 Estratégias avançadas</p>
+          <p>🎯 Coaching personalizado</p>
         </div>
       </div>
     </div>

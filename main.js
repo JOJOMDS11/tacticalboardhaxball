@@ -1058,8 +1058,8 @@ window.addEventListener('keydown', (e) => {
         toggleShadowMode();
     }
     
-    // Ctrl+Shift+C para limpar tudo (desenhos + shadows)
-    if (e.ctrlKey && e.shiftKey && (e.key === 'c' || e.key === 'C')) {
+    // Ctrl+L para limpar tudo (desenhos + shadows)
+    if (e.ctrlKey && (e.key === 'l' || e.key === 'L')) {
         e.preventDefault();
         clearEverything();
     }
@@ -1191,10 +1191,32 @@ class TabSystem {
 
     this.currentTab = tabName;
 
-    // Inicializar reprodutor se necessário
-    if (tabName === 'replay' && !this.replayInitialized) {
-      this.initReplayPlayer();
-      this.replayInitialized = true;
+    // Inicializar recursos específicos da aba
+    switch(tabName) {
+      case 'replay':
+        if (!this.replayInitialized) {
+          this.initReplayPlayer();
+          this.replayInitialized = true;
+        }
+        break;
+      case 'stream':
+        // Stream já é carregada via iframe, não precisa de inicialização especial
+        break;
+      case 'videos':
+        if (!this.videosInitialized && window.contentManager) {
+          window.contentManager.loadPublicVideos();
+          this.videosInitialized = true;
+        }
+        break;
+      case 'tutorials':
+        if (!this.tutorialsInitialized && window.contentManager) {
+          window.contentManager.loadPublicTutorials();
+          this.tutorialsInitialized = true;
+        }
+        break;
+      case 'shop':
+        // Shop é estática, não precisa de inicialização
+        break;
     }
   }
 
@@ -1788,10 +1810,10 @@ document.getElementById("blueShadowColorPicker").addEventListener('change', (e) 
 // Event listener para botão de tips
 document.getElementById("tipsBtn").onclick=()=>{
   const tips = {
-    pt: "💡 DICAS:\n\n• Ctrl+Z: Desfazer última ação\n• Ctrl+D: Ativar/Desativar modo desenho\n• Ctrl+S: Ativar/Desativar modo shadow\n• Ctrl+Shift+C: Limpar tudo (desenhos + shadows)\n• Botão Esquerdo: Desenhar com cor primária\n• Botão Direito: Desenhar com cor secundária\n• Ative sombra e segure o jogador com botão direito e arraste para criar um rastro de movimento",
-    en: "💡 TIPS:\n\n• Ctrl+Z: Undo last action\n• Ctrl+D: Toggle draw mode\n• Ctrl+S: Toggle shadow mode\n• Ctrl+Shift+C: Clear everything (drawings + shadows)\n• Left Click: Draw with primary color\n• Right Click: Draw with secondary color\n• Activate shadow and hold the player with right mouse button and drag to create a movement trail",
-    tr: "💡 İPUÇLARI:\n\n• Ctrl+Z: Son işlemi geri al\n• Ctrl+D: Çizim modunu aç/kapat\n• Ctrl+S: Gölge modunu aç/kapat\n• Ctrl+Shift+C: Her şeyi temizle (çizimler + gölgeler)\n• Sol Tık: Birincil renkle çiz\n• Sağ Tık: İkincil renkle çiz\n• Gölgeyi etkinleştirip oyuncuya sağ tıkla ve sürükle, hareket izi oluştur",
-    es: "💡 CONSEJOS:\n\n• Ctrl+Z: Deshacer última acción\n• Ctrl+D: Activar/Desactivar modo dibujo\n• Ctrl+S: Activar/Desactivar modo sombra\n• Ctrl+Shift+C: Limpiar todo (dibujos + sombras)\n• Clic Izquierdo: Dibujar con color primario\n• Clic Derecho: Dibujar con color secundario\n• Activa sombra y mantén el jugador con botón derecho y arrastra para crear una estela de movimiento"
+    pt: "💡 DICAS:\n\n• Ctrl+Z: Desfazer última ação\n• Ctrl+D: Ativar/Desativar modo desenho\n• Ctrl+S: Ativar/Desativar modo shadow\n• Ctrl+L: Limpar tudo (desenhos + shadows)\n• Botão Esquerdo: Desenhar com cor primária\n• Botão Direito: Desenhar com cor secundária\n• Ative sombra e segure o jogador com botão direito e arraste para criar um rastro de movimento",
+    en: "💡 TIPS:\n\n• Ctrl+Z: Undo last action\n• Ctrl+D: Toggle draw mode\n• Ctrl+S: Toggle shadow mode\n• Ctrl+L: Clear everything (drawings + shadows)\n• Left Click: Draw with primary color\n• Right Click: Draw with secondary color\n• Activate shadow and hold the player with right mouse button and drag to create a movement trail",
+    tr: "💡 İPUÇLARI:\n\n• Ctrl+Z: Son işlemi geri al\n• Ctrl+D: Çizim modunu aç/kapat\n• Ctrl+S: Gölge modunu aç/kapat\n• Ctrl+L: Her şeyi temizle (çizimler + gölgeler)\n• Sol Tık: Birincil renkle çiz\n• Sağ Tık: İkincil renkle çiz\n• Gölgeyi etkinleştirip oyuncuya sağ tıkla ve sürükle, hareket izi oluştur",
+    es: "💡 CONSEJOS:\n\n• Ctrl+Z: Deshacer última acción\n• Ctrl+D: Activar/Desactivar modo dibujo\n• Ctrl+S: Activar/Desactivar modo sombra\n• Ctrl+L: Limpiar todo (dibujos + sombras)\n• Clic Izquierdo: Dibujar con color primario\n• Clic Derecho: Dibujar con color secundario\n• Activa sombra y mantén el jugador con botón derecho y arrastra para crear una estela de movimiento"
   };
   alert(tips[currentLang]);
 };
@@ -1879,6 +1901,202 @@ function downloadFinalCanvas(canvas) {
     link.click();
 }
 
+// Sistema de Autenticação e Gerenciamento de Conteúdo
+class ContentManager {
+  constructor() {
+    this.adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+    this.videos = JSON.parse(localStorage.getItem('videos') || '[]');
+    this.tutorials = JSON.parse(localStorage.getItem('tutorials') || '[]');
+    this.initContent();
+  }
+
+  initContent() {
+    this.loadPublicVideos();
+    this.loadPublicTutorials();
+  }
+
+  // Autenticação para Videos
+  authenticateVideos() {
+    const password = document.getElementById('videosPassword').value;
+    if (password === this.adminPassword) {
+      document.getElementById('videosLoginForm').style.display = 'none';
+      document.getElementById('videosAdminPanel').style.display = 'block';
+      this.loadAdminVideos();
+    } else {
+      alert('Senha incorreta!');
+    }
+  }
+
+  // Autenticação para Tutorials
+  authenticateTutorials() {
+    const password = document.getElementById('tutorialsPassword').value;
+    if (password === this.adminPassword) {
+      document.getElementById('tutorialsLoginForm').style.display = 'none';
+      document.getElementById('tutorialsAdminPanel').style.display = 'block';
+      this.loadAdminTutorials();
+    } else {
+      alert('Senha incorreta!');
+    }
+  }
+
+  // Gerenciamento de Vídeos
+  addVideo() {
+    const title = document.getElementById('videoTitle').value;
+    const url = document.getElementById('videoUrl').value;
+    
+    if (!title || !url) {
+      alert('Preencha todos os campos!');
+      return;
+    }
+
+    const videoId = this.extractYouTubeId(url);
+    if (!videoId) {
+      alert('URL do YouTube inválida!');
+      return;
+    }
+
+    const video = {
+      id: Date.now(),
+      title,
+      url,
+      videoId,
+      embedUrl: `https://www.youtube.com/embed/${videoId}`,
+      createdAt: new Date().toLocaleDateString()
+    };
+
+    this.videos.push(video);
+    localStorage.setItem('videos', JSON.stringify(this.videos));
+    
+    document.getElementById('videoTitle').value = '';
+    document.getElementById('videoUrl').value = '';
+    
+    this.loadAdminVideos();
+    this.loadPublicVideos();
+  }
+
+  extractYouTubeId(url) {
+    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  }
+
+  removeVideo(id) {
+    this.videos = this.videos.filter(video => video.id !== id);
+    localStorage.setItem('videos', JSON.stringify(this.videos));
+    this.loadAdminVideos();
+    this.loadPublicVideos();
+  }
+
+  loadAdminVideos() {
+    const container = document.getElementById('videosList');
+    container.innerHTML = this.videos.map(video => `
+      <div class="content-item">
+        <h3>${video.title}</h3>
+        <iframe width="100%" height="200" src="${video.embedUrl}" frameborder="0" allowfullscreen></iframe>
+        <p>Adicionado em: ${video.createdAt}</p>
+        <button onclick="contentManager.removeVideo(${video.id})" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px;">Remover</button>
+      </div>
+    `).join('');
+  }
+
+  loadPublicVideos() {
+    const container = document.getElementById('publicVideosList');
+    if (this.videos.length === 0) {
+      container.innerHTML = '<p style="text-align: center; color: #aaa;">Nenhum vídeo disponível no momento.</p>';
+      return;
+    }
+    
+    container.innerHTML = this.videos.map(video => `
+      <div class="content-item">
+        <h3>${video.title}</h3>
+        <iframe width="100%" height="200" src="${video.embedUrl}" frameborder="0" allowfullscreen></iframe>
+        <p>Publicado em: ${video.createdAt}</p>
+      </div>
+    `).join('');
+  }
+
+  // Gerenciamento de Tutoriais
+  addTutorial() {
+    const title = document.getElementById('tutorialTitle').value;
+    const content = document.getElementById('tutorialContent').value;
+    
+    if (!title || !content) {
+      alert('Preencha todos os campos!');
+      return;
+    }
+
+    const tutorial = {
+      id: Date.now(),
+      title,
+      content,
+      createdAt: new Date().toLocaleDateString()
+    };
+
+    this.tutorials.push(tutorial);
+    localStorage.setItem('tutorials', JSON.stringify(this.tutorials));
+    
+    document.getElementById('tutorialTitle').value = '';
+    document.getElementById('tutorialContent').value = '';
+    
+    this.loadAdminTutorials();
+    this.loadPublicTutorials();
+  }
+
+  removeTutorial(id) {
+    this.tutorials = this.tutorials.filter(tutorial => tutorial.id !== id);
+    localStorage.setItem('tutorials', JSON.stringify(this.tutorials));
+    this.loadAdminTutorials();
+    this.loadPublicTutorials();
+  }
+
+  loadAdminTutorials() {
+    const container = document.getElementById('tutorialsList');
+    container.innerHTML = this.tutorials.map(tutorial => `
+      <div class="content-item">
+        <h3>${tutorial.title}</h3>
+        <div>${tutorial.content}</div>
+        <p>Adicionado em: ${tutorial.createdAt}</p>
+        <button onclick="contentManager.removeTutorial(${tutorial.id})" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px;">Remover</button>
+      </div>
+    `).join('');
+  }
+
+  loadPublicTutorials() {
+    const container = document.getElementById('publicTutorialsList');
+    if (this.tutorials.length === 0) {
+      container.innerHTML = '<p style="text-align: center; color: #aaa;">Nenhum tutorial disponível no momento.</p>';
+      return;
+    }
+    
+    container.innerHTML = this.tutorials.map(tutorial => `
+      <div class="content-item">
+        <h3>${tutorial.title}</h3>
+        <div>${tutorial.content}</div>
+        <p>Publicado em: ${tutorial.createdAt}</p>
+      </div>
+    `).join('');
+  }
+}
+
+// Funções globais para os botões HTML
+let contentManager;
+
+function authenticateVideos() {
+  contentManager.authenticateVideos();
+}
+
+function authenticateTutorials() {
+  contentManager.authenticateTutorials();
+}
+
+function addVideo() {
+  contentManager.addVideo();
+}
+
+function addTutorial() {
+  contentManager.addTutorial();
+}
+
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar se todos os elementos existem
@@ -1894,6 +2112,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (draw && board) {
     resizeCanvas();
   }
+  
+  // Inicializar ContentManager
+  contentManager = new ContentManager();
+  window.contentManager = contentManager; // Tornar acessível globalmente
   
   // Rastrear visita após carregamento
   setTimeout(() => {
