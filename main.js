@@ -67,7 +67,7 @@ const gameConfigs = {
         { uid: 5, id: 'LE', team: 'red', x: 0.2, y: 0.8, size: 25 },
         { uid: 6, id: 'PV', team: 'red', x: 0.35, y: 0.5, size: 25 },
         { uid: 7, id: 'PE', team: 'red', x: 0.35, y: 0.8, size: 25 },
-        
+
         { uid: 8, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 25 },
         { uid: 9, id: 'LD', team: 'blue', x: 0.8, y: 0.2, size: 25 },
         { uid: 10, id: 'PD', team: 'blue', x: 0.65, y: 0.2, size: 25 },
@@ -75,7 +75,7 @@ const gameConfigs = {
         { uid: 12, id: 'LE', team: 'blue', x: 0.8, y: 0.8, size: 25 },
         { uid: 13, id: 'PV', team: 'blue', x: 0.65, y: 0.5, size: 25 },
         { uid: 14, id: 'PE', team: 'blue', x: 0.65, y: 0.8, size: 25 },
-        
+
         { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
       ]
     }
@@ -97,10 +97,10 @@ const FIREBASE_CONFIG = {
 class HaxballStatsTracker {
   constructor() {
     this.firebaseInitialized = false;
-    
+
     try {
       const hasAllKeys = Object.values(FIREBASE_CONFIG).every(key => key && key !== 'undefined');
-      
+
       if (hasAllKeys && typeof firebase !== 'undefined') {
         if (!firebase.apps.length) {
           firebase.initializeApp(FIREBASE_CONFIG);
@@ -114,7 +114,7 @@ class HaxballStatsTracker {
     } catch (error) {
       console.error('Erro ao inicializar Firebase:', error);
     }
-    
+
     this.counters = {
       totalVisits: 'totalVisits',
       todayVisits: 'todayVisits_' + new Date().toISOString().split('T')[0],
@@ -179,24 +179,14 @@ class HaxballStatsTracker {
       if (lang === 'en') await this.increment(this.counters.langEn);
       if (lang === 'tr') await this.increment(this.counters.langTr);
       if (lang === 'es') await this.increment(this.counters.langEs);
-      console.log(`Mudança de idioma para ${lang} rastreada com sucesso`);
+      console.log(`Mudança de idioma para ${lang} rastreada`);
     } catch (error) {
       console.error('Erro ao rastrear mudança de idioma:', error);
     }
   }
 
-  async trackDiscordClick() {
-    try {
-      await this.increment(this.counters.discordClicks);
-      console.log('Clique no Discord rastreado com sucesso');
-    } catch (error) {
-      console.error('Erro ao rastrear clique no Discord:', error);
-    }
-  }
-
   async trackConfigChange(type, value) {
     try {
-      await this.increment(this.counters.configChanges);
       await this.increment(`${type}_${value}`);
       console.log(`Configuração ${type} alterada para ${value}`);
     } catch (error) {
@@ -272,7 +262,7 @@ const translations = {
     teamSizeLabel: "Team Size:",
     mapTypeLabel: "Map Type:",
     currentModeLabel: "— 3x3 Futsal",
-    comingSoon: "Coming soon!"
+    comingSoon: "Coming Soon!"
   },
   tr: {
     drawOnBtn: "Çizimi Etkinleştir",
@@ -285,22 +275,22 @@ const translations = {
     lineBtn: "Çizgi",
     squareBtn: "Kare",
     triangleBtn: "Üçgen",
-    circleBtn: "Çember",
+    circleBtn: "Daire",
     arrowBtn: "Ok",
     strokeSizeLabel: "Çizgi Kalınlığı:",
     eraserSizeLabel: "Silgi Boyutu:",
-    discordMessage: "ETKİNLİKLERE KATILMAK İÇİN DISCORD'UMUZA HEMEN KATILIN.",
-    creditsLabel: "Yapılan:",
+    discordMessage: "ETKİNLİKLERE KATILMAK İÇİN ŞİMDİ DISCORD'UMUZA KATILIN.",
+    creditsLabel: "Yapımcı:",
     helpProject: "Projeye yardım et",
     teamSizeLabel: "Takım Boyutu:",
-    mapTypeLabel: "Harita Tipi:",
+    mapTypeLabel: "Harita Türü:",
     currentModeLabel: "— 3x3 Futsal",
     comingSoon: "Yakında!"
   },
   es: {
     drawOnBtn: "Activar Dibujo",
     drawOffBtn: "Desactivar Dibujo",
-    eraseBtn: "Goma",
+    eraseBtn: "Borrador",
     clearBtn: "Limpiar",
     colorLabel: "Color:",
     downloadBtn: "Descargar PNG",
@@ -310,9 +300,9 @@ const translations = {
     triangleBtn: "Triángulo",
     circleBtn: "Círculo",
     arrowBtn: "Flecha",
-    strokeSizeLabel: "Grosor del Trazo:",
-    eraserSizeLabel: "Tamaño de la Goma:",
-    discordMessage: "ÚNETE A NUESTRO DISCORD AHORA PARA PARTICIPAR EN LOS EVENTOS.",
+    strokeSizeLabel: "Tamaño del Trazo:",
+    eraserSizeLabel: "Tamaño del Borrador:",
+    discordMessage: "ÚNETE A NUESTRO DISCORD AHORA PARA PARTICIPAR EN EVENTOS.",
     creditsLabel: "Hecho por:",
     helpProject: "Ayuda al proyecto",
     teamSizeLabel: "Tamaño del Equipo:",
@@ -322,361 +312,225 @@ const translations = {
   }
 };
 
-function updateCurrentModeLabel() {
-  const teamSize = currentTeamSize;
-  const mapType = currentMapType.charAt(0).toUpperCase() + currentMapType.slice(1);
-  document.getElementById('currentModeLabel').textContent = `— ${teamSize} ${mapType}`;
-}
-
-function populateSelects() {
-  const teamSizeSelect = document.getElementById('teamSizeSelect');
-  const mapTypeSelect = document.getElementById('mapTypeSelect');
-  
-  teamSizeSelect.innerHTML = '';
-  mapTypeSelect.innerHTML = '';
-  
-  Object.keys(gameConfigs).forEach(teamSize => {
-    const option = document.createElement('option');
-    option.value = teamSize;
-    option.textContent = teamSize;
-    if (teamSize === currentTeamSize) option.selected = true;
-    teamSizeSelect.appendChild(option);
-  });
-  
-  if (gameConfigs[currentTeamSize]) {
-    Object.keys(gameConfigs[currentTeamSize]).forEach(mapType => {
-      const option = document.createElement('option');
-      option.value = mapType;
-      option.textContent = mapType.charAt(0).toUpperCase() + mapType.slice(1);
-      if (mapType === currentMapType) option.selected = true;
-      mapTypeSelect.appendChild(option);
-    });
-  }
-}
-
-function updateTexts() {
-  document.getElementById('drawOnBtn').textContent = translations[currentLang].drawOnBtn;
-  document.getElementById('drawOffBtn').textContent = translations[currentLang].drawOffBtn;
-  document.getElementById('eraseBtn').textContent = translations[currentLang].eraseBtn;
-  document.getElementById('clearBtn').textContent = translations[currentLang].clearBtn;
-  document.getElementById('colorLabel').textContent = translations[currentLang].colorLabel;
-  document.getElementById('downloadBtn').textContent = translations[currentLang].downloadBtn;
-  document.getElementById('freeBtn').textContent = translations[currentLang].freeBtn;
-  document.getElementById('lineBtn').textContent = translations[currentLang].lineBtn;
-  document.getElementById('squareBtn').textContent = translations[currentLang].squareBtn;
-  document.getElementById('triangleBtn').textContent = translations[currentLang].triangleBtn;
-  document.getElementById('circleBtn').textContent = translations[currentLang].circleBtn;
-  document.getElementById('arrowBtn').textContent = translations[currentLang].arrowBtn;
-  document.getElementById('strokeSizeLabel').textContent = translations[currentLang].strokeSizeLabel;
-  document.getElementById('eraserSizeLabel').textContent = translations[currentLang].eraserSizeLabel;
-  document.querySelector('.discord-message a').textContent = translations[currentLang].discordMessage;
-  document.getElementById('creditsLabel').textContent = translations[currentLang].creditsLabel;
-  document.getElementById('helpProjectLabel').textContent = translations[currentLang].helpProject;
-  document.getElementById('teamSizeLabel').textContent = translations[currentLang].teamSizeLabel;
-  document.getElementById('mapTypeLabel').textContent = translations[currentLang].mapTypeLabel;
-
-  document.querySelectorAll('.language-selector img').forEach(img => {
-      img.classList.remove('active');
-  });
-  document.getElementById(`flag-${currentLang}`).classList.add('active');
-  
-  updateCurrentModeLabel();
-}
-
-// Event listeners para as bandeiras
-document.getElementById('flag-pt').addEventListener('click', () => { 
-  currentLang = 'pt'; 
-  updateTexts(); 
-  statsTracker.trackLanguageChange('pt');
-});
-document.getElementById('flag-en').addEventListener('click', () => { 
-  currentLang = 'en'; 
-  updateTexts(); 
-  statsTracker.trackLanguageChange('en');
-});
-document.getElementById('flag-tr').addEventListener('click', () => { 
-  currentLang = 'tr'; 
-  updateTexts(); 
-  statsTracker.trackLanguageChange('tr');
-});
-document.getElementById('flag-es').addEventListener('click', () => { 
-  currentLang = 'es'; 
-  updateTexts(); 
-  statsTracker.trackLanguageChange('es');
-});
-
-// Event listeners para configurações de jogo
-document.getElementById('teamSizeSelect').addEventListener('change', (e) => {
-  const newTeamSize = e.target.value;
-  
-  if (gameConfigs[newTeamSize]) {
-    const availableMaps = Object.keys(gameConfigs[newTeamSize]);
-    const newMapType = availableMaps.includes(currentMapType) ? currentMapType : availableMaps[0];
-    
-    changeGameConfig(newTeamSize, newMapType);
-    statsTracker.trackConfigChange('team_size', newTeamSize);
-  } else {
-    e.target.value = currentTeamSize;
-    alert(translations[currentLang].comingSoon);
-  }
-});
-
-document.getElementById('mapTypeSelect').addEventListener('change', (e) => {
-  const newMapType = e.target.value;
-  
-  if (gameConfigs[currentTeamSize] && gameConfigs[currentTeamSize][newMapType]) {
-    changeGameConfig(currentTeamSize, newMapType);
-    statsTracker.trackConfigChange('map_type', newMapType);
-  } else {
-    e.target.value = currentMapType;
-    alert(translations[currentLang].comingSoon);
-  }
-});
-
-function changeGameConfig(teamSize, mapType) {
-  currentTeamSize = teamSize;
-  currentMapType = mapType;
-  
-  playersLayer.innerHTML = '';
-  
-  const config = gameConfigs[teamSize][mapType];
-  players = [...config.players];
-  
-  board.style.backgroundImage = `url('${config.backgroundImage}')`;
-  
-  players.forEach(p => {
-    const el = document.createElement("div");
-    el.className = `player ${p.team}`;
-    el.textContent = p.id;
-    el.dataset.uid = p.uid;
-    // Aplicar o tamanho personalizado do gameConfig
-    el.style.setProperty('--size', `${p.size}px`);
-    playersLayer.appendChild(el);
-    p.el = el;
-  });
-  
-  placePlayers();
-  
-  ctx.clearRect(0, 0, draw.width, draw.height);
-  history = [];
-  
-  populateSelects();
-  updateCurrentModeLabel();
-}
-
-document.querySelector('.discord-message a').addEventListener('click', () => {
-  statsTracker.trackDiscordClick();
-});
-
-function saveState() {
-  if (history.length >= maxHistory) {
-    history.shift();
-  }
-  history.push(draw.toDataURL());
-}
-
-function undo() {
-  if (history.length > 0) {
-    history.pop();
-    if (history.length > 0) {
-      const img = new Image();
-      img.onload = () => {
-        ctx.clearRect(0, 0, draw.width, draw.height);
-        ctx.drawImage(img, 0, 0);
-      };
-      img.src = history[history.length - 1];
-    } else {
-      ctx.clearRect(0, 0, draw.width, draw.height);
-    }
-  }
-}
-
-function resizeCanvas(){
-  draw.width = board.clientWidth;
-  draw.height = board.clientHeight;
-  if (history.length > 0) {
-    const img = new Image();
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0);
-    };
-    img.src = history[history.length - 1];
-  }
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-// Inicializar jogadores
-players.forEach(p=>{
-  const el=document.createElement("div");
-  el.className=`player ${p.team}`;
-  el.textContent=p.id;
-  el.dataset.uid = p.uid;
-  // Aplicar tamanho personalizado
-  el.style.setProperty('--size', `${p.size}px`);
-  playersLayer.appendChild(el);
-  p.el=el;
-});
-
-function placePlayers(){
-  const rect=board.getBoundingClientRect();
-  players.forEach(p=>{
-    const size = p.size || 29; // Usar tamanho do config ou padrão
-    p.el.style.left=(p.x*rect.width - size/2)+"px";
-    p.el.style.top=(p.y*rect.height - size/2)+"px";
-  });
-}
-placePlayers();
-window.addEventListener("resize",placePlayers);
-
 // Sistema de drag
-let drag=null;
-board.addEventListener("pointerdown",e=>{
-  const t=e.target.closest('.player'); 
-  if(!t) return;
-  
-  const rect=board.getBoundingClientRect();
+let drag = null;
+let shadowMove = null;
+let shadowLine = null;
+
+board.addEventListener("pointerdown", e => {
+  const t = e.target.closest('.player');
+  if (!t) return;
+  const rect = board.getBoundingClientRect();
   const uniqueId = t.dataset.uid;
-  const p = players.find(pp=>pp.uid == uniqueId);
+  const p = players.find(pp => pp.uid == uniqueId);
   if (!p) return;
-
   const size = p.size || 29;
-  drag={p,offsetX:e.clientX-rect.left-(p.x*rect.width),offsetY:e.clientY-rect.top-(p.y*rect.height)};
-  t.setPointerCapture(e.pointerId);
+  // Botão direito: shadow
+  if (e.button === 2) {
+    shadowMove = { p, startX: p.x, startY: p.y, startClientX: e.clientX, startClientY: e.clientY };
+    shadowLine = null;
+    t.setPointerCapture(e.pointerId);
+  } else if (e.button === 0) {
+    drag = { p, offsetX: e.clientX - rect.left - (p.x * rect.width), offsetY: e.clientY - rect.top - (p.y * rect.height) };
+    t.setPointerCapture(e.pointerId);
+  }
 });
 
-window.addEventListener("pointermove",e=>{
-  if(!drag) return;
-  const rect=board.getBoundingClientRect();
-  const size = drag.p.size || 29;
-  
-  drag.p.x = (e.clientX - rect.left - drag.offsetX) / rect.width;
-  drag.p.y = (e.clientY - rect.top - drag.offsetY) / rect.height;
+// Desenhar shadow
+function drawShadowLine() {
+  if (!shadowMove) return;
+  const rect = board.getBoundingClientRect();
+  const startX = shadowMove.startX * rect.width;
+  const startY = shadowMove.startY * rect.height;
+  const endX = shadowMove.p.x * rect.width;
+  const endY = shadowMove.p.y * rect.height;
+  // Desenhar linha no canvas de desenho
+  ctx.save();
+  ctx.globalAlpha = 0.7;
+  ctx.strokeStyle = '#fff200';
+  ctx.lineWidth = 4;
+  ctx.setLineDash([8, 8]);
+  ctx.beginPath();
+  ctx.moveTo(startX, startY);
+  ctx.lineTo(endX, endY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
 
-  const minX = (size / 2) / rect.width;
-  const maxX = 1 - (size / 2) / rect.width;
-  const minY = (size / 2) / rect.height;
-  const maxY = 1 - (size / 2) / rect.height;
-
-  drag.p.x = Math.max(minX, Math.min(drag.p.x, maxX));
-  drag.p.y = Math.max(minY, Math.min(drag.p.y, maxY));
-  
-  placePlayers();
+window.addEventListener("pointermove", e => {
+  const rect = board.getBoundingClientRect();
+  if (drag) {
+    const size = drag.p.size || 29;
+    drag.p.x = (e.clientX - rect.left - drag.offsetX) / rect.width;
+    drag.p.y = (e.clientY - rect.top - drag.offsetY) / rect.height;
+    const minX = (size / 2) / rect.width;
+    const maxX = 1 - (size / 2) / rect.width;
+    const minY = (size / 2) / rect.height;
+    const maxY = 1 - (size / 2) / rect.height;
+    drag.p.x = Math.max(minX, Math.min(drag.p.x, maxX));
+    drag.p.y = Math.max(minY, Math.min(drag.p.y, maxY));
+    placePlayers();
+  } else if (shadowMove) {
+    // Atualiza posição do shadow
+    const size = shadowMove.p.size || 29;
+    shadowMove.p.x = (e.clientX - rect.left - (size / 2)) / rect.width;
+    shadowMove.p.y = (e.clientY - rect.top - (size / 2)) / rect.height;
+    const minX = (size / 2) / rect.width;
+    const maxX = 1 - (size / 2) / rect.width;
+    const minY = (size / 2) / rect.height;
+    const maxY = 1 - (size / 2) / rect.height;
+    shadowMove.p.x = Math.max(minX, Math.min(shadowMove.p.x, maxX));
+    shadowMove.p.y = Math.max(minY, Math.min(shadowMove.p.y, maxY));
+    placePlayers();
+    // Desenhar shadow
+    ctx.clearRect(0, 0, draw.width, draw.height);
+    if (history.length > 0) {
+      const lastState = new Image();
+      lastState.src = history[history.length - 1];
+      ctx.drawImage(lastState, 0, 0);
+    }
+    drawShadowLine();
+  }
 });
-window.addEventListener("pointerup",()=>{ drag=null; });
+
+window.addEventListener("pointerup", () => {
+  if (shadowMove) {
+    // Finaliza shadow
+    drawShadowLine();
+    shadowMove = null;
+    shadowLine = null;
+  }
+  drag = null;
+});
+
+// Adiciona para evitar menu do botão direito no board
+board.addEventListener('contextmenu', function(e) {
+  if (e.target.closest('.player')) {
+    e.preventDefault();
+    return false;
+  }
+});
 
 // Funções de desenho
-function getPos(e){
-  const rect=draw.getBoundingClientRect();
-  return {x:e.clientX-rect.left,y:e.clientY-rect.top};
+function getPos(e) {
+  const rect = draw.getBoundingClientRect();
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top, button: e.button };
 }
 
 function drawShape(e) {
-    const pos = getPos(e);
-    ctx.clearRect(0, 0, draw.width, draw.height);
-    if (history.length > 0) {
-        const lastState = new Image();
-        lastState.src = history[history.length - 1];
-        ctx.drawImage(lastState, 0, 0);
-    }
+  const pos = getPos(e);
+  ctx.clearRect(0, 0, draw.width, draw.height);
+  if (history.length > 0) {
+    const lastState = new Image();
+    lastState.src = history[history.length - 1];
+    ctx.drawImage(lastState, 0, 0);
+  }
 
-    ctx.strokeStyle = document.getElementById("colorPicker").value;
-    ctx.lineWidth = document.getElementById("sizePicker").value;
-    ctx.lineCap = "round";
+  ctx.strokeStyle = document.getElementById("colorPicker").value;
+  ctx.lineWidth = document.getElementById("sizePicker").value;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+
+  if (mode === 'line') {
+    ctx.moveTo(startPos.x, startPos.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+  } else if (mode === 'square') {
+    const width = pos.x - startPos.x;
+    const height = pos.y - startPos.y;
+    ctx.strokeRect(startPos.x, startPos.y, width, height);
+  } else if (mode === 'triangle') {
+    ctx.moveTo(startPos.x, startPos.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.lineTo(startPos.x + (pos.x - startPos.x) / 2, startPos.y);
+    ctx.closePath();
+    ctx.stroke();
+  } else if (mode === 'circle') {
+    const dx = pos.x - startPos.x;
+    const dy = pos.y - startPos.y;
+    const radius = Math.sqrt(dx * dx + dy * dy) / 2;
+    ctx.arc(startPos.x + dx / 2, startPos.y + dy / 2, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+  } else if (mode === 'arrow') {
+    const headlen = 15;
+    const angle = Math.atan2(pos.y - startPos.y, pos.x - startPos.x);
+    ctx.moveTo(startPos.x, startPos.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
     ctx.beginPath();
-
-    if (mode === 'line') {
-        ctx.moveTo(startPos.x, startPos.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    } else if (mode === 'square') {
-        const width = pos.x - startPos.x;
-        const height = pos.y - startPos.y;
-        ctx.strokeRect(startPos.x, startPos.y, width, height);
-    } else if (mode === 'triangle') {
-        ctx.moveTo(startPos.x, startPos.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.lineTo(startPos.x + (pos.x - startPos.x) / 2, startPos.y);
-        ctx.closePath();
-        ctx.stroke();
-    } else if (mode === 'circle') {
-        const dx = pos.x - startPos.x;
-        const dy = pos.y - startPos.y;
-        const radius = Math.sqrt(dx * dx + dy * dy) / 2;
-        ctx.arc(startPos.x + dx / 2, startPos.y + dy / 2, radius, 0, 2 * Math.PI);
-        ctx.stroke();
-    } else if (mode === 'arrow') {
-        const headlen = 15;
-        const angle = Math.atan2(pos.y - startPos.y, pos.x - startPos.x);
-        ctx.moveTo(startPos.x, startPos.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-        ctx.lineTo(pos.x - headlen * Math.cos(angle - Math.PI / 6), pos.y - headlen * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(pos.x - headlen * Math.cos(angle + Math.PI / 6), pos.y - headlen * Math.sin(angle + Math.PI / 6));
-        ctx.closePath();
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.fill();
-    }
+    ctx.moveTo(pos.x, pos.y);
+    ctx.lineTo(pos.x - headlen * Math.cos(angle - Math.PI / 6), pos.y - headlen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(pos.x - headlen * Math.cos(angle + Math.PI / 6), pos.y - headlen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fill();
+  }
 }
 
-function startDraw(e){ 
-  if(erasing) {
+function startDraw(e) {
+  if (erasing) {
     drawing = true;
     last = getPos(e);
     return;
   }
-  if(mode === null) return;
-  drawing = true; 
-  
-  if(mode === 'free') {
+  if (mode === null) return;
+  drawing = true;
+  let color;
+  if (e.button === 2) {
+    color = document.getElementById("colorPicker2").value;
+  } else {
+    color = document.getElementById("colorPicker").value;
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = document.getElementById("sizePicker").value;
+  ctx.lineCap = "round";
+  if (mode === 'free') {
     last = getPos(e);
-    ctx.strokeStyle = document.getElementById("colorPicker").value;
-    ctx.lineWidth = document.getElementById("sizePicker").value;
-    ctx.lineCap = "round";
     ctx.beginPath();
     ctx.moveTo(last.x, last.y);
   } else {
-    startPos = getPos(e); 
+    startPos = getPos(e);
     last = getPos(e);
   }
 }
 
-function moveDraw(e){
-    if (!drawing) return;
-    
-    if (erasing) {
-        const pos = getPos(e);
-        ctx.lineWidth = document.getElementById("eraserSizePicker").value;
-        ctx.lineCap = "round";
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.beginPath();
-        ctx.moveTo(last.x, last.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-        last = pos;
-    } else if (mode === 'free') {
-        const pos = getPos(e);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-        last = pos;
-    } else {
-        drawShape(e);
-    }
+function moveDraw(e) {
+  if (!drawing) return;
+  // Forçar desenho sempre no canvas, ignorando overlay dos jogadores
+  draw.style.pointerEvents = "auto";
+  if (erasing) {
+    const pos = getPos(e);
+    ctx.lineWidth = document.getElementById("eraserSizePicker").value;
+    ctx.lineCap = "round";
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.beginPath();
+    ctx.moveTo(last.x, last.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    last = pos;
+  } else if (mode === 'free') {
+    const pos = getPos(e);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    last = pos;
+  } else {
+    drawShape(e);
+  }
 }
 
-function endDraw(){ 
-  if(drawing) {
+function endDraw() {
+  if (drawing) {
     if (!erasing) {
-        if (mode === 'free') {
-            // Para desenho livre, não precisa fazer nada especial
-        } else {
-            drawShape(event); // Desenha a forma final
-        }
-        saveState(); // Salva o estado
+      if (mode === 'free') {
+        // Para desenho livre, não precisa fazer nada especial
+      } else {
+        drawShape(event); // Desenha a forma final
+      }
+      saveState(); // Salva o estado
     }
-    drawing = false; 
+    drawing = false;
     last = null;
     startPos = null;
     ctx.globalCompositeOperation = "source-over";
@@ -687,14 +541,19 @@ function endDraw(){
 draw.addEventListener("mousedown", startDraw);
 draw.addEventListener("mousemove", moveDraw);
 window.addEventListener("mouseup", endDraw);
-draw.addEventListener("mouseleave", endDraw);
+draw.addEventListener("contextmenu", function(e) {
+  if (mode && mode !== null) {
+    e.preventDefault();
+    startDraw(e);
+  }
+});
 
 // Ctrl+Z para desfazer
 window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'z') {
-        e.preventDefault();
-        undo();
-    }
+  if (e.ctrlKey && e.key === 'z') {
+    e.preventDefault();
+    undo();
+  }
 });
 
 // Função para gerenciar o estado ativo dos botões
@@ -708,7 +567,7 @@ function updateActiveButtons(activeButtonId) {
 }
 
 // Event listeners dos botões
-document.getElementById("drawOnBtn").onclick=()=>{
+document.getElementById("drawOnBtn").onclick = () => {
   erasing = false;
   mode = 'line';
   draw.style.pointerEvents = "auto";
@@ -716,53 +575,53 @@ document.getElementById("drawOnBtn").onclick=()=>{
   document.getElementById('lineBtn').classList.add('active');
   statsTracker.trackDraw();
 };
-document.getElementById("drawOffBtn").onclick=()=>{
+document.getElementById("drawOffBtn").onclick = () => {
   erasing = false;
   mode = null;
   draw.style.pointerEvents = "none";
   updateActiveButtons('drawOffBtn');
 };
-document.getElementById("eraseBtn").onclick=()=>{
+document.getElementById("eraseBtn").onclick = () => {
   erasing = true;
   mode = null;
   draw.style.pointerEvents = "auto";
   updateActiveButtons('eraseBtn');
 };
-document.getElementById("clearBtn").onclick=()=>{
-  ctx.clearRect(0,0,draw.width,draw.height);
+document.getElementById("clearBtn").onclick = () => {
+  ctx.clearRect(0, 0, draw.width, draw.height);
   history = [];
 };
-document.getElementById("freeBtn").onclick=()=>{
+document.getElementById("freeBtn").onclick = () => {
   erasing = false;
   mode = 'free';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('freeBtn');
 };
-document.getElementById("lineBtn").onclick=()=>{
+document.getElementById("lineBtn").onclick = () => {
   erasing = false;
   mode = 'line';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('lineBtn');
 };
-document.getElementById("squareBtn").onclick=()=>{
+document.getElementById("squareBtn").onclick = () => {
   erasing = false;
   mode = 'square';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('squareBtn');
 };
-document.getElementById("triangleBtn").onclick=()=>{
+document.getElementById("triangleBtn").onclick = () => {
   erasing = false;
   mode = 'triangle';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('triangleBtn');
 };
-document.getElementById("circleBtn").onclick=()=>{
+document.getElementById("circleBtn").onclick = () => {
   erasing = false;
   mode = 'circle';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('circleBtn');
 };
-document.getElementById("arrowBtn").onclick=()=>{
+document.getElementById("arrowBtn").onclick = () => {
   erasing = false;
   mode = 'arrow';
   draw.style.pointerEvents = "auto";
@@ -770,77 +629,76 @@ document.getElementById("arrowBtn").onclick=()=>{
 };
 
 // Função de download PNG com tracking
-document.getElementById("downloadBtn").onclick=()=>{
-    statsTracker.trackDownload();
-    
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = board.clientWidth;
-    tempCanvas.height = board.clientHeight;
-    const tempCtx = tempCanvas.getContext('2d');
+document.getElementById("downloadBtn").onclick = () => {
+  statsTracker.trackDownload();
 
-    const bgImage = new Image();
-    bgImage.crossOrigin = 'anonymous';
-    bgImage.onload = () => {
-        tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
-        tempCtx.drawImage(draw, 0, 0);
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = board.clientWidth;
+  tempCanvas.height = board.clientHeight;
+  const tempCtx = tempCanvas.getContext('2d');
 
-        let playersDrawn = 0;
-        const totalPlayers = players.length;
+  const bgImage = new Image();
+  bgImage.crossOrigin = 'anonymous';
+  bgImage.onload = () => {
+    tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.drawImage(draw, 0, 0);
 
-        if (totalPlayers === 0) {
-            downloadFinalCanvas(tempCanvas);
-            return;
+    let playersDrawn = 0;
+    const totalPlayers = players.length;
+
+    if (totalPlayers === 0) {
+      downloadFinalCanvas(tempCanvas);
+      return;
+    }
+
+    players.forEach(p => {
+      const img = new Image();
+      img.onload = () => {
+        const playerSize = p.size || 29;
+        const playerCanvas = document.createElement('canvas');
+        playerCanvas.width = playerSize;
+        playerCanvas.height = playerSize;
+        const playerCtx = playerCanvas.getContext('2d');
+
+        playerCtx.beginPath();
+        playerCtx.arc(playerSize / 2, playerSize / 2, playerSize / 2 - 2, 0, Math.PI * 2);
+        playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
+        playerCtx.fill();
+        playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
+        playerCtx.lineWidth = 2;
+        playerCtx.stroke();
+
+        if (p.id) { // Só desenha texto se não for a bola
+          playerCtx.font = `bold ${Math.max(10, playerSize * 0.4)}px Arial, sans-serif`;
+          playerCtx.fillStyle = getComputedStyle(p.el).color;
+          playerCtx.textAlign = "center";
+          playerCtx.textBaseline = "middle";
+          playerCtx.fillText(p.el.textContent, playerSize / 2, playerSize / 2);
         }
 
-        players.forEach(p => {
-            const img = new Image();
-            img.onload = () => {
-                const playerSize = p.size || 29;
-                const playerCanvas = document.createElement('canvas');
-                playerCanvas.width = playerSize;
-                playerCanvas.height = playerSize;
-                const playerCtx = playerCanvas.getContext('2d');
+        const rect = board.getBoundingClientRect();
+        const x = p.x * rect.width - playerSize / 2;
+        const y = p.y * rect.height - playerSize / 2;
+        tempCtx.drawImage(playerCanvas, x, y);
 
-                playerCtx.beginPath();
-                playerCtx.arc(playerSize / 2, playerSize / 2, playerSize / 2 - 2, 0, Math.PI * 2);
-                playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
-                playerCtx.fill();
-                playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
-                playerCtx.lineWidth = 2;
-                playerCtx.stroke();
-
-                if (p.id) { // Só desenha texto se não for a bola
-                    playerCtx.font = `bold ${Math.max(10, playerSize * 0.4)}px Arial, sans-serif`;
-                    playerCtx.fillStyle = getComputedStyle(p.el).color;
-                    playerCtx.textAlign = "center";
-                    playerCtx.textBaseline = "middle";
-                    playerCtx.fillText(p.el.textContent, playerSize / 2, playerSize / 2);
-                }
-
-                const rect = board.getBoundingClientRect();
-                const x = p.x * rect.width - playerSize / 2;
-                const y = p.y * rect.height - playerSize / 2;
-                tempCtx.drawImage(playerCanvas, x, y);
-
-                playersDrawn++;
-                if (playersDrawn === totalPlayers) {
-                    downloadFinalCanvas(tempCanvas);
-                }
-            };
-            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-        });
-    };
-    
+        playersDrawn++;
+        if (playersDrawn === totalPlayers) {
+          downloadFinalCanvas(tempCanvas);
+        }
+      };
+      img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+    });
     const config = gameConfigs[currentTeamSize][currentMapType];
     bgImage.src = config.backgroundImage;
-};
+  }
 
-function downloadFinalCanvas(canvas) {
+  function downloadFinalCanvas(canvas) {
     const link = document.createElement('a');
     link.download = `quadro-tatico-${currentTeamSize}-${currentMapType}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-}
+  }
+};
 
 // Inicialização
 document.getElementById("drawOffBtn").click();
