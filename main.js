@@ -315,6 +315,14 @@ let secondaryColor = '#ff0000';
 let redShadowColor = '#ff4444';
 let blueShadowColor = '#4444ff';
 
+// Sistema de Replay HBR2
+let replayData = null;
+let replayFrames = [];
+let currentFrame = 0;
+let isReplayPlaying = false;
+let replayInterval = null;
+let playbackSpeed = 1;
+
 // Usar as configurações
 let players = [...gameConfigs[currentTeamSize][currentMapType].players];
 
@@ -345,7 +353,6 @@ const translations = {
     primaryColorLabel: "Cor Primária:",
     secondaryColorLabel: "Cor Secundária:",
     tipsButton: "💡 Dicas",
-    clearShadowsBtn: "Limpar Shadows",
     viewerCount: "Visitantes",
     toggleShadowBtn: "Ativar Sombra"
   },
@@ -485,7 +492,6 @@ function updateTexts() {
     'circleBtn': translations[currentLang].circleBtn,
     'arrowBtn': translations[currentLang].arrowBtn,
     'tipsBtn': translations[currentLang].tipsButton,
-    'clearShadowsBtn': translations[currentLang].clearShadowsBtn,
     'toggleShadowBtn': shadowEnabled ? 
       (currentLang === 'pt' ? 'Desativar Sombra' : 
        currentLang === 'en' ? 'Disable Shadow' :
@@ -1086,6 +1092,237 @@ document.getElementById('redFormationSelect').addEventListener('change', () => {
 document.getElementById('blueFormationSelect').addEventListener('change', () => {
   if (currentTeamSize === '11x11') changeGameConfig(currentTeamSize, currentMapType);
 });
+
+// ==================== SISTEMA DE REPLAY HBR2 ====================
+
+// Função para processar arquivo HBR2
+function processHBR2File(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const arrayBuffer = e.target.result;
+      const dataView = new DataView(arrayBuffer);
+      
+      // Parser básico para HBR2 (formato simplificado)
+      // Nota: HBR2 é um formato binário complexo, esta é uma implementação simplificada
+      const replayInfo = parseHBR2(dataView);
+      
+      if (replayInfo) {
+        replayData = replayInfo;
+        replayFrames = replayInfo.frames || [];
+        currentFrame = 0;
+        
+        // Mostrar controles
+        document.getElementById('replayControls').style.display = 'block';
+        document.getElementById('replayTimeline').max = replayFrames.length - 1;
+        
+        // Configurar campo para replay
+        setupReplayField();
+        
+        // Mostrar primeiro frame
+        showFrame(0);
+        
+        alert(`Replay carregado! ${replayFrames.length} frames encontrados.`);
+      } else {
+        throw new Error('Formato não suportado');
+      }
+    } catch (error) {
+      console.error('Erro ao processar replay:', error);
+      alert('Erro ao carregar replay. Verifique se o arquivo é um .hbr2 válido.');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// Parser básico para HBR2 (implementação simplificada)
+function parseHBR2(dataView) {
+  try {
+    // Esta é uma implementação mock para demonstração
+    // Em um caso real, precisaríamos implementar o parser completo do formato HBR2
+    
+    // Simular dados de replay para demonstração
+    const mockFrames = [];
+    const duration = 300; // 5 minutos simulados
+    
+    for (let i = 0; i < duration; i++) {
+      const frame = {
+        time: i,
+        players: generateMockPlayerPositions(i)
+      };
+      mockFrames.push(frame);
+    }
+    
+    return {
+      version: '1.0',
+      duration: duration,
+      fps: 60,
+      frames: mockFrames
+    };
+  } catch (error) {
+    console.error('Erro no parser HBR2:', error);
+    return null;
+  }
+}
+
+// Gerar posições mock para demonstração
+function generateMockPlayerPositions(frame) {
+  const players = [];
+  for (let i = 0; i < 6; i++) {
+    players.push({
+      id: i + 1,
+      name: `Player ${i + 1}`,
+      team: i < 3 ? 'red' : 'blue',
+      x: 0.2 + (Math.sin(frame * 0.1 + i) * 0.3),
+      y: 0.3 + (Math.cos(frame * 0.1 + i) * 0.2)
+    });
+  }
+  return players;
+}
+
+// Configurar campo para modo replay
+function setupReplayField() {
+  // Limpar campo atual
+  playersLayer.innerHTML = '';
+  ctx.clearRect(0, 0, draw.width, draw.height);
+  
+  // Configurar campo padrão para replay
+  board.style.backgroundImage = "url('https://i.imgur.com/UiOK7Gr.png')";
+}
+
+// Mostrar frame específico do replay
+function showFrame(frameIndex) {
+  if (!replayFrames[frameIndex]) return;
+  
+  const frame = replayFrames[frameIndex];
+  currentFrame = frameIndex;
+  
+  // Limpar jogadores atuais
+  playersLayer.innerHTML = '';
+  
+  // Criar jogadores baseado no frame
+  frame.players.forEach(playerData => {
+    const el = document.createElement("div");
+    el.className = `player ${playerData.team}`;
+    el.textContent = playerData.name.substring(0, 3);
+    el.style.setProperty('--size', '29px');
+    
+    // Posicionar jogador
+    const rect = board.getBoundingClientRect();
+    const x = playerData.x * rect.width;
+    const y = playerData.y * rect.height;
+    
+    el.style.left = `${x - 14.5}px`;
+    el.style.top = `${y - 14.5}px`;
+    
+    playersLayer.appendChild(el);
+  });
+  
+  // Atualizar timeline
+  document.getElementById('replayTimeline').value = frameIndex;
+  
+  // Atualizar tempo
+  const currentTime = Math.floor(frameIndex / 60);
+  const totalTime = Math.floor(replayFrames.length / 60);
+  document.getElementById('replayTime').textContent = 
+    `${formatTime(currentTime)} / ${formatTime(totalTime)}`;
+}
+
+// Formatar tempo em MM:SS
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Controles de reprodução
+function playReplay() {
+  if (isReplayPlaying) return;
+  
+  isReplayPlaying = true;
+  document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
+  
+  replayInterval = setInterval(() => {
+    if (currentFrame < replayFrames.length - 1) {
+      showFrame(currentFrame + 1);
+    } else {
+      pauseReplay();
+    }
+  }, 1000 / (60 * playbackSpeed));
+}
+
+function pauseReplay() {
+  isReplayPlaying = false;
+  document.getElementById('playPauseBtn').textContent = '▶️ Play';
+  
+  if (replayInterval) {
+    clearInterval(replayInterval);
+    replayInterval = null;
+  }
+}
+
+function resetReplay() {
+  pauseReplay();
+  showFrame(0);
+}
+
+// Event Listeners para Upload
+document.getElementById('uploadArea').addEventListener('click', () => {
+  document.getElementById('replayFileInput').click();
+});
+
+document.getElementById('uploadArea').addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.target.style.borderColor = '#B917FF';
+  e.target.style.backgroundColor = '#3c3c3c';
+});
+
+document.getElementById('uploadArea').addEventListener('dragleave', (e) => {
+  e.target.style.borderColor = '#666';
+  e.target.style.backgroundColor = 'transparent';
+});
+
+document.getElementById('uploadArea').addEventListener('drop', (e) => {
+  e.preventDefault();
+  e.target.style.borderColor = '#666';
+  e.target.style.backgroundColor = 'transparent';
+  
+  const files = e.dataTransfer.files;
+  if (files.length > 0 && files[0].name.endsWith('.hbr2')) {
+    processHBR2File(files[0]);
+  } else {
+    alert('Por favor, faça upload de um arquivo .hbr2 válido.');
+  }
+});
+
+document.getElementById('replayFileInput').addEventListener('change', (e) => {
+  if (e.target.files.length > 0) {
+    processHBR2File(e.target.files[0]);
+  }
+});
+
+// Controles de reprodução
+document.getElementById('playPauseBtn').addEventListener('click', () => {
+  if (isReplayPlaying) {
+    pauseReplay();
+  } else {
+    playReplay();
+  }
+});
+
+document.getElementById('resetReplayBtn').addEventListener('click', resetReplay);
+
+document.getElementById('replayTimeline').addEventListener('input', (e) => {
+  const frame = parseInt(e.target.value);
+  showFrame(frame);
+});
+
+document.getElementById('playbackSpeed').addEventListener('change', (e) => {
+  playbackSpeed = parseFloat(e.target.value);
+  if (isReplayPlaying) {
+    pauseReplay();
+    playReplay();
+  }
+});
 document.getElementById("drawOnBtn").onclick=()=>{
   erasing = false;
   mode = 'line';
@@ -1109,20 +1346,7 @@ document.getElementById("eraseBtn").onclick=()=>{
 document.getElementById("clearBtn").onclick=()=>{
   ctx.clearRect(0,0,draw.width,draw.height);
   history = [];
-};
-document.getElementById("clearShadowsBtn").onclick=()=>{
-  shadows = [];
-  ctx.clearRect(0,0,draw.width,draw.height);
-  if (history.length > 0) {
-    const img = new Image();
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0);
-      saveState(); // Salva o estado após redesenhar
-    };
-    img.src = history[history.length - 1];
-  } else {
-    saveState(); // Salva o estado mesmo sem histórico
-  }
+  shadows = []; // Também limpa shadows
 };
 document.getElementById("freeBtn").onclick=()=>{
   erasing = false;

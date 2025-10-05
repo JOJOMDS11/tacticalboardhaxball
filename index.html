@@ -239,7 +239,6 @@
   <button id="toggleShadowBtn"></button>
   <button id="eraseBtn"></button>
   <button id="clearBtn"></button>
-  <button id="clearShadowsBtn"></button>
         <label id="primaryColorLabel" for="primaryColorPicker"></label>
         <input type="color" id="primaryColorPicker" value="#B917FF">
         <label id="secondaryColorLabel" for="secondaryColorPicker"></label>
@@ -270,6 +269,39 @@
         <input type="range" id="sizePicker" min="2" max="20" value="4">
         <label id="eraserSizeLabel" for="eraserSizePicker"></label>
         <input type="range" id="eraserSizePicker" min="2" max="50" value="20">
+      </div>
+    </div>
+
+    <div class="replay-upload-section" style="margin: 20px 0; text-align: center; padding: 15px; background: #2c2c2c; border-radius: 8px; border: 1px solid #444;">
+      <h3 style="margin: 0 0 10px; color: #e5e7eb;">📺 Analisador de Replay Haxball</h3>
+      <p style="margin: 0 0 15px; color: #999; font-size: 14px;">Faça upload do seu arquivo .hbr2 para analisar jogadas frame por frame!</p>
+      
+      <div class="upload-area" style="border: 2px dashed #666; border-radius: 8px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s;" id="uploadArea">
+        <input type="file" id="replayFileInput" accept=".hbr2" style="display: none;">
+        <div id="uploadContent">
+          <span style="font-size: 24px;">📁</span><br>
+          <span style="color: #e5e7eb;">Clique aqui ou arraste seu arquivo .hbr2</span><br>
+          <small style="color: #999;">Suporte para replays do Haxball</small>
+        </div>
+      </div>
+      
+      <div id="replayControls" style="display: none; margin-top: 15px;">
+        <div style="margin-bottom: 10px;">
+          <span style="color: #e5e7eb; margin-right: 10px;">Timeline:</span>
+          <input type="range" id="replayTimeline" min="0" max="100" value="0" style="width: 60%; margin: 0 10px;">
+          <span id="replayTime" style="color: #999;">00:00 / 00:00</span>
+        </div>
+        <div>
+          <button id="playPauseBtn" style="margin: 0 5px; padding: 8px 16px; background: #B917FF; color: white; border: none; border-radius: 4px; cursor: pointer;">▶️ Play</button>
+          <button id="resetReplayBtn" style="margin: 0 5px; padding: 8px 16px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;">🔄 Reset</button>
+          <span style="color: #e5e7eb; margin-left: 15px;">Velocidade:</span>
+          <select id="playbackSpeed" style="margin-left: 5px; padding: 4px; background: #2c2c2c; color: white; border: 1px solid #444;">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="2">2x</option>
+            <option value="4">4x</option>
+          </select>
+        </div>
       </div>
     </div>
     
