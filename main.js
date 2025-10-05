@@ -1,4 +1,67 @@
 // Configurações dos jogos (movido para dentro do arquivo para evitar problemas de importação)
+const x11Formations = {
+  '442': {
+    red: [
+      { id: 'GK', x: 0.05, y: 0.5 },
+      { id: 'LE', x: 0.2, y: 0.15 }, { id: 'ZAG', x: 0.2, y: 0.35 }, { id: 'ZAG', x: 0.2, y: 0.65 }, { id: 'LD', x: 0.2, y: 0.85 },
+      { id: 'VOL', x: 0.35, y: 0.25 }, { id: 'MC', x: 0.35, y: 0.5 }, { id: 'MC', x: 0.35, y: 0.75 }, { id: 'MEI', x: 0.48, y: 0.47 },
+      { id: 'ATA', x: 0.65, y: 0.35 }, { id: 'ATA', x: 0.65, y: 0.65 }
+    ],
+    blue: [
+      { id: 'GK', x: 0.95, y: 0.5 },
+      { id: 'LE', x: 0.8, y: 0.15 }, { id: 'ZAG', x: 0.8, y: 0.35 }, { id: 'ZAG', x: 0.8, y: 0.65 }, { id: 'LD', x: 0.8, y: 0.85 },
+      { id: 'VOL', x: 0.65, y: 0.25 }, { id: 'MC', x: 0.65, y: 0.5 }, { id: 'MC', x: 0.65, y: 0.75 }, { id: 'MEI', x: 0.52, y: 0.53 },
+      { id: 'ATA', x: 0.35, y: 0.35 }, { id: 'ATA', x: 0.35, y: 0.65 }
+    ]
+  },
+  '433': {
+    red: [
+      { id: 'GK', x: 0.05, y: 0.5 },
+      { id: 'LE', x: 0.2, y: 0.15 }, { id: 'ZAG', x: 0.2, y: 0.35 }, { id: 'ZAG', x: 0.2, y: 0.65 }, { id: 'LD', x: 0.2, y: 0.85 },
+      { id: 'VOL', x: 0.32, y: 0.5 }, { id: 'MC', x: 0.42, y: 0.3 }, { id: 'MC', x: 0.42, y: 0.7 },
+      { id: 'PE', x: 0.58, y: 0.2 }, { id: 'ATA', x: 0.65, y: 0.5 }, { id: 'PD', x: 0.58, y: 0.8 }
+    ],
+    blue: [
+      { id: 'GK', x: 0.95, y: 0.5 },
+      { id: 'LE', x: 0.82, y: 0.15 }, { id: 'ZAG', x: 0.82, y: 0.35 }, { id: 'ZAG', x: 0.82, y: 0.65 }, { id: 'LD', x: 0.82, y: 0.85 },
+      { id: 'VOL', x: 0.68, y: 0.5 }, { id: 'MC', x: 0.58, y: 0.3 }, { id: 'MC', x: 0.58, y: 0.7 },
+      { id: 'PE', x: 0.42, y: 0.2 }, { id: 'ATA', x: 0.35, y: 0.5 }, { id: 'PD', x: 0.42, y: 0.8 }
+    ]
+  },
+  '352': {
+    red: [
+      { id: 'GK', x: 0.05, y: 0.5 },
+      { id: 'ZAG', x: 0.18, y: 0.25 }, { id: 'ZAG', x: 0.18, y: 0.5 }, { id: 'ZAG', x: 0.18, y: 0.75 },
+      { id: 'LE', x: 0.32, y: 0.15 }, { id: 'LD', x: 0.32, y: 0.85 },
+      { id: 'VOL', x: 0.38, y: 0.5 }, { id: 'MC', x: 0.45, y: 0.3 }, { id: 'MC', x: 0.45, y: 0.7 },
+      { id: 'ATA', x: 0.65, y: 0.35 }, { id: 'ATA', x: 0.65, y: 0.65 }
+    ],
+    blue: [
+      { id: 'GK', x: 0.95, y: 0.5 },
+      { id: 'ZAG', x: 0.82, y: 0.25 }, { id: 'ZAG', x: 0.82, y: 0.5 }, { id: 'ZAG', x: 0.82, y: 0.75 },
+      { id: 'LE', x: 0.68, y: 0.15 }, { id: 'LD', x: 0.68, y: 0.85 },
+      { id: 'VOL', x: 0.62, y: 0.5 }, { id: 'MC', x: 0.55, y: 0.3 }, { id: 'MC', x: 0.55, y: 0.7 },
+      { id: 'ATA', x: 0.35, y: 0.35 }, { id: 'ATA', x: 0.35, y: 0.65 }
+    ]
+  },
+  '343': {
+    red: [
+      { id: 'GK', x: 0.05, y: 0.5 },
+      { id: 'ZAG', x: 0.18, y: 0.25 }, { id: 'ZAG', x: 0.18, y: 0.5 }, { id: 'ZAG', x: 0.18, y: 0.75 },
+      { id: 'LE', x: 0.32, y: 0.15 }, { id: 'LD', x: 0.32, y: 0.85 },
+      { id: 'MC', x: 0.45, y: 0.3 }, { id: 'MC', x: 0.45, y: 0.7 }, { id: 'MEI', x: 0.48, y: 0.5 },
+      { id: 'ATA', x: 0.65, y: 0.35 }, { id: 'ATA', x: 0.65, y: 0.65 }
+    ],
+    blue: [
+      { id: 'GK', x: 0.95, y: 0.5 },
+      { id: 'ZAG', x: 0.82, y: 0.25 }, { id: 'ZAG', x: 0.82, y: 0.5 }, { id: 'ZAG', x: 0.82, y: 0.75 },
+      { id: 'LE', x: 0.68, y: 0.15 }, { id: 'LD', x: 0.68, y: 0.85 },
+      { id: 'MC', x: 0.55, y: 0.3 }, { id: 'MC', x: 0.55, y: 0.7 }, { id: 'MEI', x: 0.52, y: 0.5 },
+      { id: 'ATA', x: 0.35, y: 0.35 }, { id: 'ATA', x: 0.35, y: 0.65 }
+    ]
+  }
+};
+
 const gameConfigs = {
   '3x3': {
     futsal: {
@@ -979,6 +1042,13 @@ function updateActiveButtons(activeButtonId) {
 }
 
 // Event listeners dos botões
+// Event listeners para seletores de formação x11
+document.getElementById('redFormationSelect').addEventListener('change', () => {
+  if (currentTeamSize === '11x11') changeGameConfig(currentTeamSize, currentMapType);
+});
+document.getElementById('blueFormationSelect').addEventListener('change', () => {
+  if (currentTeamSize === '11x11') changeGameConfig(currentTeamSize, currentMapType);
+});
 document.getElementById("drawOnBtn").onclick=()=>{
   erasing = false;
   mode = 'line';
