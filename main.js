@@ -152,6 +152,7 @@ let currentMapType = 'futsal';
 let shadows = [];
 let dragginWithShadow = false;
 let shadowOriginalPos = null;
+let shadowEnabled = true;
 
 // Sistema de duas cores para desenho
 let primaryColor = '#B917FF';
@@ -188,7 +189,8 @@ const translations = {
     secondaryColorLabel: "Cor Secundária:",
     tipsButton: "💡 Dicas",
     clearShadowsBtn: "Limpar Shadows",
-    viewerCount: "Visitantes"
+    viewerCount: "Visitantes",
+    toggleShadowBtn: "Ativar Sombra"
   },
   en: {
     drawOnBtn: "Activate Draw",
@@ -216,7 +218,8 @@ const translations = {
     secondaryColorLabel: "Secondary Color:",
     tipsButton: "💡 Tips",
     clearShadowsBtn: "Clear Shadows",
-    viewerCount: "Visitors"
+    viewerCount: "Visitors",
+    toggleShadowBtn: "Toggle Shadow"
   },
   tr: {
     drawOnBtn: "Çizimi Etkinleştir",
@@ -244,7 +247,8 @@ const translations = {
     secondaryColorLabel: "İkincil Renk:",
     tipsButton: "💡 İpuçları",
     clearShadowsBtn: "Gölgeleri Temizle",
-    viewerCount: "Ziyaretçiler"
+    viewerCount: "Ziyaretçiler",
+    toggleShadowBtn: "Gölge Aç/Kapat"
   },
   es: {
     drawOnBtn: "Activar Dibujo",
@@ -272,7 +276,8 @@ const translations = {
     secondaryColorLabel: "Color Secundario:",
     tipsButton: "💡 Consejos",
     clearShadowsBtn: "Limpiar Sombras",
-    viewerCount: "Visitantes"
+    viewerCount: "Visitantes",
+    toggleShadowBtn: "Activar Sombra"
   }
 };
 
@@ -309,38 +314,61 @@ function populateSelects() {
 }
 
 function updateTexts() {
-  document.getElementById('drawOnBtn').textContent = translations[currentLang].drawOnBtn;
-  document.getElementById('drawOffBtn').textContent = translations[currentLang].drawOffBtn;
-  document.getElementById('eraseBtn').textContent = translations[currentLang].eraseBtn;
-  document.getElementById('clearBtn').textContent = translations[currentLang].clearBtn;
-  document.getElementById('colorLabel').textContent = translations[currentLang].colorLabel;
-  document.getElementById('downloadBtn').textContent = translations[currentLang].downloadBtn;
-  document.getElementById('freeBtn').textContent = translations[currentLang].freeBtn;
-  document.getElementById('lineBtn').textContent = translations[currentLang].lineBtn;
-  document.getElementById('squareBtn').textContent = translations[currentLang].squareBtn;
-  document.getElementById('triangleBtn').textContent = translations[currentLang].triangleBtn;
-  document.getElementById('circleBtn').textContent = translations[currentLang].circleBtn;
-  document.getElementById('arrowBtn').textContent = translations[currentLang].arrowBtn;
-  document.getElementById('strokeSizeLabel').textContent = translations[currentLang].strokeSizeLabel;
-  document.getElementById('eraserSizeLabel').textContent = translations[currentLang].eraserSizeLabel;
-  document.querySelector('.discord-message a').textContent = translations[currentLang].discordMessage;
-  document.getElementById('creditsLabel').textContent = translations[currentLang].creditsLabel;
-  document.getElementById('helpProjectLabel').textContent = translations[currentLang].helpProject;
-  document.getElementById('teamSizeLabel').textContent = translations[currentLang].teamSizeLabel;
-  document.getElementById('mapTypeLabel').textContent = translations[currentLang].mapTypeLabel;
-  
-  // Novos elementos
-  if (document.getElementById('primaryColorLabel')) {
-    document.getElementById('primaryColorLabel').textContent = translations[currentLang].primaryColorLabel;
-  }
-  if (document.getElementById('secondaryColorLabel')) {
-    document.getElementById('secondaryColorLabel').textContent = translations[currentLang].secondaryColorLabel;
-  }
-  if (document.getElementById('tipsBtn')) {
-    document.getElementById('tipsBtn').textContent = translations[currentLang].tipsButton;
-  }
-  if (document.getElementById('clearShadowsBtn')) {
-    document.getElementById('clearShadowsBtn').textContent = translations[currentLang].clearShadowsBtn;
+  // Verificar se os elementos existem antes de aplicar textos
+  const elements = {
+    'drawOnBtn': translations[currentLang].drawOnBtn,
+    'drawOffBtn': translations[currentLang].drawOffBtn,
+    'eraseBtn': translations[currentLang].eraseBtn,
+    'clearBtn': translations[currentLang].clearBtn,
+    'downloadBtn': translations[currentLang].downloadBtn,
+    'freeBtn': translations[currentLang].freeBtn,
+    'lineBtn': translations[currentLang].lineBtn,
+    'squareBtn': translations[currentLang].squareBtn,
+    'triangleBtn': translations[currentLang].triangleBtn,
+    'circleBtn': translations[currentLang].circleBtn,
+    'arrowBtn': translations[currentLang].arrowBtn,
+    'tipsBtn': translations[currentLang].tipsButton,
+    'clearShadowsBtn': translations[currentLang].clearShadowsBtn,
+    'toggleShadowBtn': shadowEnabled ? 
+      (currentLang === 'pt' ? 'Desativar Sombra' : 
+       currentLang === 'en' ? 'Disable Shadow' :
+       currentLang === 'tr' ? 'Gölgeyi Kapat' : 'Desactivar Sombra') :
+      translations[currentLang].toggleShadowBtn
+  };
+
+  // Aplicar textos aos elementos
+  Object.keys(elements).forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = elements[id];
+    } else {
+      console.warn(`Elemento não encontrado: ${id}`);
+    }
+  });
+
+  // Labels
+  const labels = {
+    'strokeSizeLabel': translations[currentLang].strokeSizeLabel,
+    'eraserSizeLabel': translations[currentLang].eraserSizeLabel,
+    'primaryColorLabel': translations[currentLang].primaryColorLabel,
+    'secondaryColorLabel': translations[currentLang].secondaryColorLabel,
+    'creditsLabel': translations[currentLang].creditsLabel,
+    'helpProjectLabel': translations[currentLang].helpProject,
+    'teamSizeLabel': translations[currentLang].teamSizeLabel,
+    'mapTypeLabel': translations[currentLang].mapTypeLabel
+  };
+
+  Object.keys(labels).forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = labels[id];
+    }
+  });
+
+  // Discord message
+  const discordLink = document.querySelector('.discord-message a');
+  if (discordLink) {
+    discordLink.textContent = translations[currentLang].discordMessage;
   }
 
   document.querySelectorAll('.language-selector img').forEach(img => {
@@ -524,11 +552,13 @@ board.addEventListener("pointerdown",e=>{
 
   const size = p.size || 29;
   
-  // Se for botão direito, criar shadow E mover o jogador
+  // Se for botão direito, criar shadow E mover o jogador (se shadow estiver ativado)
   if (e.button === 2) {
     e.preventDefault();
-    dragginWithShadow = true;
-    shadowOriginalPos = { x: p.x, y: p.y, player: p };
+    if (shadowEnabled) {
+      dragginWithShadow = true;
+      shadowOriginalPos = { x: p.x, y: p.y, player: p };
+    }
     drag={p,offsetX:e.clientX-rect.left-(p.x*rect.width),offsetY:e.clientY-rect.top-(p.y*rect.height)};
     t.setPointerCapture(e.pointerId);
     return;
@@ -947,6 +977,12 @@ document.getElementById("tipsBtn").onclick=()=>{
     es: "💡 CONSEJOS:\n\n• Ctrl+Z: Deshacer última acción\n• Clic Izquierdo: Dibujar con color primario\n• Clic Derecho: Dibujar con color secundario\n• Clic Derecho en Jugador + Arrastrar: Crear sombra de movimiento\n• Usa 'Limpiar Sombras' para eliminar todas las flechas de movimiento"
   };
   alert(tips[currentLang]);
+};
+
+// Event listener para botão de toggle shadow
+document.getElementById("toggleShadowBtn").onclick=()=>{
+  shadowEnabled = !shadowEnabled;
+  updateTexts(); // Atualizar texto do botão
 };
 
 // Função de download PNG com tracking
