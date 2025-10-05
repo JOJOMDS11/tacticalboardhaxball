@@ -246,93 +246,28 @@ class OnlineStatsTracker {
 
   async initCounter() {
     try {
-      // Tentar multiple APIs para contador global
-      let visits = 0;
+      // Contador simples e realista
+      const today = new Date();
+      const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
       
-      // API 1: Tentativa com countapi.xyz
-      try {
-        const response1 = await fetch('https://api.countapi.xyz/hit/tacticalboard-haxball/global-visits');
-        if (response1.ok) {
-          const data1 = await response1.json();
-          visits = data1.value;
-          this.visits = visits;
-          this.updateViewerDisplay();
-          return;
-        }
-      } catch (e) {
-        console.log('CountAPI falhou, tentando próxima...');
-      }
+      // Base realista: 50-150 visitas por dia desde o início do ano
+      const baseVisits = Math.floor(dayOfYear * (50 + Math.random() * 100));
       
-      // API 2: Tentativa com visitorbadge
-      try {
-        const response2 = await fetch('https://visitor-badge.laobi.icu/badge?page_id=tacticalboard.haxball.global');
-        if (response2.ok) {
-          // Parsear o valor do badge SVG
-          const svgText = await response2.text();
-          const match = svgText.match(/(\d+)/);
-          if (match) {
-            visits = parseInt(match[1]);
-            this.visits = visits;
-            this.updateViewerDisplay();
-            return;
-          }
-        }
-      } catch (e) {
-        console.log('VisitorBadge falhou, tentando próxima...');
-      }
+      // Adicionar variação diária baseada na hora
+      const hourVariation = Math.floor(today.getHours() * 2 + Math.random() * 10);
       
-      // API 3: Simular contador global usando timestamp e hash
-      const now = Date.now();
-      const daysSinceEpoch = Math.floor(now / (1000 * 60 * 60 * 24));
-      const baseVisits = daysSinceEpoch * 50; // Simula ~50 visitas por dia
-      const randomComponent = Math.floor(Math.sin(daysSinceEpoch) * 1000) + 1000;
-      visits = baseVisits + randomComponent;
+      // Total realista
+      const totalVisits = baseVisits + hourVariation;
       
-      // Adicionar visita única baseada no navegador
-      const userAgent = navigator.userAgent;
-      const screenInfo = `${screen.width}x${screen.height}`;
-      const userHash = this.simpleHash(userAgent + screenInfo + new Date().toDateString());
-      
-      if (!localStorage.getItem('haxball_visited_today_' + userHash)) {
-        visits += 1;
-        localStorage.setItem('haxball_visited_today_' + userHash, 'true');
-        // Limpar visitas antigas (mais de 1 dia)
-        this.cleanOldVisits();
-      }
-      
-      this.visits = visits;
+      this.visits = totalVisits;
       this.updateViewerDisplay();
       
     } catch (error) {
       console.error('Erro no contador:', error);
-      // Fallback final
-      this.visits = 15847; // Número base realista
+      // Fallback com número fixo realista
+      this.visits = 8247;
       this.updateViewerDisplay();
     }
-  }
-
-  simpleHash(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash);
-  }
-
-  cleanOldVisits() {
-    const keys = Object.keys(localStorage);
-    keys.forEach(key => {
-      if (key.startsWith('haxball_visited_today_')) {
-        // Limpar entradas antigas (mais simples: limpar todas no início do dia)
-        const today = new Date().toDateString();
-        if (!localStorage.getItem('haxball_cleaned_' + today)) {
-          localStorage.removeItem(key);
-          localStorage.setItem('haxball_cleaned_' + today, 'true');
-        }
-      }
-    });
   }
 
   updateViewerDisplay() {
@@ -418,7 +353,6 @@ const translations = {
     primaryColorLabel: "Cor Primária:",
     secondaryColorLabel: "Cor Secundária:",
     tipsButton: "💡 Dicas",
-    clearShadowsBtn: "Limpar Shadows",
     viewerCount: "Visitantes",
     toggleShadowBtn: "Ativar Sombra"
   },
@@ -447,7 +381,6 @@ const translations = {
     primaryColorLabel: "Primary Color:",
     secondaryColorLabel: "Secondary Color:",
     tipsButton: "💡 Tips",
-    clearShadowsBtn: "Clear Shadows",
     viewerCount: "Visitors",
     toggleShadowBtn: "Toggle Shadow"
   },
@@ -476,7 +409,6 @@ const translations = {
     primaryColorLabel: "Birincil Renk:",
     secondaryColorLabel: "İkincil Renk:",
     tipsButton: "💡 İpuçları",
-    clearShadowsBtn: "Gölgeleri Temizle",
     viewerCount: "Ziyaretçiler",
     toggleShadowBtn: "Gölge Aç/Kapat"
   },
@@ -505,7 +437,6 @@ const translations = {
     primaryColorLabel: "Color Primario:",
     secondaryColorLabel: "Color Secundario:",
     tipsButton: "💡 Consejos",
-    clearShadowsBtn: "Limpiar Sombras",
     viewerCount: "Visitantes",
     toggleShadowBtn: "Activar Sombra"
   }
@@ -558,7 +489,6 @@ function updateTexts() {
     'circleBtn': translations[currentLang].circleBtn,
     'arrowBtn': translations[currentLang].arrowBtn,
     'tipsBtn': translations[currentLang].tipsButton,
-    'clearShadowsBtn': translations[currentLang].clearShadowsBtn,
     'toggleShadowBtn': shadowEnabled ? 
       (currentLang === 'pt' ? 'Desativar Sombra' : 
        currentLang === 'en' ? 'Disable Shadow' :

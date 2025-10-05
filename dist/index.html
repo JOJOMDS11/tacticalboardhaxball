@@ -366,6 +366,27 @@
       background: #B917FF;
     }
     
+    /* Créditos do Replay Player */
+    .replay-credits {
+      margin-top: 15px;
+      padding: 15px;
+      background: #1b1b1b;
+      border-radius: 8px;
+      border: 1px solid #444;
+      text-align: center;
+    }
+    .replay-credits p {
+      margin: 5px 0;
+      color: #e5e7eb;
+    }
+    .replay-credits a {
+      color: #B917FF;
+      text-decoration: none;
+    }
+    .replay-credits a:hover {
+      text-decoration: underline;
+    }
+    
     /* Timeline com eventos */
     .timeline-container {
       position: relative;
@@ -419,7 +440,7 @@
       cursor: pointer;
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-CVdZQu92.js"></script>
+  <script type="module" crossorigin src="/assets/main-DNUzAsVC.js"></script>
 </head>
 <body>
   <div class="app">
@@ -582,6 +603,14 @@
             <button id="replayEraseBtn">🧽 Borracha</button>
             <button id="replayClearBtn">🗑️ Limpar</button>
             <input type="color" id="replayColorPicker" value="#ff0000">
+        </div>
+        
+        <!-- Créditos e informações do Replay Player -->
+        <div class="replay-credits">
+          <p><strong>Reprodutor de Replay HBR2</strong></p>
+          <p>📁 Carregue arquivos .hbr2 • ⏸️ Pause para desenhar • 🎨 Ferramentas de análise</p>
+          <p>Baseado no <a href="https://haxball-replay-analyzer.github.io" target="_blank">Haxball Replay Analyzer</a></p>
+          <p style="font-size: 12px; color: #999;">Créditos: haxball-replay-analyzer.github.io</p>
         </div>
       </div>
     </div>
