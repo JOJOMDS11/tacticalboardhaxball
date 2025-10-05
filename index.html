@@ -356,8 +356,8 @@
         <h3 style="margin: 0 0 10px; color: #e5e7eb;">� Upload do Replay</h3>
         <p style="margin: 0 0 15px; color: #999; font-size: 14px;">Faça upload do seu arquivo .hbr2 para reproduzir o jogo completo!</p>
         
-        <div class="upload-area" style="border: 2px dashed #666; border-radius: 8px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s;" id="replayUploadArea">
-          <input type="file" id="replayFileInput" accept=".hbr2" style="display: none;">
+        <div class="upload-area" style="border: 2px dashed #666; border-radius: 8px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s;" id="replayUploadArea" onclick="console.log('Upload area clicked directly');">
+          <input type="file" id="replayFileInput" accept=".hbr2" style="display: none;" onchange="console.log('File input changed');">
           <div id="replayUploadContent">
             <span style="font-size: 24px;">📁</span><br>
             <span style="color: #e5e7eb;">Clique aqui ou arraste seu arquivo .hbr2</span><br>

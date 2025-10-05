@@ -1136,36 +1136,50 @@ function switchTab(tabName) {
 // ==================== SISTEMA DE REPLAY HBR2 COMPLETO ====================
 
 function initializeReplaySystem() {
+  console.log('Inicializando sistema de replay...');
+  
+  // Sempre tentar configurar os event listeners
+  setupReplayEventListeners();
+  
+  // Inicializar canvas se necessário
   if (!replayCanvas) {
     replayCanvas = document.getElementById('replayDrawLayer');
     replayCtx = replayCanvas?.getContext('2d');
     replayPlayersLayer = document.getElementById('replayPlayersLayer');
-    
-    if (replayCanvas && replayPlayersLayer) {
-      setupReplayEventListeners();
-    }
   }
 }
 
 function setupReplayEventListeners() {
+  console.log('Configurando event listeners do upload...');
+  
   // Upload de arquivo
   const uploadArea = document.getElementById('replayUploadArea');
   const fileInput = document.getElementById('replayFileInput');
   
   if (!uploadArea || !fileInput) {
-    console.error('Elementos de upload não encontrados');
-    setTimeout(() => setupReplayEventListeners(), 1000); // Tentar novamente em 1s
+    console.warn('Elementos de upload não encontrados, tentando novamente...');
+    setTimeout(() => setupReplayEventListeners(), 500);
     return;
   }
   
+  // Remover listeners existentes para evitar duplicação
+  uploadArea.onclick = null;
+  fileInput.onchange = null;
+  
   // Clique na área de upload
-  uploadArea.addEventListener('click', () => fileInput.click());
+  uploadArea.addEventListener('click', (e) => {
+    console.log('Clique na área de upload');
+    e.preventDefault();
+    fileInput.click();
+  });
   
   // Mudança no input de arquivo
   fileInput.addEventListener('change', (e) => {
+    console.log('Input change event');
     const files = e.target.files;
     if (files.length > 0) {
       console.log('Arquivo selecionado:', files[0].name);
+      updateUploadContent('Processando arquivo...', '⏳');
       processReplayFile(files[0]);
     }
   });
@@ -2280,4 +2294,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     statsTracker.trackVisit();
   }, 100);
+  
+  // Inicializar sistema de upload de replay
+  setTimeout(() => {
+    console.log('Inicializando sistema de upload...');
+    setupReplayEventListeners();
+  }, 200);
 });
