@@ -621,11 +621,11 @@
     <div class="tabs-container">
       <div class="tabs">
         <button class="tab active" data-tab="tactical">Quadro Tático</button>
-        <button class="tab" data-tab="replay">Reprodutor de Replay</button>
         <button class="tab" data-tab="stream">Stream</button>
+        <button class="tab" data-tab="replay">Reprodutor de Replay</button>
         <button class="tab" data-tab="tutorials">Tutoriais/Dicas</button>
-        <button class="tab" data-tab="shop">Loja</button>
         <button class="tab" data-tab="videos">Vídeos</button>
+        <button class="tab" data-tab="loja">Loja</button>
       </div>
     </div>
     
@@ -789,7 +789,7 @@
           <form onsubmit="event.preventDefault(); authenticateVideos();">
             <h3>🔐 Acesso Admin</h3>
             <p>Gerenciar vídeos:</p>
-            <input type="password" id="videosPassword" placeholder="Senha">
+            <input type="password" id="videosPassword" placeholder="Senha" autocomplete="new-password">
             <button type="submit">Entrar</button>
           </form>
         </div>
@@ -824,7 +824,7 @@
           <form onsubmit="event.preventDefault(); authenticateTutorials();">
             <h3>🔐 Acesso Admin</h3>
             <p>Gerenciar tutoriais:</p>
-            <input type="password" id="tutorialsPassword" placeholder="Senha">
+            <input type="password" id="tutorialsPassword" placeholder="Senha" autocomplete="new-password">
             <button type="submit">Entrar</button>
           </form>
         </div>
@@ -845,7 +845,7 @@
     </div>
     
     <!-- Aba Shop -->
-    <div id="shop-tab" class="tab-content">
+    <div id="loja-tab" class="tab-content">
       <div class="shop-container">
         <h2>🛒 Loja JOJO Haxball</h2>
         <p style="margin: 20px 0; color: #aaa;">

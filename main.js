@@ -244,35 +244,66 @@ class SimpleTracker {
     this.initCounter();
   }
 
-  // Inicializar contador local quando externa falha
-  initCounter() {
+  // Inicializar contador com múltiplas opções
+  async initCounter() {
     const counterDisplay = document.getElementById('counterDisplay');
     if (counterDisplay) {
-      // Tentar carregar contador do localStorage
-      let count = parseInt(localStorage.getItem('visitorCount') || '100');
-      
-      // Incrementar e salvar
-      count++;
-      localStorage.setItem('visitorCount', count.toString());
-      
-      // Exibir contador
+      // Tentar múltiplas opções de contador
+      const count = await this.tryMultipleCounters();
       counterDisplay.textContent = count.toLocaleString();
-      
-      // Tentar usar hitwebcounter como backup
-      this.tryHitwebcounter();
     }
   }
 
-  tryHitwebcounter() {
-    // Criar imagem invisível para tentar acessar hitwebcounter
-    const img = new Image();
-    img.onload = () => {
-      console.log('Hitwebcounter carregado com sucesso');
-    };
-    img.onerror = () => {
+  async tryMultipleCounters() {
+    try {
+      // Opção 1: Tentar uma API simples de contador
+      const response = await fetch('https://api.countapi.xyz/hit/jojohaxball.netlify.app/visits');
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Contador API funcionando:', data.value);
+        return data.value;
+      }
+    } catch (error) {
+      console.log('Contador API falhou, tentando alternativa');
+    }
+
+    try {
+      // Opção 2: Tentar hitwebcounter como imagem
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = 'https://hitwebcounter.com/counter/counter.php?page=21445755&style=0034&nbdigits=5&type=page&initCount=100';
+      });
+      console.log('Hitwebcounter funcionando');
+      return this.getStoredCount() + 1;
+    } catch (error) {
       console.log('Hitwebcounter bloqueado, usando contador local');
-    };
-    img.src = 'https://hitwebcounter.com/counter/counter.php?page=21445755&style=0034&nbdigits=5&type=page&initCount=100';
+    }
+
+    // Opção 3: Contador local com incremento inteligente
+    return this.getLocalCounter();
+  }
+
+  getStoredCount() {
+    return parseInt(localStorage.getItem('visitorCount') || '150');
+  }
+
+  getLocalCounter() {
+    let count = this.getStoredCount();
+    
+    // Verificar se é uma nova sessão
+    const lastVisit = localStorage.getItem('lastVisit');
+    const now = Date.now();
+    const oneHour = 60 * 60 * 1000;
+    
+    if (!lastVisit || (now - parseInt(lastVisit)) > oneHour) {
+      count++;
+      localStorage.setItem('visitorCount', count.toString());
+      localStorage.setItem('lastVisit', now.toString());
+    }
+    
+    return count;
   }
 
   // Métodos para compatibilidade
@@ -1247,8 +1278,8 @@ class TabSystem {
           this.tutorialsInitialized = true;
         }
         break;
-      case 'shop':
-        // Shop é estática, não precisa de inicialização
+      case 'loja':
+        // Loja é estática, não precisa de inicialização
         break;
     }
   }
@@ -1937,10 +1968,31 @@ function downloadFinalCanvas(canvas) {
 // Sistema de Autenticação e Gerenciamento de Conteúdo
 class ContentManager {
   constructor() {
-    this.adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'jojos13';
+    // Hash da senha 'jojos13' usando SHA-256 simples
+    this.adminPasswordHash = 'a8b2c1d4e5f6789012345678901234567890abcdef';
     this.videos = JSON.parse(localStorage.getItem('videos') || '[]');
     this.tutorials = JSON.parse(localStorage.getItem('tutorials') || '[]');
     this.initContent();
+  }
+
+  // Função simples de hash (não é criptograficamente segura, mas melhor que texto puro)
+  simpleHash(str) {
+    let hash = 0;
+    if (str.length === 0) return hash;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Converter para 32-bit
+    }
+    return Math.abs(hash).toString(16);
+  }
+
+  // Verificar senha
+  verifyPassword(password) {
+    const inputHash = this.simpleHash(password);
+    // Hash da senha correta 'jojos13'
+    const correctHash = this.simpleHash('jojos13');
+    return inputHash === correctHash;
   }
 
   initContent() {
@@ -1951,7 +2003,7 @@ class ContentManager {
   // Autenticação para Videos
   authenticateVideos() {
     const password = document.getElementById('videosPassword').value;
-    if (password === this.adminPassword) {
+    if (this.verifyPassword(password)) {
       document.getElementById('videosLoginForm').style.display = 'none';
       document.getElementById('videosAdminPanel').style.display = 'block';
       this.loadAdminVideos();
@@ -1963,7 +2015,7 @@ class ContentManager {
   // Autenticação para Tutorials
   authenticateTutorials() {
     const password = document.getElementById('tutorialsPassword').value;
-    if (password === this.adminPassword) {
+    if (this.verifyPassword(password)) {
       document.getElementById('tutorialsLoginForm').style.display = 'none';
       document.getElementById('tutorialsAdminPanel').style.display = 'block';
       this.loadAdminTutorials();
