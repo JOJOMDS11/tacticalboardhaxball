@@ -130,7 +130,7 @@ const gameConfigs = {
         { uid: 5, id: 'LE', team: 'red', x: 0.2, y: 0.8, size: 25 },
         { uid: 6, id: 'PV', team: 'red', x: 0.35, y: 0.5, size: 25 },
         { uid: 7, id: 'PE', team: 'red', x: 0.35, y: 0.8, size: 25 },
-        
+
         { uid: 8, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 25 },
         { uid: 9, id: 'LD', team: 'blue', x: 0.8, y: 0.2, size: 25 },
         { uid: 10, id: 'PD', team: 'blue', x: 0.65, y: 0.2, size: 25 },
@@ -138,7 +138,7 @@ const gameConfigs = {
         { uid: 12, id: 'LE', team: 'blue', x: 0.8, y: 0.8, size: 25 },
         { uid: 13, id: 'PV', team: 'blue', x: 0.65, y: 0.5, size: 25 },
         { uid: 14, id: 'PE', team: 'blue', x: 0.65, y: 0.8, size: 25 },
-        
+
         { uid: 15, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
       ]
     }
@@ -149,44 +149,44 @@ const gameConfigs = {
       players: [
         // Time Vermelho (Formação 4-4-2)
         { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5, size: 22 },
-        
+
         // Defesa
         { uid: 2, id: 'LE', team: 'red', x: 0.2, y: 0.15, size: 22 },
         { uid: 3, id: 'ZAG', team: 'red', x: 0.2, y: 0.35, size: 22 },
         { uid: 4, id: 'ZAG', team: 'red', x: 0.2, y: 0.65, size: 22 },
         { uid: 5, id: 'LD', team: 'red', x: 0.2, y: 0.85, size: 22 },
-        
-  // Meio-campo
-  { uid: 6, id: 'VOL', team: 'red', x: 0.35, y: 0.25, size: 22 },
-  { uid: 7, id: 'MC', team: 'red', x: 0.35, y: 0.5, size: 22 },
-  { uid: 8, id: 'MC', team: 'red', x: 0.35, y: 0.75, size: 22 },
-  { uid: 9, id: 'MEI', team: 'red', x: 0.48, y: 0.47, size: 22 },
-        
+
+        // Meio-campo
+        { uid: 6, id: 'VOL', team: 'red', x: 0.35, y: 0.25, size: 22 },
+        { uid: 7, id: 'MC', team: 'red', x: 0.35, y: 0.5, size: 22 },
+        { uid: 8, id: 'MC', team: 'red', x: 0.35, y: 0.75, size: 22 },
+        { uid: 9, id: 'MEI', team: 'red', x: 0.48, y: 0.47, size: 22 },
+
         // Ataque
         { uid: 10, id: 'ATA', team: 'red', x: 0.65, y: 0.35, size: 22 },
         { uid: 11, id: 'ATA', team: 'red', x: 0.65, y: 0.65, size: 22 },
-        
+
         // Time Azul (Formação 4-4-2)
         { uid: 12, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 22 },
-        
+
         // Defesa
         { uid: 13, id: 'LE', team: 'blue', x: 0.8, y: 0.15, size: 22 },
         { uid: 14, id: 'ZAG', team: 'blue', x: 0.8, y: 0.35, size: 22 },
         { uid: 15, id: 'ZAG', team: 'blue', x: 0.8, y: 0.65, size: 22 },
         { uid: 16, id: 'LD', team: 'blue', x: 0.8, y: 0.85, size: 22 },
-        
-  // Meio-campo
-  { uid: 17, id: 'VOL', team: 'blue', x: 0.65, y: 0.25, size: 22 },
-  { uid: 18, id: 'MC', team: 'blue', x: 0.65, y: 0.5, size: 22 },
-  { uid: 19, id: 'MC', team: 'blue', x: 0.65, y: 0.75, size: 22 },
-  { uid: 20, id: 'MEI', team: 'blue', x: 0.52, y: 0.53, size: 22 },
-        
+
+        // Meio-campo
+        { uid: 17, id: 'VOL', team: 'blue', x: 0.65, y: 0.25, size: 22 },
+        { uid: 18, id: 'MC', team: 'blue', x: 0.65, y: 0.5, size: 22 },
+        { uid: 19, id: 'MC', team: 'blue', x: 0.65, y: 0.75, size: 22 },
+        { uid: 20, id: 'MEI', team: 'blue', x: 0.52, y: 0.53, size: 22 },
+
         // Ataque
         { uid: 21, id: 'ATA', team: 'blue', x: 0.35, y: 0.35, size: 22 },
         { uid: 22, id: 'ATA', team: 'blue', x: 0.35, y: 0.65, size: 22 },
-        
-  // Bola
-  { uid: 23, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
+
+        // Bola
+        { uid: 23, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
       ]
     },
     realsoccer: {
@@ -194,42 +194,42 @@ const gameConfigs = {
       players: [
         // Time Vermelho (Formação 4-3-3)
         { uid: 1, id: 'GK', team: 'red', x: 0.05, y: 0.5, size: 22 },
-        
+
         // Defesa
         { uid: 2, id: 'LE', team: 'red', x: 0.18, y: 0.15, size: 22 },
         { uid: 3, id: 'ZAG', team: 'red', x: 0.18, y: 0.35, size: 22 },
         { uid: 4, id: 'ZAG', team: 'red', x: 0.18, y: 0.65, size: 22 },
         { uid: 5, id: 'LD', team: 'red', x: 0.18, y: 0.85, size: 22 },
-        
+
         // Meio-campo
         { uid: 6, id: 'VOL', team: 'red', x: 0.32, y: 0.5, size: 22 },
         { uid: 7, id: 'MC', team: 'red', x: 0.42, y: 0.3, size: 22 },
         { uid: 8, id: 'MC', team: 'red', x: 0.42, y: 0.7, size: 22 },
-        
+
         // Ataque
         { uid: 9, id: 'PE', team: 'red', x: 0.58, y: 0.2, size: 22 },
         { uid: 10, id: 'ATA', team: 'red', x: 0.65, y: 0.5, size: 22 },
         { uid: 11, id: 'PD', team: 'red', x: 0.58, y: 0.8, size: 22 },
-        
+
         // Time Azul (Formação 4-3-3)
         { uid: 12, id: 'GK', team: 'blue', x: 0.95, y: 0.5, size: 22 },
-        
+
         // Defesa
         { uid: 13, id: 'LE', team: 'blue', x: 0.82, y: 0.15, size: 22 },
         { uid: 14, id: 'ZAG', team: 'blue', x: 0.82, y: 0.35, size: 22 },
         { uid: 15, id: 'ZAG', team: 'blue', x: 0.82, y: 0.65, size: 22 },
         { uid: 16, id: 'LD', team: 'blue', x: 0.82, y: 0.85, size: 22 },
-        
+
         // Meio-campo
         { uid: 17, id: 'VOL', team: 'blue', x: 0.68, y: 0.5, size: 22 },
         { uid: 18, id: 'MC', team: 'blue', x: 0.58, y: 0.3, size: 22 },
         { uid: 19, id: 'MC', team: 'blue', x: 0.58, y: 0.7, size: 22 },
-        
+
         // Ataque
         { uid: 20, id: 'PE', team: 'blue', x: 0.42, y: 0.2, size: 22 },
         { uid: 21, id: 'ATA', team: 'blue', x: 0.35, y: 0.5, size: 22 },
         { uid: 22, id: 'PD', team: 'blue', x: 0.42, y: 0.8, size: 22 },
-        
+
         // Bola
         { uid: 23, id: '', team: 'ball', x: 0.5, y: 0.5, size: 8 }
       ]
@@ -248,8 +248,10 @@ class SimpleTracker {
     const counterDisplay = document.getElementById('counterDisplay');
     if (!counterDisplay) return;
     try {
-      // Incrementa contador global
-      const response = await fetch('/.netlify/functions/visitor-counter', { method: 'POST' });
+      // Incrementa contador global via Google Sheets API
+      const url = 'https://script.google.com/macros/s/AKfycbzOuK6yD2pbaWnj95cTAG8OOI9Rv58ycTTOKnRtFa0w4cpMG0-wUcUvl590BvCQVSSs/exec?type=counter';
+      // POST para incrementar
+      const response = await fetch(url, { method: 'POST' });
       if (response.ok) {
         const data = await response.json();
         counterDisplay.textContent = data.count.toLocaleString();
@@ -273,6 +275,81 @@ class SimpleTracker {
 
 // Instância global do tracker
 const statsTracker = new SimpleTracker();
+
+// --- INTEGRAÇÃO GOOGLE SHEETS API: POSTS (VÍDEOS/TUTORIAIS) ---
+const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzOuK6yD2pbaWnj95cTAG8OOI9Rv58ycTTOKnRtFa0w4cpMG0-wUcUvl590BvCQVSSs/exec';
+
+// Carregar posts públicos (vídeos e tutoriais)
+async function loadPublicPosts(tipo, listElementId) {
+  try {
+    const response = await fetch(GOOGLE_SHEETS_API_URL + '?type=posts');
+    const posts = await response.json();
+    const filtered = posts.filter(p => p.tipo === tipo);
+    const list = document.getElementById(listElementId);
+    if (!list) return;
+    list.innerHTML = '';
+    filtered.forEach(post => {
+      const div = document.createElement('div');
+      div.className = 'post-item';
+      if (tipo === 'video') {
+        div.innerHTML = `<b>${post.titulo}</b><br><a href="${post.url}" target="_blank">Assistir</a>`;
+      } else {
+        div.innerHTML = `<b>${post.titulo}</b><br><div>${post.conteudo}</div>`;
+      }
+      list.appendChild(div);
+    });
+  } catch (err) {
+    // erro ao carregar posts
+  }
+}
+
+// Adicionar post (admin)
+async function addPost(tipo, titulo, conteudo, url) {
+  try {
+    const params = new URLSearchParams({
+      type: 'addpost',
+      tipo,
+      titulo,
+      conteudo,
+      url: url || ''
+    });
+    await fetch(GOOGLE_SHEETS_API_URL + '?' + params.toString(), { method: 'POST' });
+    // Recarregar lista após adicionar
+    if (tipo === 'video') loadPublicPosts('video', 'publicVideosList');
+    if (tipo === 'tutorial') loadPublicPosts('tutorial', 'publicTutorialsList');
+  } catch (err) {
+    // erro ao adicionar post
+  }
+}
+
+// Inicialização das abas de vídeos e tutoriais
+document.addEventListener('DOMContentLoaded', () => {
+  // Vídeos públicos
+  loadPublicPosts('video', 'publicVideosList');
+  // Tutoriais públicos
+  loadPublicPosts('tutorial', 'publicTutorialsList');
+});
+
+// Funções para admin (chamadas nos botões)
+window.addVideo = function() {
+  const titulo = document.getElementById('videoTitle').value;
+  const url = document.getElementById('videoUrl').value;
+  if (titulo && url) {
+    addPost('video', titulo, '', url);
+    document.getElementById('videoTitle').value = '';
+    document.getElementById('videoUrl').value = '';
+  }
+};
+
+window.addTutorial = function() {
+  const titulo = document.getElementById('tutorialTitle').value;
+  const conteudo = document.getElementById('tutorialContent').value;
+  if (titulo && conteudo) {
+    addPost('tutorial', titulo, conteudo, '');
+    document.getElementById('tutorialTitle').value = '';
+    document.getElementById('tutorialContent').value = '';
+  }
+};
 
 const board = document.getElementById("board");
 const draw = document.getElementById("drawLayer");
@@ -435,10 +512,10 @@ function updateCurrentModeLabel() {
 function populateSelects() {
   const teamSizeSelect = document.getElementById('teamSizeSelect');
   const mapTypeSelect = document.getElementById('mapTypeSelect');
-  
+
   teamSizeSelect.innerHTML = '';
   mapTypeSelect.innerHTML = '';
-  
+
   Object.keys(gameConfigs).forEach(teamSize => {
     const option = document.createElement('option');
     option.value = teamSize;
@@ -446,7 +523,7 @@ function populateSelects() {
     if (teamSize === currentTeamSize) option.selected = true;
     teamSizeSelect.appendChild(option);
   });
-  
+
   if (gameConfigs[currentTeamSize]) {
     Object.keys(gameConfigs[currentTeamSize]).forEach(mapType => {
       const option = document.createElement('option');
@@ -473,10 +550,10 @@ function updateTexts() {
     'circleBtn': translations[currentLang].circleBtn,
     'arrowBtn': translations[currentLang].arrowBtn,
     'tipsBtn': translations[currentLang].tipsButton,
-    'toggleShadowBtn': shadowsEnabled ? 
-      (currentLang === 'pt' ? 'Desativar Sombra' : 
-       currentLang === 'en' ? 'Disable Shadow' :
-       currentLang === 'tr' ? 'Gölgeyi Kapat' : 'Desactivar Sombra') :
+    'toggleShadowBtn': shadowsEnabled ?
+      (currentLang === 'pt' ? 'Desativar Sombra' :
+        currentLang === 'en' ? 'Disable Shadow' :
+          currentLang === 'tr' ? 'Gölgeyi Kapat' : 'Desactivar Sombra') :
       translations[currentLang].toggleShadowBtn
   };
 
@@ -516,46 +593,46 @@ function updateTexts() {
   }
 
   document.querySelectorAll('.language-selector img').forEach(img => {
-      img.classList.remove('active');
+    img.classList.remove('active');
   });
   document.getElementById(`flag-${currentLang}`).classList.add('active');
-  
+
   // Atualizar contador de viewers
   statsTracker.updateViewerDisplay();
-  
+
   updateCurrentModeLabel();
 }
 
 // Event listeners para as bandeiras
-document.getElementById('flag-pt').addEventListener('click', () => { 
-  currentLang = 'pt'; 
-  updateTexts(); 
+document.getElementById('flag-pt').addEventListener('click', () => {
+  currentLang = 'pt';
+  updateTexts();
   statsTracker.trackLanguageChange('pt');
 });
-document.getElementById('flag-en').addEventListener('click', () => { 
-  currentLang = 'en'; 
-  updateTexts(); 
+document.getElementById('flag-en').addEventListener('click', () => {
+  currentLang = 'en';
+  updateTexts();
   statsTracker.trackLanguageChange('en');
 });
-document.getElementById('flag-tr').addEventListener('click', () => { 
-  currentLang = 'tr'; 
-  updateTexts(); 
+document.getElementById('flag-tr').addEventListener('click', () => {
+  currentLang = 'tr';
+  updateTexts();
   statsTracker.trackLanguageChange('tr');
 });
-document.getElementById('flag-es').addEventListener('click', () => { 
-  currentLang = 'es'; 
-  updateTexts(); 
+document.getElementById('flag-es').addEventListener('click', () => {
+  currentLang = 'es';
+  updateTexts();
   statsTracker.trackLanguageChange('es');
 });
 
 // Event listeners para configurações de jogo
 document.getElementById('teamSizeSelect').addEventListener('change', (e) => {
   const newTeamSize = e.target.value;
-  
+
   if (gameConfigs[newTeamSize]) {
     const availableMaps = Object.keys(gameConfigs[newTeamSize]);
     const newMapType = availableMaps.includes(currentMapType) ? currentMapType : availableMaps[0];
-    
+
     changeGameConfig(newTeamSize, newMapType);
     statsTracker.trackConfigChange('team_size', newTeamSize);
   } else {
@@ -566,7 +643,7 @@ document.getElementById('teamSizeSelect').addEventListener('change', (e) => {
 
 document.getElementById('mapTypeSelect').addEventListener('change', (e) => {
   const newMapType = e.target.value;
-  
+
   if (gameConfigs[currentTeamSize] && gameConfigs[currentTeamSize][newMapType]) {
     changeGameConfig(currentTeamSize, newMapType);
     statsTracker.trackConfigChange('map_type', newMapType);
@@ -598,7 +675,7 @@ function changeGameConfig(teamSize, mapType) {
     const blueFormation = document.getElementById('blueFormationSelect').value;
     // Atualiza jogadores red
     let redPlayers = x11Formations[redFormation].red.map((p, i) => ({
-      uid: i+1,
+      uid: i + 1,
       id: p.id,
       team: 'red',
       x: p.x,
@@ -607,7 +684,7 @@ function changeGameConfig(teamSize, mapType) {
     }));
     // Atualiza jogadores blue
     let bluePlayers = x11Formations[blueFormation].blue.map((p, i) => ({
-      uid: i+12,
+      uid: i + 12,
       id: p.id,
       team: 'blue',
       x: p.x,
@@ -670,15 +747,15 @@ function undo() {
   }
 }
 
-function resizeCanvas(){
+function resizeCanvas() {
   if (!draw || !board || !ctx) {
     console.error('Canvas ou elementos não encontrados para resize');
     return;
   }
-  
+
   draw.width = board.clientWidth;
   draw.height = board.clientHeight;
-  
+
   if (history.length > 0) {
     const img = new Image();
     img.onload = () => {
@@ -694,41 +771,41 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 // Inicializar jogadores
-players.forEach(p=>{
-  const el=document.createElement("div");
-  el.className=`player ${p.team}`;
-  el.textContent=p.id;
+players.forEach(p => {
+  const el = document.createElement("div");
+  el.className = `player ${p.team}`;
+  el.textContent = p.id;
   el.dataset.uid = p.uid;
   // Aplicar tamanho personalizado
   el.style.setProperty('--size', `${p.size}px`);
   playersLayer.appendChild(el);
-  p.el=el;
+  p.el = el;
 });
 
-function placePlayers(){
-  const rect=board.getBoundingClientRect();
-  players.forEach(p=>{
+function placePlayers() {
+  const rect = board.getBoundingClientRect();
+  players.forEach(p => {
     const size = p.size || 29; // Usar tamanho do config ou padrão
-    p.el.style.left=(p.x*rect.width - size/2)+"px";
-    p.el.style.top=(p.y*rect.height - size/2)+"px";
+    p.el.style.left = (p.x * rect.width - size / 2) + "px";
+    p.el.style.top = (p.y * rect.height - size / 2) + "px";
   });
 }
 placePlayers();
-window.addEventListener("resize",placePlayers);
+window.addEventListener("resize", placePlayers);
 
 // Sistema de drag e shadow
-let drag=null;
-board.addEventListener("pointerdown",e=>{
-  const t=e.target.closest('.player'); 
-  if(!t) return;
-  
-  const rect=board.getBoundingClientRect();
+let drag = null;
+board.addEventListener("pointerdown", e => {
+  const t = e.target.closest('.player');
+  if (!t) return;
+
+  const rect = board.getBoundingClientRect();
   const uniqueId = t.dataset.uid;
-  const p = players.find(pp=>pp.uid == uniqueId);
+  const p = players.find(pp => pp.uid == uniqueId);
   if (!p) return;
 
   const size = p.size || 29;
-  
+
   // Se for botão direito, criar shadow E mover o jogador (se shadow estiver ativado)
   if (e.button === 2) {
     e.preventDefault();
@@ -736,21 +813,21 @@ board.addEventListener("pointerdown",e=>{
       dragginWithShadow = true;
       shadowOriginalPos = { x: p.x, y: p.y, player: p };
     }
-    drag={p,offsetX:e.clientX-rect.left-(p.x*rect.width),offsetY:e.clientY-rect.top-(p.y*rect.height)};
+    drag = { p, offsetX: e.clientX - rect.left - (p.x * rect.width), offsetY: e.clientY - rect.top - (p.y * rect.height) };
     t.setPointerCapture(e.pointerId);
     return;
   }
-  
+
   // Botão esquerdo - drag normal
-  drag={p,offsetX:e.clientX-rect.left-(p.x*rect.width),offsetY:e.clientY-rect.top-(p.y*rect.height)};
+  drag = { p, offsetX: e.clientX - rect.left - (p.x * rect.width), offsetY: e.clientY - rect.top - (p.y * rect.height) };
   t.setPointerCapture(e.pointerId);
 });
 
-window.addEventListener("pointermove",e=>{
-  if(!drag) return;
-  const rect=board.getBoundingClientRect();
+window.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const rect = board.getBoundingClientRect();
   const size = drag.p.size || 29;
-  
+
   drag.p.x = (e.clientX - rect.left - drag.offsetX) / rect.width;
   drag.p.y = (e.clientY - rect.top - drag.offsetY) / rect.height;
 
@@ -761,27 +838,27 @@ window.addEventListener("pointermove",e=>{
 
   drag.p.x = Math.max(minX, Math.min(drag.p.x, maxX));
   drag.p.y = Math.max(minY, Math.min(drag.p.y, maxY));
-  
+
   placePlayers();
-  
+
   // Se estiver arrastando com shadow, redesenhar o canvas com o shadow temporário
   if (dragginWithShadow && shadowOriginalPos) {
     ctx.clearRect(0, 0, draw.width, draw.height);
     if (history.length > 0) {
-        const lastState = new Image();
-        lastState.src = history[history.length - 1];
-        ctx.drawImage(lastState, 0, 0);
+      const lastState = new Image();
+      lastState.src = history[history.length - 1];
+      ctx.drawImage(lastState, 0, 0);
     }
-    
+
     // Desenhar shadows existentes
     drawShadows();
-    
+
     // Desenhar shadow temporário na posição original
     const startX = shadowOriginalPos.x * rect.width;
     const startY = shadowOriginalPos.y * rect.height;
     const endX = drag.p.x * rect.width;
     const endY = drag.p.y * rect.height;
-    
+
     // Linha de movimento
     ctx.strokeStyle = '#ffff00';
     ctx.lineWidth = 2;
@@ -791,12 +868,12 @@ window.addEventListener("pointermove",e=>{
     ctx.lineTo(endX, endY);
     ctx.stroke();
     ctx.setLineDash([]);
-    
+
     // Shadow do player na posição original
     const shadowSize = drag.p.size || 29;
     ctx.save();
     ctx.globalAlpha = 0.5;
-    
+
     ctx.beginPath();
     ctx.arc(startX, startY, shadowSize / 2 - 2, 0, Math.PI * 2);
     ctx.fillStyle = drag.p.team === 'red' ? '#e53935' : drag.p.team === 'blue' ? '#1e88e5' : '#B917FF';
@@ -804,7 +881,7 @@ window.addEventListener("pointermove",e=>{
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 2;
     ctx.stroke();
-    
+
     if (drag.p.id) {
       ctx.font = `bold ${Math.max(10, shadowSize * 0.4)}px Arial, sans-serif`;
       ctx.fillStyle = 'white';
@@ -812,13 +889,13 @@ window.addEventListener("pointermove",e=>{
       ctx.textBaseline = "middle";
       ctx.fillText(drag.p.id, startX, startY);
     }
-    
+
     ctx.restore();
   }
 });
 
-window.addEventListener("pointerup",e=>{ 
-  if(dragginWithShadow && shadowOriginalPos) {
+window.addEventListener("pointerup", e => {
+  if (dragginWithShadow && shadowOriginalPos) {
     // Criar shadow permanente
     shadows.push({
       startX: shadowOriginalPos.x,
@@ -830,47 +907,47 @@ window.addEventListener("pointerup",e=>{
       playerTeam: drag.p.team,
       playerText: drag.p.id
     });
-    
+
     // Limpar e redesenhar tudo
     ctx.clearRect(0, 0, draw.width, draw.height);
     if (history.length > 0) {
-        const img = new Image();
-        img.onload = () => {
-            ctx.drawImage(img, 0, 0);
-            drawShadows();
-            saveState();
-        };
-        img.src = history[history.length - 1];
-    } else {
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0);
         drawShadows();
         saveState();
+      };
+      img.src = history[history.length - 1];
+    } else {
+      drawShadows();
+      saveState();
     }
-    
+
     dragginWithShadow = false;
     shadowOriginalPos = null;
   }
-  
-  drag=null; 
+
+  drag = null;
 });
 
 // Funções de desenho
-function getPos(e){
-  if (!draw) return {x: 0, y: 0};
-  const rect=draw.getBoundingClientRect();
-  return {x:e.clientX-rect.left,y:e.clientY-rect.top};
+function getPos(e) {
+  if (!draw) return { x: 0, y: 0 };
+  const rect = draw.getBoundingClientRect();
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
 }
 
 function drawShadows() {
   if (!ctx || !board) return;
-  
+
   const rect = board.getBoundingClientRect();
-  
+
   shadows.forEach(shadow => {
     const startX = shadow.startX * rect.width;
     const startY = shadow.startY * rect.height;
     const endX = shadow.endX * rect.width;
     const endY = shadow.endY * rect.height;
-    
+
     // Desenhar linha de movimento
     const lineColor = shadow.playerTeam === 'red' ? redShadowColor : shadow.playerTeam === 'blue' ? blueShadowColor : '#ffff00';
     ctx.strokeStyle = lineColor;
@@ -881,12 +958,12 @@ function drawShadows() {
     ctx.lineTo(endX, endY);
     ctx.stroke();
     ctx.setLineDash([]);
-    
+
     // Desenhar shadow do player na posição final
     const shadowSize = shadow.playerSize;
     ctx.save();
     ctx.globalAlpha = 0.5;
-    
+
     // Círculo do player shadow
     ctx.beginPath();
     ctx.arc(endX, endY, shadowSize / 2 - 2, 0, Math.PI * 2);
@@ -896,7 +973,7 @@ function drawShadows() {
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 2;
     ctx.stroke();
-    
+
     // Texto do player shadow
     if (shadow.playerText) {
       ctx.font = `bold ${Math.max(10, shadowSize * 0.4)}px Arial, sans-serif`;
@@ -905,77 +982,77 @@ function drawShadows() {
       ctx.textBaseline = "middle";
       ctx.fillText(shadow.playerText, endX, endY);
     }
-    
+
     ctx.restore();
   });
 }
 
 function drawShape(e) {
-    const pos = getPos(e);
-    ctx.clearRect(0, 0, draw.width, draw.height);
-    if (history.length > 0) {
-        const lastState = new Image();
-        lastState.src = history[history.length - 1];
-        ctx.drawImage(lastState, 0, 0);
-    }
+  const pos = getPos(e);
+  ctx.clearRect(0, 0, draw.width, draw.height);
+  if (history.length > 0) {
+    const lastState = new Image();
+    lastState.src = history[history.length - 1];
+    ctx.drawImage(lastState, 0, 0);
+  }
 
-    // Usar cor primária ou secundária dependendo do botão do mouse
-    const color = e.button === 2 ? secondaryColor : primaryColor;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = document.getElementById("sizePicker").value;
-    ctx.lineCap = "round";
+  // Usar cor primária ou secundária dependendo do botão do mouse
+  const color = e.button === 2 ? secondaryColor : primaryColor;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = document.getElementById("sizePicker").value;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+
+  if (mode === 'line') {
+    ctx.moveTo(startPos.x, startPos.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+  } else if (mode === 'square') {
+    const width = pos.x - startPos.x;
+    const height = pos.y - startPos.y;
+    ctx.strokeRect(startPos.x, startPos.y, width, height);
+  } else if (mode === 'triangle') {
+    ctx.moveTo(startPos.x, startPos.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.lineTo(startPos.x + (pos.x - startPos.x) / 2, startPos.y);
+    ctx.closePath();
+    ctx.stroke();
+  } else if (mode === 'circle') {
+    const dx = pos.x - startPos.x;
+    const dy = pos.y - startPos.y;
+    const radius = Math.sqrt(dx * dx + dy * dy) / 2;
+    ctx.arc(startPos.x + dx / 2, startPos.y + dy / 2, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+  } else if (mode === 'arrow') {
+    const headlen = 15;
+    const angle = Math.atan2(pos.y - startPos.y, pos.x - startPos.x);
+    ctx.moveTo(startPos.x, startPos.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
     ctx.beginPath();
-
-    if (mode === 'line') {
-        ctx.moveTo(startPos.x, startPos.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    } else if (mode === 'square') {
-        const width = pos.x - startPos.x;
-        const height = pos.y - startPos.y;
-        ctx.strokeRect(startPos.x, startPos.y, width, height);
-    } else if (mode === 'triangle') {
-        ctx.moveTo(startPos.x, startPos.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.lineTo(startPos.x + (pos.x - startPos.x) / 2, startPos.y);
-        ctx.closePath();
-        ctx.stroke();
-    } else if (mode === 'circle') {
-        const dx = pos.x - startPos.x;
-        const dy = pos.y - startPos.y;
-        const radius = Math.sqrt(dx * dx + dy * dy) / 2;
-        ctx.arc(startPos.x + dx / 2, startPos.y + dy / 2, radius, 0, 2 * Math.PI);
-        ctx.stroke();
-    } else if (mode === 'arrow') {
-        const headlen = 15;
-        const angle = Math.atan2(pos.y - startPos.y, pos.x - startPos.x);
-        ctx.moveTo(startPos.x, startPos.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-        ctx.lineTo(pos.x - headlen * Math.cos(angle - Math.PI / 6), pos.y - headlen * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(pos.x - headlen * Math.cos(angle + Math.PI / 6), pos.y - headlen * Math.sin(angle + Math.PI / 6));
-        ctx.closePath();
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.fill();
-    }
+    ctx.moveTo(pos.x, pos.y);
+    ctx.lineTo(pos.x - headlen * Math.cos(angle - Math.PI / 6), pos.y - headlen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(pos.x - headlen * Math.cos(angle + Math.PI / 6), pos.y - headlen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fill();
+  }
 }
 
-function startDraw(e){ 
-  if(erasing) {
+function startDraw(e) {
+  if (erasing) {
     drawing = true;
     last = getPos(e);
     return;
   }
-  if(mode === null) return;
-  
+  if (mode === null) return;
+
   // Salvar estado antes de começar a desenhar (para Ctrl+Z)
   saveState();
-  
-  drawing = true; 
-  
-  if(mode === 'free') {
+
+  drawing = true;
+
+  if (mode === 'free') {
     last = getPos(e);
     // Usar cor primária ou secundária dependendo do botão do mouse
     const color = e.button === 2 ? secondaryColor : primaryColor;
@@ -985,49 +1062,49 @@ function startDraw(e){
     ctx.beginPath();
     ctx.moveTo(last.x, last.y);
   } else {
-    startPos = getPos(e); 
+    startPos = getPos(e);
     last = getPos(e);
   }
 }
 
-function moveDraw(e){
-    if (!drawing) return;
-    
-    if (erasing) {
-        const pos = getPos(e);
-        ctx.lineWidth = document.getElementById("eraserSizePicker").value;
-        ctx.lineCap = "round";
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.beginPath();
-        ctx.moveTo(last.x, last.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-        last = pos;
-    } else if (mode === 'free') {
-        const pos = getPos(e);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-        last = pos;
-    } else {
-        drawShape(e);
-    }
+function moveDraw(e) {
+  if (!drawing) return;
+
+  if (erasing) {
+    const pos = getPos(e);
+    ctx.lineWidth = document.getElementById("eraserSizePicker").value;
+    ctx.lineCap = "round";
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.beginPath();
+    ctx.moveTo(last.x, last.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    last = pos;
+  } else if (mode === 'free') {
+    const pos = getPos(e);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    last = pos;
+  } else {
+    drawShape(e);
+  }
 }
 
-function endDraw(e){ 
-  if(drawing) {
+function endDraw(e) {
+  if (drawing) {
     if (!erasing) {
-        if (mode === 'free') {
-            // Para desenho livre, não precisa fazer nada especial
-        } else {
-            drawShape(e); // Desenha a forma final
-        }
-        
-        // Desenhar shadows por cima
-        drawShadows();
-        saveState(); // Salva o estado
+      if (mode === 'free') {
+        // Para desenho livre, não precisa fazer nada especial
+      } else {
+        drawShape(e); // Desenha a forma final
+      }
+
+      // Desenhar shadows por cima
+      drawShadows();
+      saveState(); // Salva o estado
     }
-    drawing = false; 
+    drawing = false;
     last = null;
     startPos = null;
     ctx.globalCompositeOperation = "source-over";
@@ -1053,112 +1130,112 @@ board.addEventListener("contextmenu", e => {
 
 // Ctrl+Z para desfazer e sistema de atalhos
 window.addEventListener('keydown', (e) => {
-    // Verificar se está na aba do quadro tático
-    const tacticalTab = document.getElementById('tactical-tab');
-    const isVisible = tacticalTab && tacticalTab.classList.contains('active');
-    
-    if (!isVisible) return;
-    
-    if (e.ctrlKey && (e.key === 'z' || e.key === 'Z')) {
-        e.preventDefault();
-        console.log('Ctrl+Z pressed, undoing...', 'History length:', history.length);
-        undo();
-    }
-    
-    // Ctrl+D para toggle modo de desenho (padrão do Photoshop para brush tool)
-    if (e.ctrlKey && (e.key === 'd' || e.key === 'D')) {
-        e.preventDefault();
-        toggleDrawMode();
-    }
-    
-    // Ctrl+S para toggle modo shadow (similar ao Photoshop para shadow/effects)
-    if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
-        e.preventDefault();
-        toggleShadowMode();
-    }
-    
-    // Ctrl+L para limpar tudo (desenhos + shadows)
-    if (e.ctrlKey && (e.key === 'l' || e.key === 'L')) {
-        e.preventDefault();
-        clearEverything();
-    }
+  // Verificar se está na aba do quadro tático
+  const tacticalTab = document.getElementById('tactical-tab');
+  const isVisible = tacticalTab && tacticalTab.classList.contains('active');
+
+  if (!isVisible) return;
+
+  if (e.ctrlKey && (e.key === 'z' || e.key === 'Z')) {
+    e.preventDefault();
+    console.log('Ctrl+Z pressed, undoing...', 'History length:', history.length);
+    undo();
+  }
+
+  // Ctrl+D para toggle modo de desenho (padrão do Photoshop para brush tool)
+  if (e.ctrlKey && (e.key === 'd' || e.key === 'D')) {
+    e.preventDefault();
+    toggleDrawMode();
+  }
+
+  // Ctrl+S para toggle modo shadow (similar ao Photoshop para shadow/effects)
+  if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    toggleShadowMode();
+  }
+
+  // Ctrl+L para limpar tudo (desenhos + shadows)
+  if (e.ctrlKey && (e.key === 'l' || e.key === 'L')) {
+    e.preventDefault();
+    clearEverything();
+  }
 });
 
 // Função para toggle modo de desenho
 function toggleDrawMode() {
-    if (mode !== null && !erasing) {
-        // Desenho está ativo, desativar
-        mode = null;
-        erasing = false;
-        draw.style.pointerEvents = "none";
-        updateActiveButtons('drawOffBtn');
-        console.log('Modo de desenho desativado (Ctrl+D)');
-    } else {
-        // Desenho não está ativo, ativar e desativar shadow
-        shadowsEnabled = false;
-        erasing = false;
-        mode = 'line';
-        draw.style.pointerEvents = "auto";
-        updateActiveButtons('drawOnBtn');
-        document.getElementById("lineBtn").classList.add('active');
-        console.log('Modo de desenho ativado (Ctrl+D)');
-        statsTracker.trackDraw();
-    }
-    updateTexts();
+  if (mode !== null && !erasing) {
+    // Desenho está ativo, desativar
+    mode = null;
+    erasing = false;
+    draw.style.pointerEvents = "none";
+    updateActiveButtons('drawOffBtn');
+    console.log('Modo de desenho desativado (Ctrl+D)');
+  } else {
+    // Desenho não está ativo, ativar e desativar shadow
+    shadowsEnabled = false;
+    erasing = false;
+    mode = 'line';
+    draw.style.pointerEvents = "auto";
+    updateActiveButtons('drawOnBtn');
+    document.getElementById("lineBtn").classList.add('active');
+    console.log('Modo de desenho ativado (Ctrl+D)');
+    statsTracker.trackDraw();
+  }
+  updateTexts();
 }
 
 // Função para toggle modo shadow
 function toggleShadowMode() {
-    if (shadowsEnabled) {
-        // Shadow está ativo, desativar
-        shadowsEnabled = false;
-        console.log('Modo shadow desativado (Ctrl+S)');
-    } else {
-        // Shadow não está ativo, ativar e desativar desenho
-        shadowsEnabled = true;
-        erasing = false;
-        mode = null;
-        draw.style.pointerEvents = "none";
-        updateActiveButtons('toggleShadowBtn');
-        console.log('Modo shadow ativado (Ctrl+S)');
-    }
-    updateTexts();
+  if (shadowsEnabled) {
+    // Shadow está ativo, desativar
+    shadowsEnabled = false;
+    console.log('Modo shadow desativado (Ctrl+S)');
+  } else {
+    // Shadow não está ativo, ativar e desativar desenho
+    shadowsEnabled = true;
+    erasing = false;
+    mode = null;
+    draw.style.pointerEvents = "none";
+    updateActiveButtons('toggleShadowBtn');
+    console.log('Modo shadow ativado (Ctrl+S)');
+  }
+  updateTexts();
 }
 
 // Função para limpar tudo (desenhos + shadows)
 function clearEverything() {
-    // Limpar desenhos
-    ctx.clearRect(0, 0, draw.width, draw.height);
-    history = [];
-    
-    // Limpar shadows
-    shadows = [];
-    
-    console.log('Tudo limpo: desenhos e shadows (Ctrl+Shift+C)');
+  // Limpar desenhos
+  ctx.clearRect(0, 0, draw.width, draw.height);
+  history = [];
+
+  // Limpar shadows
+  shadows = [];
+
+  console.log('Tudo limpo: desenhos e shadows (Ctrl+Shift+C)');
 }
 
 // Função para mostrar mensagens de conflito entre modos
 function showModeConflictMessage(requestedMode) {
-    const messages = {
-        pt: {
-            shadowBlocked: "⚠️ Você está com desenho ativo!\n\nDesative o desenho primeiro ou use Ctrl+S para ativar sombra automaticamente.",
-            drawBlocked: "⚠️ Você está com sombra ativa!\n\nDesative a sombra primeiro ou use Ctrl+D para ativar desenho automaticamente."
-        },
-        en: {
-            shadowBlocked: "⚠️ You have drawing active!\n\nDisable drawing first or use Ctrl+S to activate shadow automatically.",
-            drawBlocked: "⚠️ You have shadow active!\n\nDisable shadow first or use Ctrl+D to activate drawing automatically."
-        },
-        tr: {
-            shadowBlocked: "⚠️ Çizim aktif!\n\nÖnce çizimi devre dışı bırakın veya gölgeyi otomatik olarak etkinleştirmek için Ctrl+S kullanın.",
-            drawBlocked: "⚠️ Gölge aktif!\n\nÖnce gölgeyi devre dışı bırakın veya çizimi otomatik olarak etkinleştirmek için Ctrl+D kullanın."
-        },
-        es: {
-            shadowBlocked: "⚠️ ¡Tienes dibujo activo!\n\nDesactiva el dibujo primero o usa Ctrl+S para activar sombra automáticamente.",
-            drawBlocked: "⚠️ ¡Tienes sombra activa!\n\nDesactiva la sombra primero o usa Ctrl+D para activar dibujo automáticamente."
-        }
-    };
-    
-    alert(messages[currentLang][requestedMode]);
+  const messages = {
+    pt: {
+      shadowBlocked: "⚠️ Você está com desenho ativo!\n\nDesative o desenho primeiro ou use Ctrl+S para ativar sombra automaticamente.",
+      drawBlocked: "⚠️ Você está com sombra ativa!\n\nDesative a sombra primeiro ou use Ctrl+D para ativar desenho automaticamente."
+    },
+    en: {
+      shadowBlocked: "⚠️ You have drawing active!\n\nDisable drawing first or use Ctrl+S to activate shadow automatically.",
+      drawBlocked: "⚠️ You have shadow active!\n\nDisable shadow first or use Ctrl+D to activate drawing automatically."
+    },
+    tr: {
+      shadowBlocked: "⚠️ Çizim aktif!\n\nÖnce çizimi devre dışı bırakın veya gölgeyi otomatik olarak etkinleştirmek için Ctrl+S kullanın.",
+      drawBlocked: "⚠️ Gölge aktif!\n\nÖnce gölgeyi devre dışı bırakın veya çizimi otomatik olarak etkinleştirmek için Ctrl+D kullanın."
+    },
+    es: {
+      shadowBlocked: "⚠️ ¡Tienes dibujo activo!\n\nDesactiva el dibujo primero o usa Ctrl+S para activar sombra automáticamente.",
+      drawBlocked: "⚠️ ¡Tienes sombra activa!\n\nDesactiva la sombra primero o usa Ctrl+D para activar dibujo automáticamente."
+    }
+  };
+
+  alert(messages[currentLang][requestedMode]);
 }
 
 // Função para gerenciar o estado ativo dos botões
@@ -1211,7 +1288,7 @@ class TabSystem {
     this.currentTab = tabName;
 
     // Inicializar recursos específicos da aba
-    switch(tabName) {
+    switch (tabName) {
       case 'replay':
         if (!this.replayInitialized) {
           this.initReplayPlayer();
@@ -1280,7 +1357,7 @@ class HBR2ReplayPlayer {
   resizeCanvas() {
     const container = this.canvas.parentElement;
     const rect = container.getBoundingClientRect();
-    
+
     [this.canvas, this.drawCanvas].forEach(canvas => {
       canvas.width = rect.width;
       canvas.height = rect.height;
@@ -1294,7 +1371,7 @@ class HBR2ReplayPlayer {
     const uploadArea = document.getElementById('uploadArea');
 
     selectBtn?.addEventListener('click', () => fileInput?.click());
-    
+
     fileInput?.addEventListener('change', (e) => {
       if (e.target.files[0]) {
         this.loadReplay(e.target.files[0]);
@@ -1322,7 +1399,7 @@ class HBR2ReplayPlayer {
     // Controles do player
     document.getElementById('playPauseBtn')?.addEventListener('click', () => this.togglePlayPause());
     document.getElementById('stopBtn')?.addEventListener('click', () => this.stop());
-    
+
     const timeline = document.getElementById('timelineSlider');
     timeline?.addEventListener('input', (e) => {
       this.seekTo(parseFloat(e.target.value));
@@ -1332,7 +1409,7 @@ class HBR2ReplayPlayer {
     document.getElementById('replayDrawBtn')?.addEventListener('click', () => this.setDrawMode('draw'));
     document.getElementById('replayEraseBtn')?.addEventListener('click', () => this.setDrawMode('erase'));
     document.getElementById('replayClearBtn')?.addEventListener('click', () => this.clearDrawings());
-    
+
     // Botão Novo Replay
     document.getElementById('newReplayBtn')?.addEventListener('click', () => this.newReplay());
   }
@@ -1344,12 +1421,12 @@ class HBR2ReplayPlayer {
     this.currentTime = 0;
     this.duration = 0;
     this.clearDrawings();
-    
+
     // Resetar UI
     document.getElementById('uploadArea').style.display = 'block';
     document.getElementById('replayPlayer').style.display = 'none';
     document.getElementById('fileInput').value = '';
-    
+
     // Limpar timeline events
     const eventsContainer = document.getElementById('timelineEvents');
     if (eventsContainer) {
@@ -1362,7 +1439,7 @@ class HBR2ReplayPlayer {
       console.log('Carregando arquivo:', file.name);
       const arrayBuffer = await file.arrayBuffer();
       this.replay = await this.parseHBR2(arrayBuffer);
-      
+
       if (this.replay) {
         console.log('Replay carregado com sucesso:', this.replay);
         this.displayReplayInfo();
@@ -1404,7 +1481,7 @@ class HBR2ReplayPlayer {
         height: 400
       }
     };
-    
+
     console.log('Replay demo criado:', this.replay);
     this.displayReplayInfo();
     this.showPlayer();
@@ -1417,24 +1494,24 @@ class HBR2ReplayPlayer {
   async parseHBR2(arrayBuffer) {
     try {
       console.log('Tentando fazer parse do HBR2, tamanho:', arrayBuffer.byteLength);
-      
+
       // Tentar ler dados reais do HBR2
       const view = new DataView(arrayBuffer);
       const decoder = new TextDecoder();
-      
+
       // Verificar assinatura HBR2 (primeiros bytes)
       if (arrayBuffer.byteLength < 16) {
         throw new Error('Arquivo muito pequeno para ser um HBR2 válido');
       }
-      
+
       let offset = 0;
-      
+
       // Tentar ler versão
       const version = view.getUint32(offset, true);
       offset += 4;
-      
+
       console.log('Versão detectada:', version);
-      
+
       // Se conseguirmos ler dados básicos, criar estrutura
       const replay = {
         version: version,
@@ -1444,13 +1521,13 @@ class HBR2ReplayPlayer {
         frames: [],
         stadium: null
       };
-      
+
       // Tentar extrair informações básicas
       // (Este é um parser simplificado - um completo seria muito complexo)
-      
+
       // Se chegou aqui, pelo menos a estrutura básica está ok
       console.log('Estrutura básica do HBR2 detectada');
-      
+
       return replay;
     } catch (error) {
       console.error('Erro no parser HBR2:', error);
@@ -1478,7 +1555,7 @@ class HBR2ReplayPlayer {
   togglePlayPause() {
     this.isPlaying = !this.isPlaying;
     const btn = document.getElementById('playPauseBtn');
-    
+
     if (this.isPlaying) {
       btn.textContent = '⏸️ Pause';
       this.play();
@@ -1490,10 +1567,10 @@ class HBR2ReplayPlayer {
 
   play() {
     if (!this.replay) return;
-    
+
     const animate = () => {
       if (this.isPlaying && this.currentTime < this.duration) {
-        this.currentTime += 1/60; // 60 FPS
+        this.currentTime += 1 / 60; // 60 FPS
         this.render();
         this.updateUI();
         this.animationFrame = requestAnimationFrame(animate);
@@ -1501,7 +1578,7 @@ class HBR2ReplayPlayer {
         this.stop();
       }
     };
-    
+
     animate();
   }
 
@@ -1533,92 +1610,92 @@ class HBR2ReplayPlayer {
 
     // Desenhar campo estilo Haxball
     this.drawField();
-    
+
     // Desenhar jogadores e bola
     this.drawPlayers();
-    
+
     // Desenhar eventos na timeline
     this.drawTimelineEvents();
   }
-  
+
   drawField() {
     const w = this.canvas.width;
     const h = this.canvas.height;
-    
+
     // Fundo do campo
     this.ctx.fillStyle = '#4a7c59';
     this.ctx.fillRect(0, 0, w, h);
-    
+
     // Linhas do campo
     this.ctx.strokeStyle = 'white';
     this.ctx.lineWidth = 3;
     this.ctx.beginPath();
-    
+
     // Borda do campo
     this.ctx.rect(40, 40, w - 80, h - 80);
-    
+
     // Linha central
     this.ctx.moveTo(w / 2, 40);
     this.ctx.lineTo(w / 2, h - 40);
-    
+
     // Círculo central
     this.ctx.arc(w / 2, h / 2, 60, 0, Math.PI * 2);
     this.ctx.moveTo(w / 2 + 60, h / 2);
-    
+
     // Áreas dos gols
     const goalAreaW = 120;
     const goalAreaH = 80;
     const goalY = (h - goalAreaH) / 2;
-    
+
     // Área esquerda
     this.ctx.rect(40, goalY, goalAreaW, goalAreaH);
-    
+
     // Área direita  
     this.ctx.rect(w - 40 - goalAreaW, goalY, goalAreaW, goalAreaH);
-    
+
     // Traves
     const goalW = 8;
     const goalH = 40;
     const goalYPos = (h - goalH) / 2;
-    
+
     this.ctx.rect(40 - goalW, goalYPos, goalW, goalH);
     this.ctx.rect(w - 40, goalYPos, goalW, goalH);
-    
+
     this.ctx.stroke();
   }
-  
+
   drawPlayers() {
     if (!this.replay.players) return;
-    
+
     this.replay.players.forEach((player, index) => {
       // Simular movimento baseado no tempo
       const baseX = 100 + (index % 3) * 200;
       const baseY = 100 + Math.floor(index / 3) * 100;
       const x = baseX + Math.sin(this.currentTime * 0.5 + index) * 50;
       const y = baseY + Math.cos(this.currentTime * 0.3 + index) * 30;
-      
+
       // Desenhar jogador
       this.ctx.beginPath();
       this.ctx.arc(x, y, 18, 0, Math.PI * 2);
       this.ctx.fillStyle = player.team === 1 ? '#ff4444' : '#4444ff';
       this.ctx.fill();
-      
+
       // Borda
       this.ctx.strokeStyle = 'black';
       this.ctx.lineWidth = 2;
       this.ctx.stroke();
-      
+
       // Nome do jogador
       this.ctx.fillStyle = 'white';
       this.ctx.font = 'bold 11px Arial';
       this.ctx.textAlign = 'center';
       this.ctx.fillText(player.name, x, y + 3);
     });
-    
+
     // Desenhar bola
     const ballX = this.canvas.width / 2 + Math.sin(this.currentTime) * 100;
     const ballY = this.canvas.height / 2 + Math.cos(this.currentTime * 1.2) * 50;
-    
+
     this.ctx.beginPath();
     this.ctx.arc(ballX, ballY, 8, 0, Math.PI * 2);
     this.ctx.fillStyle = '#ffffff';
@@ -1627,30 +1704,30 @@ class HBR2ReplayPlayer {
     this.ctx.lineWidth = 2;
     this.ctx.stroke();
   }
-  
+
   drawTimelineEvents() {
     // Desenhar marcadores de eventos na timeline (gols, etc)
     if (!this.replay.events) return;
-    
+
     const eventsContainer = document.getElementById('timelineEvents');
     if (!eventsContainer) return;
-    
+
     // Limpar eventos anteriores
     eventsContainer.innerHTML = '';
-    
+
     this.replay.events.forEach(event => {
       const eventMarker = document.createElement('div');
       eventMarker.className = `timeline-event ${event.type}`;
       eventMarker.style.left = `${(event.time / this.duration) * 100}%`;
       eventMarker.title = `${event.type.toUpperCase()}: ${event.player} (${this.formatTime(event.time)})`;
-      
+
       // Adicionar clique para ir ao momento do evento
       eventMarker.addEventListener('click', () => {
         this.currentTime = event.time;
         this.updateUI();
         this.render();
       });
-      
+
       eventsContainer.appendChild(eventMarker);
     });
   }
@@ -1676,10 +1753,10 @@ class HBR2ReplayPlayer {
 
   setDrawMode(mode) {
     this.drawMode = mode;
-    
+
     // Atualizar botões ativos
     document.querySelectorAll('.replay-toolbar button').forEach(btn => btn.classList.remove('active'));
-    
+
     if (mode === 'draw') {
       document.getElementById('replayDrawBtn').classList.add('active');
       this.drawCanvas.style.cursor = 'crosshair';
@@ -1689,7 +1766,7 @@ class HBR2ReplayPlayer {
     } else {
       this.drawCanvas.style.cursor = 'default';
     }
-    
+
     // Configurar eventos do mouse para desenho
     if (mode === 'draw') {
       this.setupDrawingEvents();
@@ -1704,7 +1781,7 @@ class HBR2ReplayPlayer {
     this.drawCanvas.onmousedown = (e) => {
       isDrawing = true;
       [lastX, lastY] = [e.offsetX, e.offsetY];
-      
+
       // Definir cor baseada no botão do mouse
       if (e.button === 0) { // Botão esquerdo
         this.drawCtx.strokeStyle = document.getElementById('leftClickColor').value;
@@ -1712,19 +1789,19 @@ class HBR2ReplayPlayer {
         this.drawCtx.strokeStyle = document.getElementById('rightClickColor').value;
         e.preventDefault();
       }
-      
+
       this.drawCtx.lineWidth = document.getElementById('brushSize').value;
       this.drawCtx.lineCap = 'round';
     };
 
     this.drawCanvas.onmousemove = (e) => {
       if (!isDrawing) return;
-      
+
       this.drawCtx.beginPath();
       this.drawCtx.moveTo(lastX, lastY);
       this.drawCtx.lineTo(e.offsetX, e.offsetY);
       this.drawCtx.stroke();
-      
+
       [lastX, lastY] = [e.offsetX, e.offsetY];
     };
 
@@ -1748,7 +1825,7 @@ class HBR2ReplayPlayer {
 document.addEventListener('DOMContentLoaded', () => {
   const tabSystem = new TabSystem();
 });
-document.getElementById("drawOnBtn").onclick=()=>{
+document.getElementById("drawOnBtn").onclick = () => {
   // Verificar se shadow está ativo e mostrar aviso
   if (shadowsEnabled) {
     showModeConflictMessage('drawBlocked');
@@ -1756,13 +1833,13 @@ document.getElementById("drawOnBtn").onclick=()=>{
   }
   toggleDrawMode(); // Usa função toggle
 };
-document.getElementById("drawOffBtn").onclick=()=>{
+document.getElementById("drawOffBtn").onclick = () => {
   erasing = false;
   mode = null;
   draw.style.pointerEvents = "none";
   updateActiveButtons('drawOffBtn');
 };
-document.getElementById("eraseBtn").onclick=()=>{
+document.getElementById("eraseBtn").onclick = () => {
   shadowsEnabled = false; // Desativa shadow ao usar borracha
   erasing = true;
   mode = null;
@@ -1770,42 +1847,42 @@ document.getElementById("eraseBtn").onclick=()=>{
   updateActiveButtons('eraseBtn');
   updateTexts();
 };
-document.getElementById("clearBtn").onclick=()=>{
-  ctx.clearRect(0,0,draw.width,draw.height);
+document.getElementById("clearBtn").onclick = () => {
+  ctx.clearRect(0, 0, draw.width, draw.height);
   history = [];
   shadows = []; // Limpar shadows também
 };
-document.getElementById("freeBtn").onclick=()=>{
+document.getElementById("freeBtn").onclick = () => {
   erasing = false;
   mode = 'free';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('freeBtn');
 };
-document.getElementById("lineBtn").onclick=()=>{
+document.getElementById("lineBtn").onclick = () => {
   erasing = false;
   mode = 'line';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('lineBtn');
 };
-document.getElementById("squareBtn").onclick=()=>{
+document.getElementById("squareBtn").onclick = () => {
   erasing = false;
   mode = 'square';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('squareBtn');
 };
-document.getElementById("triangleBtn").onclick=()=>{
+document.getElementById("triangleBtn").onclick = () => {
   erasing = false;
   mode = 'triangle';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('triangleBtn');
 };
-document.getElementById("circleBtn").onclick=()=>{
+document.getElementById("circleBtn").onclick = () => {
   erasing = false;
   mode = 'circle';
   draw.style.pointerEvents = "auto";
   updateActiveButtons('circleBtn');
 };
-document.getElementById("arrowBtn").onclick=()=>{
+document.getElementById("arrowBtn").onclick = () => {
   erasing = false;
   mode = 'arrow';
   draw.style.pointerEvents = "auto";
@@ -1827,7 +1904,7 @@ document.getElementById("blueShadowColorPicker").addEventListener('change', (e) 
 });
 
 // Event listener para botão de tips
-document.getElementById("tipsBtn").onclick=()=>{
+document.getElementById("tipsBtn").onclick = () => {
   const tips = {
     pt: "💡 DICAS:\n\n• Ctrl+Z: Desfazer última ação\n• Ctrl+D: Ativar/Desativar modo desenho\n• Ctrl+S: Ativar/Desativar modo shadow\n• Ctrl+L: Limpar tudo (desenhos + shadows)\n• Botão Esquerdo: Desenhar com cor primária\n• Botão Direito: Desenhar com cor secundária\n• Ative sombra e segure o jogador com botão direito e arraste para criar um rastro de movimento",
     en: "💡 TIPS:\n\n• Ctrl+Z: Undo last action\n• Ctrl+D: Toggle draw mode\n• Ctrl+S: Toggle shadow mode\n• Ctrl+L: Clear everything (drawings + shadows)\n• Left Click: Draw with primary color\n• Right Click: Draw with secondary color\n• Activate shadow and hold the player with right mouse button and drag to create a movement trail",
@@ -1838,7 +1915,7 @@ document.getElementById("tipsBtn").onclick=()=>{
 };
 
 // Event listener para botão de toggle shadow
-document.getElementById("toggleShadowBtn").onclick=()=>{
+document.getElementById("toggleShadowBtn").onclick = () => {
   // Verificar se desenho está ativo e mostrar aviso
   if (mode !== null && !erasing) {
     showModeConflictMessage('shadowBlocked');
@@ -1848,83 +1925,83 @@ document.getElementById("toggleShadowBtn").onclick=()=>{
 };
 
 // Função de download PNG com tracking
-document.getElementById("downloadBtn").onclick=()=>{
-    statsTracker.trackDownload();
-    
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = board.clientWidth;
-    tempCanvas.height = board.clientHeight;
-    const tempCtx = tempCanvas.getContext('2d');
+document.getElementById("downloadBtn").onclick = () => {
+  statsTracker.trackDownload();
 
-    const bgImage = new Image();
-    bgImage.crossOrigin = 'anonymous';
-    bgImage.onload = () => {
-        tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
-        tempCtx.drawImage(draw, 0, 0);
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = board.clientWidth;
+  tempCanvas.height = board.clientHeight;
+  const tempCtx = tempCanvas.getContext('2d');
 
-        let playersDrawn = 0;
-        const totalPlayers = players.length;
+  const bgImage = new Image();
+  bgImage.crossOrigin = 'anonymous';
+  bgImage.onload = () => {
+    tempCtx.drawImage(bgImage, 0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.drawImage(draw, 0, 0);
 
-        if (totalPlayers === 0) {
-            downloadFinalCanvas(tempCanvas);
-            return;
+    let playersDrawn = 0;
+    const totalPlayers = players.length;
+
+    if (totalPlayers === 0) {
+      downloadFinalCanvas(tempCanvas);
+      return;
+    }
+
+    players.forEach(p => {
+      const img = new Image();
+      img.onload = () => {
+        const playerSize = p.size || 29;
+        const playerCanvas = document.createElement('canvas');
+        playerCanvas.width = playerSize;
+        playerCanvas.height = playerSize;
+        const playerCtx = playerCanvas.getContext('2d');
+
+        playerCtx.beginPath();
+        playerCtx.arc(playerSize / 2, playerSize / 2, playerSize / 2 - 2, 0, Math.PI * 2);
+        playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
+        playerCtx.fill();
+        playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
+        playerCtx.lineWidth = 2;
+        playerCtx.stroke();
+
+        if (p.id) { // Só desenha texto se não for a bola
+          playerCtx.font = `bold ${Math.max(10, playerSize * 0.4)}px Arial, sans-serif`;
+          playerCtx.fillStyle = getComputedStyle(p.el).color;
+          playerCtx.textAlign = "center";
+          playerCtx.textBaseline = "middle";
+          playerCtx.fillText(p.el.textContent, playerSize / 2, playerSize / 2);
         }
 
-        players.forEach(p => {
-            const img = new Image();
-            img.onload = () => {
-                const playerSize = p.size || 29;
-                const playerCanvas = document.createElement('canvas');
-                playerCanvas.width = playerSize;
-                playerCanvas.height = playerSize;
-                const playerCtx = playerCanvas.getContext('2d');
+        const rect = board.getBoundingClientRect();
+        const x = p.x * rect.width - playerSize / 2;
+        const y = p.y * rect.height - playerSize / 2;
+        tempCtx.drawImage(playerCanvas, x, y);
 
-                playerCtx.beginPath();
-                playerCtx.arc(playerSize / 2, playerSize / 2, playerSize / 2 - 2, 0, Math.PI * 2);
-                playerCtx.fillStyle = getComputedStyle(p.el).backgroundColor;
-                playerCtx.fill();
-                playerCtx.strokeStyle = getComputedStyle(p.el).borderColor;
-                playerCtx.lineWidth = 2;
-                playerCtx.stroke();
+        playersDrawn++;
+        if (playersDrawn === totalPlayers) {
+          downloadFinalCanvas(tempCanvas);
+        }
+      };
+      img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+    });
+  };
 
-                if (p.id) { // Só desenha texto se não for a bola
-                    playerCtx.font = `bold ${Math.max(10, playerSize * 0.4)}px Arial, sans-serif`;
-                    playerCtx.fillStyle = getComputedStyle(p.el).color;
-                    playerCtx.textAlign = "center";
-                    playerCtx.textBaseline = "middle";
-                    playerCtx.fillText(p.el.textContent, playerSize / 2, playerSize / 2);
-                }
-
-                const rect = board.getBoundingClientRect();
-                const x = p.x * rect.width - playerSize / 2;
-                const y = p.y * rect.height - playerSize / 2;
-                tempCtx.drawImage(playerCanvas, x, y);
-
-                playersDrawn++;
-                if (playersDrawn === totalPlayers) {
-                    downloadFinalCanvas(tempCanvas);
-                }
-            };
-            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-        });
-    };
-    
-    const config = gameConfigs[currentTeamSize][currentMapType];
-    bgImage.src = config.backgroundImage;
+  const config = gameConfigs[currentTeamSize][currentMapType];
+  bgImage.src = config.backgroundImage;
 };
 
 function downloadFinalCanvas(canvas) {
-    const link = document.createElement('a');
-    link.download = `quadro-tatico-${currentTeamSize}-${currentMapType}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+  const link = document.createElement('a');
+  link.download = `quadro-tatico-${currentTeamSize}-${currentMapType}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
 }
 
 // Sistema de Autenticação e Gerenciamento de Conteúdo
 class ContentManager {
   constructor() {
-    // Hash da senha 'jojos13' usando SHA-256 simples
-  this.adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '';
+    // Hash da senha  usando SHA-256 simples
+    this.adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '';
     this.videos = JSON.parse(localStorage.getItem('videos') || '[]');
     this.tutorials = JSON.parse(localStorage.getItem('tutorials') || '[]');
     this.initContent();
@@ -1965,7 +2042,7 @@ class ContentManager {
   addVideo() {
     const title = document.getElementById('videoTitle').value;
     const url = document.getElementById('videoUrl').value;
-    
+
     if (!title || !url) {
       alert('Preencha todos os campos!');
       return;
@@ -1988,10 +2065,10 @@ class ContentManager {
 
     this.videos.push(video);
     localStorage.setItem('videos', JSON.stringify(this.videos));
-    
+
     document.getElementById('videoTitle').value = '';
     document.getElementById('videoUrl').value = '';
-    
+
     this.loadAdminVideos();
     this.loadPublicVideos();
   }
@@ -2027,7 +2104,7 @@ class ContentManager {
       container.innerHTML = '<p style="text-align: center; color: #aaa;">Nenhum vídeo disponível no momento.</p>';
       return;
     }
-    
+
     container.innerHTML = this.videos.map(video => `
       <div class="content-item">
         <h3>${video.title}</h3>
@@ -2041,7 +2118,7 @@ class ContentManager {
   addTutorial() {
     const title = document.getElementById('tutorialTitle').value;
     const content = document.getElementById('tutorialContent').value;
-    
+
     if (!title || !content) {
       alert('Preencha todos os campos!');
       return;
@@ -2056,10 +2133,10 @@ class ContentManager {
 
     this.tutorials.push(tutorial);
     localStorage.setItem('tutorials', JSON.stringify(this.tutorials));
-    
+
     document.getElementById('tutorialTitle').value = '';
     document.getElementById('tutorialContent').value = '';
-    
+
     this.loadAdminTutorials();
     this.loadPublicTutorials();
   }
@@ -2089,7 +2166,7 @@ class ContentManager {
       container.innerHTML = '<p style="text-align: center; color: #aaa;">Nenhum tutorial disponível no momento.</p>';
       return;
     }
-    
+
     container.innerHTML = this.tutorials.map(tutorial => `
       <div class="content-item">
         <h3>${tutorial.title}</h3>
@@ -2132,19 +2209,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (drawBtn) {
     drawBtn.click();
   }
-  
+
   populateSelects();
   updateTexts();
-  
+
   // Certificar que o canvas está configurado
   if (draw && board) {
     resizeCanvas();
   }
-  
+
   // Inicializar ContentManager
   contentManager = new ContentManager();
   window.contentManager = contentManager; // Tornar acessível globalmente
-  
+
   // Rastrear visita após carregamento
   setTimeout(() => {
     statsTracker.trackVisit();
