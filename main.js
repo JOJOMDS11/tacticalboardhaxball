@@ -408,7 +408,7 @@ let currentMapType = 'futsal';
 let shadows = [];
 let dragginWithShadow = false;
 let shadowOriginalPos = null;
-let shadowEnabled = true;
+let shadowsEnabled = true;
 
 // Sistema de duas cores para desenho
 let primaryColor = '#B917FF';
@@ -582,7 +582,7 @@ function updateTexts() {
     'circleBtn': translations[currentLang].circleBtn,
     'arrowBtn': translations[currentLang].arrowBtn,
     'tipsBtn': translations[currentLang].tipsButton,
-    'toggleShadowBtn': shadowEnabled ? 
+    'toggleShadowBtn': shadowsEnabled ? 
       (currentLang === 'pt' ? 'Desativar Sombra' : 
        currentLang === 'en' ? 'Disable Shadow' :
        currentLang === 'tr' ? 'Gölgeyi Kapat' : 'Desactivar Sombra') :
@@ -841,7 +841,7 @@ board.addEventListener("pointerdown",e=>{
   // Se for botão direito, criar shadow E mover o jogador (se shadow estiver ativado)
   if (e.button === 2) {
     e.preventDefault();
-    if (shadowEnabled) {
+    if (shadowsEnabled) {
       dragginWithShadow = true;
       shadowOriginalPos = { x: p.x, y: p.y, player: p };
     }
@@ -1194,7 +1194,7 @@ function activateDrawMode() {
     mode = 'line';
     draw.style.pointerEvents = "auto";
     updateActiveButtons('drawOnBtn');
-    updateShadowButtonText();
+    updateTexts();
     document.getElementById("lineBtn").classList.add('active');
     console.log('Modo de desenho ativado (Ctrl+D)');
     statsTracker.trackDraw();
@@ -1207,8 +1207,32 @@ function activateShadowMode() {
     mode = null; // Desativa desenho
     draw.style.pointerEvents = "none";
     updateActiveButtons('toggleShadowBtn');
-    updateShadowButtonText();
+    updateTexts();
     console.log('Modo shadow ativado (Ctrl+S)');
+}
+
+// Função para mostrar mensagens de conflito entre modos
+function showModeConflictMessage(requestedMode) {
+    const messages = {
+        pt: {
+            shadowBlocked: "⚠️ Você está com desenho ativo!\n\nDesative o desenho primeiro ou use Ctrl+S para ativar sombra automaticamente.",
+            drawBlocked: "⚠️ Você está com sombra ativa!\n\nDesative a sombra primeiro ou use Ctrl+D para ativar desenho automaticamente."
+        },
+        en: {
+            shadowBlocked: "⚠️ You have drawing active!\n\nDisable drawing first or use Ctrl+S to activate shadow automatically.",
+            drawBlocked: "⚠️ You have shadow active!\n\nDisable shadow first or use Ctrl+D to activate drawing automatically."
+        },
+        tr: {
+            shadowBlocked: "⚠️ Çizim aktif!\n\nÖnce çizimi devre dışı bırakın veya gölgeyi otomatik olarak etkinleştirmek için Ctrl+S kullanın.",
+            drawBlocked: "⚠️ Gölge aktif!\n\nÖnce gölgeyi devre dışı bırakın veya çizimi otomatik olarak etkinleştirmek için Ctrl+D kullanın."
+        },
+        es: {
+            shadowBlocked: "⚠️ ¡Tienes dibujo activo!\n\nDesactiva el dibujo primero o usa Ctrl+S para activar sombra automáticamente.",
+            drawBlocked: "⚠️ ¡Tienes sombra activa!\n\nDesactiva la sombra primero o usa Ctrl+D para activar dibujo automáticamente."
+        }
+    };
+    
+    alert(messages[currentLang][requestedMode]);
 }
 
 // Função para gerenciar o estado ativo dos botões
@@ -1777,6 +1801,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabSystem = new TabSystem();
 });
 document.getElementById("drawOnBtn").onclick=()=>{
+  // Verificar se shadow está ativo e mostrar aviso
+  if (shadowsEnabled) {
+    showModeConflictMessage('drawBlocked');
+    return;
+  }
   activateDrawMode(); // Usa nova função que desativa shadow automaticamente
 };
 document.getElementById("drawOffBtn").onclick=()=>{
@@ -1791,7 +1820,7 @@ document.getElementById("eraseBtn").onclick=()=>{
   mode = null;
   draw.style.pointerEvents = "auto";
   updateActiveButtons('eraseBtn');
-  updateShadowButtonText();
+  updateTexts();
 };
 document.getElementById("clearBtn").onclick=()=>{
   ctx.clearRect(0,0,draw.width,draw.height);
@@ -1862,6 +1891,11 @@ document.getElementById("tipsBtn").onclick=()=>{
 
 // Event listener para botão de toggle shadow
 document.getElementById("toggleShadowBtn").onclick=()=>{
+  // Verificar se desenho está ativo e mostrar aviso
+  if (mode !== null && !erasing) {
+    showModeConflictMessage('shadowBlocked');
+    return;
+  }
   activateShadowMode(); // Usa nova função que desativa desenho automaticamente
 };
 
