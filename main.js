@@ -286,9 +286,19 @@ const GOOGLE_SHEETS_API_URL = '/.netlify/functions/gSheetsProxy';
 // Carregar posts públicos (vídeos e tutoriais)
 async function loadPublicPosts(tipo, listElementId) {
   try {
-  const response = await fetch(GOOGLE_SHEETS_API_URL + '?type=posts', { method: 'GET', headers: { 'Accept': 'application/json' } });
-    if (!response.ok) throw new Error('Erro na resposta');
-    const data = await response.json();
+    const response = await fetch(GOOGLE_SHEETS_API_URL + '?type=posts', { method: 'GET', headers: { 'Accept': 'application/json' } });
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error('Erro na resposta: ' + (text || response.statusText));
+    }
+    const contentType = response.headers.get('content-type') || '';
+    let data;
+    if (contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text().catch(() => '');
+      throw new Error('Resposta inválida do servidor: ' + (text || contentType));
+    }
     if (!data.success && !Array.isArray(data)) throw new Error('Dados inválidos');
     const posts = Array.isArray(data) ? data : [];
     const filtered = posts.filter(p => p.tipo === tipo);
@@ -327,9 +337,18 @@ async function addPost(tipo, titulo, conteudo, url) {
       conteudo,
       url: url || ''
     });
-  const response = await fetch(GOOGLE_SHEETS_API_URL + '?' + params.toString(), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-    if (!response.ok) throw new Error('Erro na resposta');
-    const data = await response.json();
+    const response = await fetch(GOOGLE_SHEETS_API_URL + '?' + params.toString(), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error('Erro na resposta: ' + (text || response.statusText));
+    }
+    const contentType = response.headers.get('content-type') || '';
+    let data;
+    if (contentType.includes('application/json')) data = await response.json();
+    else {
+      const text = await response.text().catch(() => '');
+      throw new Error('Resposta inválida do servidor: ' + (text || contentType));
+    }
     if (!data.success) throw new Error(data.error || 'Erro desconhecido');
     
     // Recarregar lista após adicionar

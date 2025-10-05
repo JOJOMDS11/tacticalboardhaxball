@@ -51,10 +51,24 @@ exports.handler = async function(event, context) {
     const resp = await fetch(url.toString(), fetchOptions);
     const text = await resp.text();
 
+    // Detect HTML response (usually indicates GAS returned a login page or error page)
+    const contentType = resp.headers.get('content-type') || '';
+    if (contentType.includes('text/html') || text.trim().startsWith('<')) {
+      // Return a clear JSON error so frontend can display a helpful message
+      return {
+        statusCode: 502,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({ success: false, error: 'Google Apps Script returned HTML. Make sure the Web App is deployed and set to "Anyone, even anonymous".' })
+      };
+    }
+
     return {
       statusCode: resp.status,
       headers: {
-        'Content-Type': resp.headers.get('content-type') || 'application/json',
+        'Content-Type': contentType || 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
       body: text
