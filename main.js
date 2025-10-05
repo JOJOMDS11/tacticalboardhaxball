@@ -315,26 +315,6 @@ let secondaryColor = '#ff0000';
 let redShadowColor = '#ff4444';
 let blueShadowColor = '#4444ff';
 
-// Sistema de Replay HBR2 - Estilo The Hax
-let replayData = null;
-let replayFrames = [];
-let currentFrame = 0;
-let isReplayPlaying = false;
-let replayInterval = null;
-let playbackSpeed = 1;
-let replayCanvas = null;
-let replayCtx = null;
-let replayPlayersLayer = null;
-let analysisMode = false;
-let gameStartTime = 0;
-let gameDuration = 0;
-let isPausedForTactics = false;
-let tacticalDrawings = [];
-let draggingPlayer = null;
-let mouseDownPos = null;
-let replayPlayers = [];
-let replayBall = null;
-
 // Usar as configurações
 let players = [...gameConfigs[currentTeamSize][currentMapType].players];
 
@@ -365,6 +345,7 @@ const translations = {
     primaryColorLabel: "Cor Primária:",
     secondaryColorLabel: "Cor Secundária:",
     tipsButton: "💡 Dicas",
+    clearShadowsBtn: "Limpar Shadows",
     viewerCount: "Visitantes",
     toggleShadowBtn: "Ativar Sombra"
   },
@@ -504,6 +485,7 @@ function updateTexts() {
     'circleBtn': translations[currentLang].circleBtn,
     'arrowBtn': translations[currentLang].arrowBtn,
     'tipsBtn': translations[currentLang].tipsButton,
+    'clearShadowsBtn': translations[currentLang].clearShadowsBtn,
     'toggleShadowBtn': shadowEnabled ? 
       (currentLang === 'pt' ? 'Desativar Sombra' : 
        currentLang === 'en' ? 'Disable Shadow' :
@@ -1105,696 +1087,326 @@ document.getElementById('blueFormationSelect').addEventListener('change', () => 
   if (currentTeamSize === '11x11') changeGameConfig(currentTeamSize, currentMapType);
 });
 
-// ==================== SISTEMA DE ABAS ====================
-
-// Inicializar sistema de abas
-document.addEventListener('DOMContentLoaded', function() {
-  // Event listeners das abas
-  document.getElementById('tacticalTab').addEventListener('click', () => switchTab('tactical'));
-  document.getElementById('replayTab').addEventListener('click', () => switchTab('replay'));
-  
-  // Inicializar aba tática como ativa
-  switchTab('tactical');
-});
-
-function switchTab(tabName) {
-  // Remover classe active de todos os botões e conteúdos
-  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-  
-  // Ativar aba selecionada
-  if (tabName === 'tactical') {
-    document.getElementById('tacticalTab').classList.add('active');
-    document.getElementById('tacticalContent').classList.add('active');
-  } else if (tabName === 'replay') {
-    document.getElementById('replayTab').classList.add('active');
-    document.getElementById('replayContent').classList.add('active');
-    initializeReplaySystem();
+// Sistema de Abas
+class TabSystem {
+  constructor() {
+    this.currentTab = 'tactical';
+    this.initTabs();
   }
-}
 
-// ==================== SISTEMA DE REPLAY HBR2 COMPLETO ====================
+  initTabs() {
+    const tabButtons = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
 
-function initializeReplaySystem() {
-  console.log('Inicializando sistema de replay...');
-  
-  // Sempre tentar configurar os event listeners
-  setupReplayEventListeners();
-  
-  // Inicializar canvas se necessário
-  if (!replayCanvas) {
-    replayCanvas = document.getElementById('replayDrawLayer');
-    replayCtx = replayCanvas?.getContext('2d');
-    replayPlayersLayer = document.getElementById('replayPlayersLayer');
-  }
-}
-
-function setupReplayEventListeners() {
-  console.log('Configurando event listeners do upload...');
-  
-  // Upload de arquivo
-  const uploadArea = document.getElementById('replayUploadArea');
-  const fileInput = document.getElementById('replayFileInput');
-  
-  if (!uploadArea || !fileInput) {
-    console.warn('Elementos de upload não encontrados, tentando novamente...');
-    setTimeout(() => setupReplayEventListeners(), 500);
-    return;
-  }
-  
-  // Remover listeners existentes para evitar duplicação
-  uploadArea.onclick = null;
-  fileInput.onchange = null;
-  
-  // Clique na área de upload
-  uploadArea.addEventListener('click', (e) => {
-    console.log('Clique na área de upload');
-    e.preventDefault();
-    fileInput.click();
-  });
-  
-  // Mudança no input de arquivo
-  fileInput.addEventListener('change', (e) => {
-    console.log('Input change event');
-    const files = e.target.files;
-    if (files.length > 0) {
-      console.log('Arquivo selecionado:', files[0].name);
-      updateUploadContent('Processando arquivo...', '⏳');
-      processReplayFile(files[0]);
-    }
-  });
-  
-  // Drag and drop
-  uploadArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadArea.style.borderColor = '#B917FF';
-    uploadArea.style.backgroundColor = '#3c3c3c';
-  });
-  
-  uploadArea.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    uploadArea.style.borderColor = '#666';
-    uploadArea.style.backgroundColor = 'transparent';
-  });
-  
-  uploadArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadArea.style.borderColor = '#666';
-    uploadArea.style.backgroundColor = 'transparent';
-    
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      console.log('Arquivo arrastado:', files[0].name);
-      updateUploadContent('Processando arquivo...', '⏳');
-      if (files[0].name.endsWith('.hbr2')) {
-        processReplayFile(files[0]);
-      } else {
-        updateUploadContent('Formato inválido! Use apenas arquivos .hbr2', '❌');
-        setTimeout(() => resetUploadArea(), 3000);
-      }
-    }
-  });
-  
-  console.log('Event listeners do upload configurados');
-}
-
-// Processar arquivo de replay HBR2 REAL
-function processReplayFile(file) {
-  const reader = new FileReader();
-  
-  reader.onload = function(e) {
-    try {
-      // Parser REAL do HBR2 baseado no The Hax
-      const replayData = parseHBR2Real(e.result, file.name);
-      
-      if (!replayData) {
-        throw new Error('Falha ao processar arquivo HBR2');
-      }
-      
-      // Mostrar indicador de carregamento
-      updateUploadContent('🔄 Processando arquivo HBR2...', '#B917FF');
-      
-      // Armazenar dados reais
-      currentReplay = replayData;
-      replayFrames = replayData.frames;
-      gameDuration = replayData.duration;
-      gameStartTime = Date.now();
-      currentFrame = 0;
-      isPausedForTactics = false;
-      tacticalDrawings = [];
-      
-      // Inicializar canvas do replay
-      initReplayCanvas();
-      
-      // Configurar controles
-      setupReplayControls();
-      
-      // Mostrar primeiro frame
-      showReplayFrame(0);
-      
-      // Atualizar interface
-      updateReplayUI();
-      
-      console.log('Replay HBR2 real carregado:', replayData);
-      alert(`🎉 Replay carregado estilo The Hax!\\n⏱️ Duração: ${formatGameTime(gameDuration)}\\n👥 ${mockReplay.players.length} jogadores\\n� Clique ▶️ para reproduzir ou ⏸️ para pausar e desenhar`);
-      
-    } catch (error) {
-      console.error('Erro ao processar replay:', error);
-      updateUploadContent('❌ Erro: arquivo HBR2 inválido', '#f44336');
-      setTimeout(() => {
-        resetUploadArea();
-      }, 3000);
-    }
-  };
-  
-  reader.readAsArrayBuffer(file);
-}
-
-// Parser REAL do formato HBR2 (baseado no The Hax)
-function parseHBR2Real(arrayBuffer, fileName) {
-  try {
-    console.log('Iniciando parser HBR2 real...');
-    
-    // Criar DataView para leitura binária
-    const dataView = new DataView(arrayBuffer);
-    let offset = 0;
-    
-    // Verificar header HBR2
-    const header = new TextDecoder().decode(new Uint8Array(arrayBuffer, 0, 4));
-    if (header !== 'HBR2') {
-      throw new Error('Arquivo não é um HBR2 válido');
-    }
-    offset += 4;
-    
-    // Ler versão
-    const version = dataView.getUint32(offset, true);
-    offset += 4;
-    console.log('Versão HBR2:', version);
-    
-    // Ler duração em frames
-    const durationFrames = dataView.getUint32(offset, true);
-    offset += 4;
-    
-    // Calcular duração em segundos (60 FPS)
-    const duration = durationFrames / 60;
-    console.log('Duração:', duration, 'segundos');
-    
-    // Extrair informações reais do arquivo
-    let stadium = 'Classic';
-    let players = [];
-    
-    try {
-      // Tentar extrair dados reais
-      stadium = extractStadiumFromFileName(fileName) || 'Classic';
-      players = extractPlayersFromFileName(fileName) || generateDefaultPlayers();
-    } catch (e) {
-      console.log('Usando dados padrão:', e.message);
-      players = generateDefaultPlayers();
-    }
-    
-    console.log('Dados extraídos:', { stadium, players });
-    
-    // Gerar frames realistas baseados nos dados reais
-    const frames = generateRealFrames(duration, players, stadium);
-    
-    return {
-      version: version,
-      duration: duration,
-      stadium: stadium,
-      players: players,
-      frames: frames,
-      matchInfo: {
-        stadium: stadium,
-        players: players.map(p => p.name).join(', '),
-        duration: formatGameTime(duration)
-      }
-    };
-    
-  } catch (error) {
-    console.error('Erro no parser HBR2:', error);
-    
-    // Fallback: gerar dados realistas baseados no nome do arquivo
-    return generateFallbackReplay(fileName);
-  }
-}
-
-// Extrair estádio do nome do arquivo
-function extractStadiumFromFileName(fileName) {
-  const lowerName = fileName.toLowerCase();
-  if (lowerName.includes('big')) return 'Big';
-  if (lowerName.includes('futsal')) return 'Futsal';
-  if (lowerName.includes('hockey')) return 'Hockey';
-  if (lowerName.includes('rounded')) return 'Rounded';
-  return 'Classic';
-}
-
-// Extrair jogadores do nome do arquivo
-function extractPlayersFromFileName(fileName) {
-  const baseName = fileName.replace('.hbr2', '');
-  
-  // Se o nome contém vs, x, _, etc., tentar extrair times
-  if (baseName.includes('vs') || baseName.includes('x') || baseName.includes('_')) {
-    const parts = baseName.split(/vs|x|_/i);
-    if (parts.length >= 2) {
-      return [
-        { id: 1, name: parts[0].trim() || 'Time1', team: 'red', auth: 'auth1' },
-        { id: 2, name: parts[0].trim() + '_P2' || 'Time1_P2', team: 'red', auth: 'auth2' },
-        { id: 3, name: parts[1].trim() || 'Time2', team: 'blue', auth: 'auth3' },
-        { id: 4, name: parts[1].trim() + '_P2' || 'Time2_P2', team: 'blue', auth: 'auth4' },
-      ];
-    }
-  }
-  
-  return generateDefaultPlayers();
-}
-
-// Gerar jogadores padrão
-function generateDefaultPlayers() {
-  return [
-    { id: 1, name: 'Jogador1', team: 'red', auth: 'auth1' },
-    { id: 2, name: 'Jogador2', team: 'red', auth: 'auth2' },
-    { id: 3, name: 'Jogador3', team: 'blue', auth: 'auth3' },
-    { id: 4, name: 'Jogador4', team: 'blue', auth: 'auth4' },
-  ];
-}
-
-// Gerar frames realistas baseados em dados reais
-function generateRealFrames(duration, players, stadium) {
-  const fps = 60;
-  const totalFrames = Math.floor(duration * fps);
-  const frames = [];
-  
-  console.log(`Gerando ${totalFrames} frames para ${duration}s de jogo`);
-  
-  for (let frameIndex = 0; frameIndex < totalFrames; frameIndex++) {
-    const time = frameIndex / fps;
-    
-    const frame = {
-      time: time,
-      players: players.map(player => generateRealPlayerPosition(player, time, stadium)),
-      ball: generateRealBallPosition(time, stadium),
-      score: calculateRealisticScore(time, duration),
-      events: []
-    };
-    
-    frames.push(frame);
-  }
-  
-  return frames;
-}
-
-// Posição realista do jogador baseada no tempo
-function generateRealPlayerPosition(player, time, stadium) {
-  // Diferentes formações baseadas no time
-  const isRed = player.team === 'red';
-  const baseX = isRed ? 0.25 : 0.75;
-  
-  // Posições mais realistas baseadas no ID do jogador
-  const playerId = player.id;
-  let baseY = 0.5;
-  
-  // Formação mais realista
-  if (playerId <= 2) { // Defesa
-    baseY = 0.3 + (playerId - 1) * 0.4;
-  } else if (playerId <= 4) { // Meio/Ataque
-    baseY = 0.25 + (playerId - 3) * 0.5;
-  }
-  
-  // Movimento mais natural
-  const moveX = Math.sin(time * 0.3 + playerId) * 0.12;
-  const moveY = Math.cos(time * 0.4 + playerId * 2) * 0.08;
-  
-  return {
-    ...player,
-    x: Math.max(0.05, Math.min(0.95, baseX + moveX)),
-    y: Math.max(0.05, Math.min(0.95, baseY + moveY))
-  };
-}
-
-// Posição realista da bola
-function generateRealBallPosition(time, stadium) {
-  // Movimento mais realista da bola
-  const centerX = 0.5 + Math.sin(time * 0.6) * 0.25;
-  const centerY = 0.5 + Math.cos(time * 0.4) * 0.15;
-  
-  return {
-    x: Math.max(0.05, Math.min(0.95, centerX)),
-    y: Math.max(0.05, Math.min(0.95, centerY))
-  };
-}
-
-// Score realístico baseado na duração
-function calculateRealisticScore(time, totalDuration) {
-  let redScore = 0;
-  let blueScore = 0;
-  
-  // Gols em momentos realísticos
-  const gameProgress = time / totalDuration;
-  
-  if (gameProgress > 0.2) redScore = 1;
-  if (gameProgress > 0.4) blueScore = 1;
-  if (gameProgress > 0.6) redScore = 2;
-  if (gameProgress > 0.8) blueScore = 2;
-  if (gameProgress > 0.9) redScore = 3;
-  
-  return { red: redScore, blue: blueScore };
-}
-
-// Fallback para quando não conseguir fazer parse
-function generateFallbackReplay(fileName) {
-  console.log('Usando fallback para:', fileName);
-  
-  const players = extractPlayersFromFileName(fileName);
-  const stadium = extractStadiumFromFileName(fileName);
-  const duration = 600; // 10 minutos
-  
-  return {
-    version: 9,
-    duration: duration,
-    stadium: stadium,
-    players: players,
-    frames: generateRealFrames(duration, players, stadium),
-    matchInfo: {
-      stadium: stadium,
-      players: players.map(p => p.name).join(', '),
-      duration: formatGameTime(duration)
-    }
-  };
-}
-
-// Atualizar conteúdo da área de upload
-function updateUploadContent(message, color = '#e5e7eb') {
-  const uploadContent = document.getElementById('replayUploadContent');
-  if (uploadContent) {
-    uploadContent.innerHTML = `
-      <span style="font-size: 24px;">📁</span><br>
-      <span style="color: ${color};">${message}</span>
-    `;
-  }
-}
-
-// Resetar área de upload
-function resetUploadArea() {
-  const uploadContent = document.getElementById('replayUploadContent');
-  if (uploadContent) {
-    uploadContent.innerHTML = `
-      <span style="font-size: 24px;">📁</span><br>
-      <span style="color: #e5e7eb;">Clique aqui ou arraste seu arquivo .hbr2</span><br>
-      <small style="color: #999;">Reprodutor completo de partidas Haxball</small>
-    `;
-  }
-}
-
-// Função removida - usar apenas dados reais do arquivo HBR2
-
-function generatePlayerPosition(player, time) {
-  // Simular movimento realista dos jogadores
-  const baseX = player.team === 'red' ? 0.3 : 0.7;
-  const baseY = 0.3 + (player.id % 3) * 0.2;
-  
-  return {
-    ...player,
-    x: baseX + Math.sin(time * 0.5 + player.id) * 0.15,
-    y: baseY + Math.cos(time * 0.3 + player.id) * 0.1,
-    auth: player.id.toString()
-  };
-}
-
-function generateBallPosition(time) {
-  return {
-    x: 0.5 + Math.sin(time * 0.8) * 0.3,
-    y: 0.5 + Math.cos(time * 0.6) * 0.2
-  };
-}
-
-function calculateScore(time) {
-  // Simular gols em momentos específicos
-  let redScore = 0, blueScore = 0;
-  
-  if (time > 120) redScore = 1;
-  if (time > 180) blueScore = 1;
-  if (time > 300) redScore = 2;
-  if (time > 420) blueScore = 2;
-  if (time > 540) redScore = 3;
-  
-  return { red: redScore, blue: blueScore };
-}
-
-function generateGameEvents(time, frame) {
-  const events = [];
-  
-  // Simular eventos ocasionais
-  if (frame % 1800 === 0) { // A cada 30 segundos
-    events.push({
-      type: 'play_event',
-      message: `Boa jogada aos ${formatGameTime(time)}!`,
-      time: time
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tabName = button.dataset.tab;
+        this.switchTab(tabName);
+      });
     });
   }
-  
-  return events;
-}
 
-// Mostrar frame específico do replay
-// Mostrar frame específico do replay
-function showReplayFrame(frameIndex) {
-  if (!replayFrames[frameIndex] || !replayCanvas || !replayCtx) return;
-  
-  const frame = replayFrames[frameIndex];
-  currentFrame = frameIndex;
-  
-  // Limpar canvas
-  replayCtx.clearRect(0, 0, replayCanvas.width, replayCanvas.height);
-  
-  // Desenhar campo
-  drawReplayField();
-  
-  // Desenhar bola
-  if (frame.ball) {
-    drawReplayBall(frame.ball);
-  }
-  
-  // Desenhar jogadores
-  frame.players.forEach(player => {
-    drawReplayPlayer(player);
-  });
-  
-  // Desenhar elementos táticos se em modo pausa
-  if (isPausedForTactics) {
-    drawTacticalElements();
-  }
-  
-  // Atualizar informações do jogo
-  updateReplayInfo(frame);
-}
+  switchTab(tabName) {
+    // Remover classe active de todas as abas
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-// Desenhar campo do replay
-function drawReplayField() {
-  if (!replayCtx) return;
-  
-  // Fundo verde
-  replayCtx.fillStyle = '#4a9';
-  replayCtx.fillRect(0, 0, replayCanvas.width, replayCanvas.height);
-  
-  // Linhas do campo
-  replayCtx.strokeStyle = '#fff';
-  replayCtx.lineWidth = 2;
-  
-  // Bordas
-  replayCtx.strokeRect(10, 10, replayCanvas.width - 20, replayCanvas.height - 20);
-  
-  // Linha central
-  replayCtx.beginPath();
-  replayCtx.moveTo(replayCanvas.width / 2, 10);
-  replayCtx.lineTo(replayCanvas.width / 2, replayCanvas.height - 10);
-  replayCtx.stroke();
-  
-  // Círculo central
-  replayCtx.beginPath();
-  replayCtx.arc(replayCanvas.width / 2, replayCanvas.height / 2, 50, 0, 2 * Math.PI);
-  replayCtx.stroke();
-  
-  // Áreas
-  const areaWidth = 80;
-  const areaHeight = 120;
-  const areaY = (replayCanvas.height - areaHeight) / 2;
-  
-  // Área esquerda
-  replayCtx.strokeRect(10, areaY, areaWidth, areaHeight);
-  
-  // Área direita
-  replayCtx.strokeRect(replayCanvas.width - 10 - areaWidth, areaY, areaWidth, areaHeight);
-}
+    // Adicionar classe active na aba selecionada
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(`${tabName}-tab`).classList.add('active');
 
-// Desenhar jogador no replay
-function drawReplayPlayer(player) {
-  if (!replayCtx) return;
-  
-  const x = (player.x / 100) * replayCanvas.width;
-  const y = (player.y / 100) * replayCanvas.height;
-  const radius = 12;
-  
-  // Cor do time
-  const color = player.team === 'red' ? '#ff4444' : '#4444ff';
-  
-  // Círculo do jogador
-  replayCtx.fillStyle = color;
-  replayCtx.beginPath();
-  replayCtx.arc(x, y, radius, 0, 2 * Math.PI);
-  replayCtx.fill();
-  
-  // Borda
-  replayCtx.strokeStyle = '#fff';
-  replayCtx.lineWidth = 2;
-  replayCtx.stroke();
-  
-  // Nome/número
-  replayCtx.fillStyle = '#fff';
-  replayCtx.font = 'bold 10px Arial';
-  replayCtx.textAlign = 'center';
-  replayCtx.fillText(player.name.substring(0, 3), x, y + 3);
-}
+    this.currentTab = tabName;
 
-// Desenhar bola no replay
-function drawReplayBall(ball) {
-  if (!replayCtx) return;
-  
-  const x = (ball.x / 100) * replayCanvas.width;
-  const y = (ball.y / 100) * replayCanvas.height;
-  const radius = 6;
-  
-  // Círculo da bola
-  replayCtx.fillStyle = '#fff';
-  replayCtx.beginPath();
-  replayCtx.arc(x, y, radius, 0, 2 * Math.PI);
-  replayCtx.fill();
-  
-  // Borda preta
-  replayCtx.strokeStyle = '#000';
-  replayCtx.lineWidth = 1;
-  replayCtx.stroke();
-}
-
-// Atualizar informações do replay
-function updateReplayInfo(frame) {
-  const timeDisplay = document.getElementById('replayTime');
-  const scoreDisplay = document.getElementById('replayScore');
-  
-  if (timeDisplay && frame.time !== undefined) {
-    const minutes = Math.floor(frame.time / 60);
-    const seconds = Math.floor(frame.time % 60);
-    timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  }
-  
-  if (scoreDisplay && frame.score) {
-    scoreDisplay.textContent = `${frame.score.red} - ${frame.score.blue}`;
-  }
-}
-
-// Controles de reprodução (antigos - serão removidos gradualmente)
-function playReplay() {
-  if (isReplayPlaying || !replayFrames.length) return;
-  
-  isReplayPlaying = true;
-  document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
-  
-  const frameInterval = 1000 / (60 * playbackSpeed);
-  
-  replayInterval = setInterval(() => {
-    if (currentFrame < replayFrames.length - 1) {
-      showReplayFrame(currentFrame + 1);
-    } else {
-      pauseReplay();
-      alert('🏁 Replay finalizado!');
+    // Inicializar reprodutor se necessário
+    if (tabName === 'replay' && !this.replayInitialized) {
+      this.initReplayPlayer();
+      this.replayInitialized = true;
     }
-  }, frameInterval);
-}
+  }
 
-function pauseReplay() {
-  isReplayPlaying = false;
-  document.getElementById('playPauseBtn').textContent = '▶️ Play';
-  
-  if (replayInterval) {
-    clearInterval(replayInterval);
-    replayInterval = null;
+  initReplayPlayer() {
+    const replayPlayer = new HBR2ReplayPlayer();
+    replayPlayer.init();
   }
 }
 
-function toggleReplayPlayback() {
-  if (isReplayPlaying) {
-    pauseReplay();
-  } else {
-    playReplay();
+// Sistema de Reprodutor HBR2
+class HBR2ReplayPlayer {
+  constructor() {
+    this.replay = null;
+    this.isPlaying = false;
+    this.currentTime = 0;
+    this.duration = 0;
+    this.players = [];
+    this.canvas = null;
+    this.ctx = null;
+    this.drawCanvas = null;
+    this.drawCtx = null;
+    this.animationFrame = null;
   }
-}
 
-function resetReplay() {
-  pauseReplay();
-  showReplayFrame(0);
-}
-
-function seekToPosition(progress) {
-  const targetFrame = Math.floor(progress * (replayFrames.length - 1));
-  showReplayFrame(targetFrame);
-}
-
-function jumpToTime(percentage) {
-  seekToPosition(percentage);
-}
-
-// Modo de análise
-function toggleAnalysisMode() {
-  analysisMode = !analysisMode;
-  const btn = document.getElementById('analyzeBtn');
-  const tools = document.getElementById('analysisTools');
-  
-  if (analysisMode) {
-    btn.textContent = '🎮 Modo Normal';
-    btn.style.background = '#ff9800';
-    tools.style.display = 'block';
-    pauseReplay(); // Pausar automaticamente
-  } else {
-    btn.textContent = '📝 Modo Análise';
-    btn.style.background = '#4CAF50';
-    tools.style.display = 'none';
+  init() {
+    this.setupCanvas();
+    this.setupEventListeners();
   }
-  
-  // Atualizar jogadores
-  showReplayFrame(currentFrame);
-}
 
-function makePlayerDraggable(playerEl) {
-  let isDragging = false;
-  let startX, startY;
-  
-  playerEl.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    startX = e.clientX - playerEl.offsetLeft;
-    startY = e.clientY - playerEl.offsetTop;
-    playerEl.style.cursor = 'grabbing';
-  });
-  
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
+  setupCanvas() {
+    this.canvas = document.getElementById('replayCanvas');
+    this.ctx = this.canvas?.getContext('2d');
+    this.drawCanvas = document.getElementById('replayDrawLayer');
+    this.drawCtx = this.drawCanvas?.getContext('2d');
+
+    if (this.canvas && this.drawCanvas) {
+      this.resizeCanvas();
+      window.addEventListener('resize', () => this.resizeCanvas());
+    }
+  }
+
+  resizeCanvas() {
+    const container = this.canvas.parentElement;
+    const rect = container.getBoundingClientRect();
     
-    const newX = e.clientX - startX;
-    const newY = e.clientY - startY;
+    [this.canvas, this.drawCanvas].forEach(canvas => {
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    });
+  }
+
+  setupEventListeners() {
+    // Upload de arquivo
+    const fileInput = document.getElementById('hbr2FileInput');
+    const selectBtn = document.getElementById('selectFileBtn');
+    const uploadArea = document.getElementById('uploadArea');
+
+    selectBtn?.addEventListener('click', () => fileInput?.click());
     
-    playerEl.style.left = `${newX}px`;
-    playerEl.style.top = `${newY}px`;
-  });
-  
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    playerEl.style.cursor = 'grab';
-  });
+    fileInput?.addEventListener('change', (e) => {
+      if (e.target.files[0]) {
+        this.loadReplay(e.target.files[0]);
+      }
+    });
+
+    // Drag & Drop
+    uploadArea?.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea?.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea?.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files[0]) {
+        this.loadReplay(e.dataTransfer.files[0]);
+      }
+    });
+
+    // Controles do player
+    document.getElementById('playPauseBtn')?.addEventListener('click', () => this.togglePlayPause());
+    document.getElementById('stopBtn')?.addEventListener('click', () => this.stop());
+    
+    const timeline = document.getElementById('timelineSlider');
+    timeline?.addEventListener('input', (e) => {
+      this.seekTo(parseFloat(e.target.value));
+    });
+
+    // Ferramentas de desenho
+    document.getElementById('replayDrawBtn')?.addEventListener('click', () => this.setDrawMode('draw'));
+    document.getElementById('replayEraseBtn')?.addEventListener('click', () => this.setDrawMode('erase'));
+    document.getElementById('replayClearBtn')?.addEventListener('click', () => this.clearDrawings());
+  }
+
+  async loadReplay(file) {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      this.replay = this.parseHBR2(arrayBuffer);
+      
+      if (this.replay) {
+        this.displayReplayInfo();
+        this.showPlayer();
+        this.duration = this.replay.duration || 0;
+        this.currentTime = 0;
+        this.updateUI();
+      }
+    } catch (error) {
+      console.error('Erro ao carregar replay:', error);
+      alert('Erro ao carregar o arquivo HBR2. Verifique se o arquivo é válido.');
+    }
+  }
+
+  parseHBR2(arrayBuffer) {
+    // Parser básico para HBR2 - implementação simplificada
+    // Em uma implementação completa, seria necessário um parser mais robusto
+    try {
+      const view = new DataView(arrayBuffer);
+      const decoder = new TextDecoder();
+      
+      // Estrutura básica do HBR2 (simplificada)
+      const replay = {
+        version: view.getUint32(0, true),
+        duration: 0,
+        players: [],
+        frames: [],
+        stadium: null
+      };
+
+      // Esta é uma implementação básica - um parser completo seria mais complexo
+      console.log('Replay carregado (parser básico):', replay);
+      
+      // Simular dados para demonstração
+      replay.duration = 300; // 5 minutos
+      replay.players = [
+        { id: 1, name: 'Player 1', team: 1 },
+        { id: 2, name: 'Player 2', team: 1 },
+        { id: 3, name: 'Player 3', team: 2 },
+        { id: 4, name: 'Player 4', team: 2 }
+      ];
+
+      return replay;
+    } catch (error) {
+      console.error('Erro no parser HBR2:', error);
+      return null;
+    }
+  }
+
+  displayReplayInfo() {
+    if (!this.replay) return;
+
+    document.getElementById('replayTitle').textContent = 'Replay Carregado';
+    document.getElementById('replayDuration').textContent = `Duração: ${this.formatTime(this.replay.duration)}`;
+    document.getElementById('replayPlayers').textContent = `Jogadores: ${this.replay.players.length}`;
+    document.getElementById('replayMap').textContent = 'Mapa: Clássico';
+  }
+
+  showPlayer() {
+    document.getElementById('uploadArea').style.display = 'none';
+    document.getElementById('replayPlayer').style.display = 'block';
+  }
+
+  togglePlayPause() {
+    this.isPlaying = !this.isPlaying;
+    const btn = document.getElementById('playPauseBtn');
+    
+    if (this.isPlaying) {
+      btn.textContent = '⏸️ Pause';
+      this.play();
+    } else {
+      btn.textContent = '▶️ Play';
+      this.pause();
+    }
+  }
+
+  play() {
+    if (!this.replay) return;
+    
+    const animate = () => {
+      if (this.isPlaying && this.currentTime < this.duration) {
+        this.currentTime += 1/60; // 60 FPS
+        this.render();
+        this.updateUI();
+        this.animationFrame = requestAnimationFrame(animate);
+      } else if (this.currentTime >= this.duration) {
+        this.stop();
+      }
+    };
+    
+    animate();
+  }
+
+  pause() {
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+    }
+  }
+
+  stop() {
+    this.isPlaying = false;
+    this.currentTime = 0;
+    this.pause();
+    document.getElementById('playPauseBtn').textContent = '▶️ Play';
+    this.updateUI();
+  }
+
+  seekTo(percentage) {
+    this.currentTime = (percentage / 100) * this.duration;
+    this.render();
+    this.updateUI();
+  }
+
+  render() {
+    if (!this.ctx || !this.replay) return;
+
+    // Limpar canvas
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Desenhar campo (simulado)
+    this.ctx.fillStyle = '#4a7c59';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Desenhar linhas do campo
+    this.ctx.strokeStyle = 'white';
+    this.ctx.lineWidth = 2;
+    this.ctx.beginPath();
+    this.ctx.rect(50, 50, this.canvas.width - 100, this.canvas.height - 100);
+    this.ctx.moveTo(this.canvas.width / 2, 50);
+    this.ctx.lineTo(this.canvas.width / 2, this.canvas.height - 50);
+    this.ctx.stroke();
+
+    // Desenhar jogadores (posições simuladas)
+    this.replay.players.forEach((player, index) => {
+      const x = 100 + (index * 100) + Math.sin(this.currentTime + index) * 20;
+      const y = this.canvas.height / 2 + Math.cos(this.currentTime + index) * 50;
+
+      this.ctx.fillStyle = player.team === 1 ? '#ff4444' : '#4444ff';
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, 15, 0, Math.PI * 2);
+      this.ctx.fill();
+
+      this.ctx.fillStyle = 'white';
+      this.ctx.font = '12px Arial';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(player.name, x, y + 4);
+    });
+  }
+
+  updateUI() {
+    const timeline = document.getElementById('timelineSlider');
+    const timeDisplay = document.getElementById('timeDisplay');
+
+    if (timeline) {
+      timeline.value = (this.currentTime / this.duration) * 100 || 0;
+    }
+
+    if (timeDisplay) {
+      timeDisplay.textContent = `${this.formatTime(this.currentTime)} / ${this.formatTime(this.duration)}`;
+    }
+  }
+
+  formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  setDrawMode(mode) {
+    // Implementar ferramentas de desenho
+    console.log('Modo de desenho:', mode);
+  }
+
+  clearDrawings() {
+    if (this.drawCtx) {
+      this.drawCtx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+    }
+  }
 }
 
-function formatGameTime(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
+// Inicializar sistema de abas
+document.addEventListener('DOMContentLoaded', () => {
+  const tabSystem = new TabSystem();
+});
 document.getElementById("drawOnBtn").onclick=()=>{
   erasing = false;
   mode = 'line';
@@ -1818,7 +1430,7 @@ document.getElementById("eraseBtn").onclick=()=>{
 document.getElementById("clearBtn").onclick=()=>{
   ctx.clearRect(0,0,draw.width,draw.height);
   history = [];
-  shadows = []; // Também limpa shadows
+  shadows = []; // Limpar shadows também
 };
 document.getElementById("freeBtn").onclick=()=>{
   erasing = false;
@@ -1961,319 +1573,6 @@ function downloadFinalCanvas(canvas) {
     link.click();
 }
 
-// ===== SISTEMA DE REPLAY ESTILO THE HAX =====
-
-// Inicializar canvas do replay
-function initReplayCanvas() {
-  replayCanvas = document.getElementById('replayCanvas');
-  replayCtx = replayCanvas.getContext('2d');
-  
-  if (!replayCanvas || !replayCtx) {
-    console.error('Canvas do replay não encontrado');
-    return;
-  }
-  
-  // Configurar tamanho
-  replayCanvas.width = 800;
-  replayCanvas.height = 400;
-  
-  // Adicionar eventos de mouse para interação tática
-  replayCanvas.addEventListener('mousedown', handleReplayMouseDown);
-  replayCanvas.addEventListener('mousemove', handleReplayMouseMove);
-  replayCanvas.addEventListener('mouseup', handleReplayMouseUp);
-  replayCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
-  
-  console.log('Canvas do replay inicializado com interação tática');
-}
-
-// Configurar controles do replay
-function setupReplayControls() {
-  const playBtn = document.getElementById('playReplayBtn');
-  const pauseBtn = document.getElementById('pauseReplayBtn');
-  const timeline = document.getElementById('replayTimeline');
-  const speedSelect = document.getElementById('replaySpeed');
-  
-  if (playBtn) {
-    playBtn.onclick = () => {
-      if (!isReplayPlaying) {
-        startReplayPlayback();
-      }
-    };
-  }
-  
-  if (pauseBtn) {
-    pauseBtn.onclick = () => {
-      pauseReplayForTactics();
-    };
-  }
-  
-  if (timeline) {
-    timeline.oninput = (e) => {
-      const progress = parseFloat(e.target.value);
-      seekToFrame(progress);
-    };
-  }
-  
-  if (speedSelect) {
-    speedSelect.onchange = (e) => {
-      playbackSpeed = parseFloat(e.target.value);
-    };
-  }
-}
-
-// Iniciar reprodução do replay
-function startReplayPlayback() {
-  if (isReplayPlaying || !replayFrames.length) return;
-  
-  isReplayPlaying = true;
-  isPausedForTactics = false;
-  
-  // Limpar desenhos táticos quando retomar
-  tacticalDrawings = [];
-  
-  replayInterval = setInterval(() => {
-    if (currentFrame < replayFrames.length - 1) {
-      currentFrame++;
-      showReplayFrame(currentFrame);
-      updateReplayTimeline();
-    } else {
-      // Fim do replay
-      stopReplayPlayback();
-    }
-  }, 100 / playbackSpeed); // 10 FPS base
-  
-  updatePlaybackButtons();
-}
-
-// Pausar replay para modo tático
-function pauseReplayForTactics() {
-  if (!isReplayPlaying) return;
-  
-  stopReplayPlayback();
-  isPausedForTactics = true;
-  
-  // Ativar modo tático
-  enableTacticalMode();
-  
-  updatePlaybackButtons();
-}
-
-// Parar reprodução
-function stopReplayPlayback() {
-  isReplayPlaying = false;
-  if (replayInterval) {
-    clearInterval(replayInterval);
-    replayInterval = null;
-  }
-  updatePlaybackButtons();
-}
-
-// Pular para frame específico
-function seekToFrame(progress) {
-  if (!replayFrames.length) return;
-  
-  const targetFrame = Math.floor(progress * (replayFrames.length - 1));
-  currentFrame = Math.max(0, Math.min(targetFrame, replayFrames.length - 1));
-  
-  showReplayFrame(currentFrame);
-  updateReplayTimeline();
-}
-
-// Ativar modo tático
-function enableTacticalMode() {
-  // Ativar cursors e interações
-  replayCanvas.style.cursor = 'grab';
-  
-  // Mostrar indicação visual
-  drawTacticalModeIndicator();
-}
-
-// Eventos de mouse para interação tática
-function handleReplayMouseDown(e) {
-  if (!isPausedForTactics) return;
-  
-  const rect = replayCanvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
-  mouseDownPos = { x, y };
-  
-  if (e.button === 0) { // Botão esquerdo - arrastar jogador
-    draggingPlayer = findPlayerAtPosition(x, y);
-    if (draggingPlayer) {
-      replayCanvas.style.cursor = 'grabbing';
-    }
-  } else if (e.button === 2) { // Botão direito - desenhar
-    startTacticalDrawing(x, y);
-  }
-}
-
-function handleReplayMouseMove(e) {
-  if (!isPausedForTactics) return;
-  
-  const rect = replayCanvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
-  if (draggingPlayer && mouseDownPos) {
-    // Atualizar posição do jogador
-    const frame = replayFrames[currentFrame];
-    if (frame) {
-      const player = frame.players.find(p => p.id === draggingPlayer.id);
-      if (player) {
-        player.x = (x / replayCanvas.width) * 100;
-        player.y = (y / replayCanvas.height) * 100;
-        showReplayFrame(currentFrame); // Redesenhar
-      }
-    }
-  }
-  
-  // Atualizar cursor baseado na posição
-  const playerAtPos = findPlayerAtPosition(x, y);
-  replayCanvas.style.cursor = playerAtPos ? 'grab' : 'crosshair';
-}
-
-function handleReplayMouseUp(e) {
-  if (!isPausedForTactics) return;
-  
-  draggingPlayer = null;
-  mouseDownPos = null;
-  replayCanvas.style.cursor = 'grab';
-}
-
-// Encontrar jogador na posição
-function findPlayerAtPosition(x, y) {
-  const frame = replayFrames[currentFrame];
-  if (!frame) return null;
-  
-  const tolerance = 15; // pixels
-  
-  for (const player of frame.players) {
-    const playerX = (player.x / 100) * replayCanvas.width;
-    const playerY = (player.y / 100) * replayCanvas.height;
-    
-    const distance = Math.sqrt(
-      Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)
-    );
-    
-    if (distance <= tolerance) {
-      return player;
-    }
-  }
-  
-  return null;
-}
-
-// Iniciar desenho tático
-function startTacticalDrawing(x, y) {
-  const drawing = {
-    type: 'line',
-    points: [{ x, y }],
-    color: '#ffff00',
-    width: 3
-  };
-  
-  tacticalDrawings.push(drawing);
-}
-
-// Desenhar indicador de modo tático
-function drawTacticalModeIndicator() {
-  if (!replayCtx) return;
-  
-  replayCtx.save();
-  replayCtx.fillStyle = 'rgba(255, 255, 0, 0.1)';
-  replayCtx.fillRect(0, 0, replayCanvas.width, replayCanvas.height);
-  
-  // Texto indicativo
-  replayCtx.fillStyle = '#ffff00';
-  replayCtx.font = 'bold 16px Arial';
-  replayCtx.textAlign = 'center';
-  replayCtx.fillText('MODO TÁTICO - Arraste jogadores ou desenhe', replayCanvas.width / 2, 25);
-  
-  replayCtx.restore();
-}
-
-// Renderizar desenhos táticos
-function drawTacticalElements() {
-  if (!replayCtx) return;
-  
-  // Desenhar indicador de modo tático
-  if (isPausedForTactics) {
-    drawTacticalModeIndicator();
-  }
-  
-  // Desenhar linhas táticas
-  tacticalDrawings.forEach(drawing => {
-    if (drawing.type === 'line' && drawing.points.length > 1) {
-      replayCtx.save();
-      replayCtx.strokeStyle = drawing.color;
-      replayCtx.lineWidth = drawing.width;
-      replayCtx.beginPath();
-      replayCtx.moveTo(drawing.points[0].x, drawing.points[0].y);
-      
-      for (let i = 1; i < drawing.points.length; i++) {
-        replayCtx.lineTo(drawing.points[i].x, drawing.points[i].y);
-      }
-      
-      replayCtx.stroke();
-      replayCtx.restore();
-    }
-  });
-}
-
-// Atualizar timeline do replay
-function updateReplayTimeline() {
-  const timeline = document.getElementById('replayTimeline');
-  if (timeline && replayFrames.length > 0) {
-    const progress = currentFrame / (replayFrames.length - 1);
-    timeline.value = progress;
-  }
-}
-
-// Atualizar botões de reprodução
-function updatePlaybackButtons() {
-  const playBtn = document.getElementById('playReplayBtn');
-  const pauseBtn = document.getElementById('pauseReplayBtn');
-  
-  if (playBtn && pauseBtn) {
-    playBtn.style.display = isReplayPlaying ? 'none' : 'inline-block';
-    pauseBtn.style.display = isReplayPlaying ? 'inline-block' : 'none';
-  }
-  
-  // Atualizar texto do botão de pausa baseado no estado
-  if (pauseBtn) {
-    pauseBtn.textContent = isPausedForTactics ? '▶️ Continuar' : '⏸️ Pausar';
-  }
-}
-
-// Atualizar interface do replay
-function updateReplayUI() {
-  updateReplayTimeline();
-  updatePlaybackButtons();
-  
-  // Mostrar controles
-  const controls = document.getElementById('replayControls');
-  if (controls) {
-    controls.style.display = 'block';
-  }
-}
-
-// Limpar desenhos táticos
-function clearTacticalDrawings() {
-  tacticalDrawings = [];
-  if (currentFrame >= 0) {
-    showReplayFrame(currentFrame);
-  }
-}
-
-// Função removida - usar apenas dados reais do arquivo HBR2
-function generateMockReplayData(filename) {
-  console.warn('Dados simulados removidos - carregue um arquivo HBR2 real');
-  return null;
-}
-
-// ===== FIM DO SISTEMA DE REPLAY =====
-
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar se todos os elementos existem
@@ -2294,10 +1593,4 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     statsTracker.trackVisit();
   }, 100);
-  
-  // Inicializar sistema de upload de replay
-  setTimeout(() => {
-    console.log('Inicializando sistema de upload...');
-    setupReplayEventListeners();
-  }, 200);
 });

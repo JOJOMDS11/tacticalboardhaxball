@@ -212,34 +212,33 @@
       border: 1px solid #444;
     }
     
-    /* Sistema de Abas */
-    .tab-system {
+    /* Estilos das Abas */
+    .tabs-container {
+      width: 100%;
       margin-bottom: 20px;
     }
-    .tab-buttons {
+    .tabs {
       display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
+      border-bottom: 2px solid #444;
+      gap: 0;
     }
-    .tab-button {
+    .tab {
       padding: 12px 24px;
       background: #2c2c2c;
-      color: #e5e7eb;
       border: 1px solid #444;
-      border-radius: 8px;
+      border-bottom: none;
+      color: #e5e7eb;
       cursor: pointer;
-      font-size: 16px;
       transition: all 0.3s;
+      font-weight: bold;
     }
-    .tab-button:hover {
+    .tab:hover {
       background: #3c3c3c;
-      border-color: #666;
     }
-    .tab-button.active {
+    .tab.active {
       background: #B917FF;
-      border-color: #B917FF;
       color: white;
+      border-color: #B917FF;
     }
     .tab-content {
       display: none;
@@ -248,48 +247,143 @@
       display: block;
     }
     
-    /* Estilos específicos do reprodutor */
-    .replay-board-wrap {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    /* Estilos do Reprodutor de Replay */
+    .replay-container {
+      width: 100%;
+      max-width: 1100px;
+    }
+    .upload-area {
+      border: 3px dashed #444;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .upload-area:hover, .upload-area.dragover {
+      border-color: #B917FF;
+      background: rgba(185, 23, 255, 0.1);
+    }
+    .upload-content h2 {
+      color: #e5e7eb;
+      margin-bottom: 10px;
+    }
+    .upload-content p {
+      color: #999;
+      margin-bottom: 20px;
+    }
+    #selectFileBtn {
+      padding: 12px 24px;
+      background: #B917FF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .replay-player {
+      background: #2c2c2c;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #444;
+    }
+    .replay-info {
+      margin-bottom: 15px;
+    }
+    .replay-info h3 {
+      color: #e5e7eb;
+      margin: 0 0 10px 0;
+    }
+    .replay-details {
+      display: flex;
+      gap: 20px;
+      color: #999;
+      font-size: 14px;
+    }
+    .replay-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #1b1b1b;
+      border-radius: 8px;
+    }
+    .replay-controls button {
+      padding: 8px 16px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
     .replay-controls button:hover {
-      opacity: 0.8;
-      transform: translateY(-1px);
+      background: #555;
     }
-    .replay-controls input[type="range"] {
-      -webkit-appearance: none;
-      height: 8px;
+    #timelineSlider {
+      flex: 1;
+      margin: 0 10px;
+    }
+    .replay-canvas-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: 2px solid #444;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #1a1a1a;
+      margin-bottom: 15px;
+    }
+    #replayCanvas, #replayDrawLayer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #replayDrawLayer {
+      z-index: 2;
+    }
+    .replay-toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+    .replay-toolbar button {
+      padding: 8px 16px;
+      background: #444;
+      color: white;
+      border: none;
       border-radius: 4px;
-      background: #666;
-      outline: none;
-    }
-    .replay-controls input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #B917FF;
       cursor: pointer;
+    }
+    .replay-toolbar button:hover {
+      background: #555;
+    }
+    .replay-toolbar button.active {
+      background: #B917FF;
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- Sistema de Abas -->
-    <div class="tab-system">
-      <div class="tab-buttons">
-        <button id="tacticalTab" class="tab-button active">🎯 Quadro Tático</button>
-        <button id="replayTab" class="tab-button">📺 Reprodutor de Replay</button>
-      </div>
-    </div>
-
-    <!-- Aba do Quadro Tático -->
-    <div id="tacticalContent" class="tab-content active">
-      <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
+    <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
     <div class="viewer-counter">
       <span id="viewerCount">Carregando visitantes...</span>
     </div>
+    
+    <!-- Sistema de Abas -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab active" data-tab="tactical">Quadro Tático</button>
+        <button class="tab" data-tab="replay">Reprodutor de Replay</button>
+      </div>
+    </div>
+    
+    <!-- Aba Quadro Tático -->
+    <div id="tactical-tab" class="tab-content active">
     
     <div class="config-group">
       <label id="teamSizeLabel" for="teamSizeSelect">Tamanho do Time:</label>
@@ -342,89 +436,7 @@
         <input type="range" id="eraserSizePicker" min="2" max="50" value="20">
       </div>
     </div>
-
-    </div>
-
-    <!-- Aba do Reprodutor de Replay -->
-    <div id="replayContent" class="tab-content">
-      <h1>📺 Reprodutor de Replay Haxball</h1>
-      <p style="text-align: center; color: #999; margin-bottom: 20px;">
-        Reproduza replays completos do Haxball com controles para pausar e analisar jogadas
-      </p>
-
-      <div class="replay-upload-section" style="margin: 20px 0; text-align: center; padding: 15px; background: #2c2c2c; border-radius: 8px; border: 1px solid #444;">
-        <h3 style="margin: 0 0 10px; color: #e5e7eb;">� Upload do Replay</h3>
-        <p style="margin: 0 0 15px; color: #999; font-size: 14px;">Faça upload do seu arquivo .hbr2 para reproduzir o jogo completo!</p>
-        
-        <div class="upload-area" style="border: 2px dashed #666; border-radius: 8px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s;" id="replayUploadArea" onclick="console.log('Upload area clicked directly');">
-          <input type="file" id="replayFileInput" accept=".hbr2" style="display: none;" onchange="console.log('File input changed');">
-          <div id="replayUploadContent">
-            <span style="font-size: 24px;">📁</span><br>
-            <span style="color: #e5e7eb;">Clique aqui ou arraste seu arquivo .hbr2</span><br>
-            <small style="color: #999;">Reprodutor completo de partidas Haxball</small>
-          </div>
-        </div>
-      </div>
-
-      <!-- Campo de Replay estilo The Hax -->
-      <div id="replayField" style="display: none;">
-        <div class="replay-board-wrap" style="position:relative; width:100%; aspect-ratio:16/9; border:2px solid #444; border-radius:12px; overflow:hidden; background: #4a4a4a; margin-bottom: 15px;">
-          <canvas id="replayCanvas" style="position:absolute; inset:0; width:100%; height:100%; z-index: 2;"></canvas>
-        </div>
-
-        <!-- Controles do Replay estilo The Hax -->
-        <div class="replay-controls" style="background: #2c2c2c; padding: 15px; border-radius: 8px; border: 1px solid #444;">
-          <div style="margin-bottom: 15px; text-align: center;">
-            <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
-              <span style="color: #e5e7eb; font-weight: bold;" id="replayScore">0 - 0</span>
-              <span style="color: #888;">|</span>
-              <span style="color: #e5e7eb;" id="replayTime">00:00</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-              <input type="range" id="replayTimeline" min="0" max="1" step="0.001" value="0" style="flex: 1; margin: 0;">
-            </div>
-          </div>
-          
-          <div style="text-align: center; margin-bottom: 15px;">
-            <button id="playReplayBtn" style="margin: 0 5px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">▶️ Reproduzir</button>
-            <button id="pauseReplayBtn" style="margin: 0 5px; padding: 10px 20px; background: #ff9800; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; display: none;">⏸️ Pausar</button>
-            <button onclick="clearTacticalDrawings()" style="margin: 0 5px; padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer;">�️ Limpar</button>
-          </div>
-
-          <div style="text-align: center;">
-            <label style="color: #e5e7eb; margin-right: 10px;">Velocidade:</label>
-            <select id="replaySpeed" style="margin-right: 20px; padding: 5px; background: #2c2c2c; color: white; border: 1px solid #444;">
-              <option value="0.25">0.25x</option>
-              <option value="0.5">0.5x</option>
-              <option value="1" selected>1x</option>
-              <option value="2">2x</option>
-              <option value="4">4x</option>
-            </select>
-            
-            <label style="color: #e5e7eb; margin-right: 10px;">Pular para:</label>
-            <button onclick="seekToFrame(0)" style="margin: 0 2px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">Início</button>
-            <button onclick="seekToFrame(0.25)" style="margin: 0 2px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">25%</button>
-            <button onclick="seekToFrame(0.5)" style="margin: 0 2px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">50%</button>
-            <button onclick="seekToFrame(0.75)" style="margin: 0 2px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">75%</button>
-          </div>
-          
-          <div style="text-align: center; margin-top: 15px; padding: 10px; background: #1a1a1a; border-radius: 6px;">
-            <div style="color: #ffcc00; font-weight: bold; margin-bottom: 5px;">� INSTRUÇÕES ESTILO THE HAX</div>
-            <div style="color: #e5e7eb; font-size: 14px;">
-              ▶️ <strong>Reproduzir:</strong> Assista o replay completo | 
-              ⏸️ <strong>Pausar:</strong> Pause e arraste jogadores | 
-              🖱️ <strong>Timeline:</strong> Clique para pular para qualquer momento
-            </div>
-          </div>
-        </div>
-          </div>
-          <p style="color: #999; font-size: 12px; text-align: center; margin: 10px 0 0;">
-            Pause o replay e use as ferramentas para analisar jogadas. Clique em "Play" para continuar.
-          </p>
-        </div>
-      </div>
-    </div>
-
+    
     <div class="donations">
         <h2 id="helpProjectLabel"></h2>
         <div class="links">
@@ -474,6 +486,50 @@
     </div>
     <div class="credits-message">
       <span id="creditsLabel"></span> jojo discordurser: dranklean
+    </div>
+    </div>
+    
+    <!-- Aba Reprodutor de Replay -->
+    <div id="replay-tab" class="tab-content">
+      <div class="replay-container">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-content">
+            <h2>📁 Upload do Seu Replay HBR2</h2>
+            <p>Arraste e solte seu arquivo .hbr2 aqui ou clique para selecionar</p>
+            <input type="file" id="hbr2FileInput" accept=".hbr2" style="display: none;">
+            <button id="selectFileBtn">Selecionar Arquivo</button>
+          </div>
+        </div>
+        
+        <div class="replay-player" id="replayPlayer" style="display: none;">
+          <div class="replay-info">
+            <h3 id="replayTitle">Carregando replay...</h3>
+            <div class="replay-details">
+              <span id="replayDuration">Duração: --:--</span>
+              <span id="replayPlayers">Jogadores: --</span>
+              <span id="replayMap">Mapa: --</span>
+            </div>
+          </div>
+          
+          <div class="replay-controls">
+            <button id="playPauseBtn">▶️ Play</button>
+            <button id="stopBtn">⏹️ Stop</button>
+            <input type="range" id="timelineSlider" min="0" max="100" value="0">
+            <span id="timeDisplay">00:00 / 00:00</span>
+          </div>
+          
+          <div class="replay-canvas-container">
+            <canvas id="replayCanvas"></canvas>
+            <canvas id="replayDrawLayer"></canvas>
+          </div>
+          
+          <div class="replay-toolbar">
+            <button id="replayDrawBtn">✏️ Desenhar</button>
+            <button id="replayEraseBtn">🧽 Borracha</button>
+            <button id="replayClearBtn">🗑️ Limpar</button>
+            <input type="color" id="replayColorPicker" value="#ff0000">
+        </div>
+      </div>
     </div>
   </div>
 
