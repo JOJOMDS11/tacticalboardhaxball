@@ -1,8 +1,9 @@
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7410324895176353"
-     crossorigin="anonymous"></script>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7410324895176353"
+     crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-7410324895176353">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Quadro Tático Haxball - Versão Final</title>
@@ -10,8 +11,8 @@
     body {
       margin:0;
       background:#1b1b1b;
-      color:#e5e7eb;
-      font-family: Arial, sans-serif;
+      color:#eeeeee;
+      font-family:Arial,sans-serif;
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -89,11 +90,12 @@
       background:url('https://i.imgur.com/UiOK7Gr.png') center/contain no-repeat;
       background-color: #4a4a4a;
     }
-    canvas { position:absolute; inset:0; width:100%; height:100%; }
+    canvas { position:absolute; inset:0; width:100%; height:100%; z-index: 2; }
     .players-layer {
       position:absolute;
       inset:0;
       pointer-events:none;
+      z-index: 1;
     }
     .player {
       --size:29px;
@@ -199,43 +201,273 @@
     .donations img {
       height: 30px;
     }
-    /* Estilo para opções desabilitadas */
-    .disabled-option {
-      color: #666 !important;
-      font-style: italic;
+    .viewer-counter {
+      margin: 5px 0;
+      text-align: center;
+      font-size: 14px;
+      color: #999;
+      padding: 5px;
+      background: #2c2c2c;
+      border-radius: 5px;
+      border: 1px solid #444;
+    }
+    
+    /* Estilos das Abas */
+    .tabs-container {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #444;
+      gap: 0;
+    }
+    .tab {
+      padding: 12px 24px;
+      background: #2c2c2c;
+      border: 1px solid #444;
+      border-bottom: none;
+      color: #e5e7eb;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+    .tab:hover {
+      background: #3c3c3c;
+    }
+    .tab.active {
+      background: #B917FF;
+      color: white;
+      border-color: #B917FF;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Estilos do Reprodutor de Replay */
+    .replay-container {
+      width: 100%;
+      max-width: 1100px;
+    }
+    .upload-area {
+      border: 3px dashed #444;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .upload-area:hover, .upload-area.dragover {
+      border-color: #B917FF;
+      background: rgba(185, 23, 255, 0.1);
+    }
+    .upload-content h2 {
+      color: #e5e7eb;
+      margin-bottom: 10px;
+    }
+    .upload-content p {
+      color: #999;
+      margin-bottom: 20px;
+    }
+    #selectFileBtn {
+      padding: 12px 24px;
+      background: #B917FF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .replay-player {
+      background: #2c2c2c;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #444;
+    }
+    .replay-info {
+      margin-bottom: 15px;
+    }
+    .replay-info h3 {
+      color: #e5e7eb;
+      margin: 0 0 10px 0;
+    }
+    .replay-details {
+      display: flex;
+      gap: 20px;
+      color: #999;
+      font-size: 14px;
+    }
+    .replay-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #1b1b1b;
+      border-radius: 8px;
+    }
+    .replay-controls button {
+      padding: 8px 16px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .replay-controls button:hover {
+      background: #555;
+    }
+    #timelineSlider {
+      flex: 1;
+      margin: 0 10px;
+    }
+    .replay-canvas-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: 2px solid #444;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #1a1a1a;
+      margin-bottom: 15px;
+    }
+    #replayCanvas, #replayDrawLayer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #replayDrawLayer {
+      z-index: 2;
+    }
+    .replay-toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+    .replay-toolbar button {
+      padding: 8px 16px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .replay-toolbar button:hover {
+      background: #555;
+    }
+    .replay-toolbar button.active {
+      background: #B917FF;
+    }
+    
+    /* Timeline com eventos */
+    .timeline-container {
+      position: relative;
+      flex: 1;
+      margin: 0 10px;
+    }
+    .timeline-events {
+      position: absolute;
+      top: -8px;
+      left: 0;
+      right: 0;
+      height: 16px;
+      pointer-events: none;
+    }
+    .timeline-event {
+      position: absolute;
+      width: 3px;
+      height: 16px;
+      background: #ffaa00;
+      border-radius: 2px;
+      transform: translateX(-50%);
+    }
+    .timeline-event.goal {
+      background: #ff4444;
+    }
+    .timeline-event.own-goal {
+      background: #ff8844;
+    }
+    
+    /* Controles de desenho melhorados */
+    .replay-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .replay-toolbar label {
+      font-size: 12px;
+      color: #e5e7eb;
+      margin-left: 8px;
+    }
+    .replay-toolbar input[type="range"] {
+      width: 80px;
+    }
+    .replay-toolbar input[type="color"] {
+      width: 30px;
+      height: 25px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-DGuQM-AH.js"></script>
+  <script type="module" crossorigin src="/assets/main-CVdZQu92.js"></script>
 </head>
 <body>
   <div class="app">
     <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
+    <div class="viewer-counter">
+      <span id="viewerCount">Carregando visitantes...</span>
+    </div>
+    
+    <!-- Sistema de Abas -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab active" data-tab="tactical">Quadro Tático</button>
+        <button class="tab" data-tab="replay">Reprodutor de Replay</button>
+      </div>
+    </div>
+    
+    <!-- Aba Quadro Tático -->
+    <div id="tactical-tab" class="tab-content active">
     
     <div class="config-group">
       <label id="teamSizeLabel" for="teamSizeSelect">Tamanho do Time:</label>
       <select id="teamSizeSelect">
-        <option value="3x3">3x3</option>
-        <option value="4x4" class="disabled-option">4x4 (Em breve)</option>
-        <option value="7x7" class="disabled-option">7x7 (Em breve)</option>
+        <!-- Será populado dinamicamente pelo JavaScript -->
       </select>
       
       <label id="mapTypeLabel" for="mapTypeSelect">Tipo de Mapa:</label>
       <select id="mapTypeSelect">
-        <option value="futsal">Futsal</option>
-        <option value="campo" class="disabled-option">Campo (Em breve)</option>
-        <option value="hockey" class="disabled-option">Hockey (Em breve)</option>
+        <!-- Será populado dinamicamente pelo JavaScript -->
       </select>
     </div>
     
     <div class="toolbar">
       <div class="button-group">
-        <button id="drawOnBtn"></button>
-        <button id="drawOffBtn"></button>
-        <button id="eraseBtn"></button>
-        <button id="clearBtn"></button>
-        <label id="colorLabel" for="colorPicker"></label>
-        <input type="color" id="colorPicker" value="#ffffff">
+  <button id="drawOnBtn"></button>
+  <button id="drawOffBtn"></button>
+  <button id="toggleShadowBtn"></button>
+  <button id="eraseBtn"></button>
+  <button id="clearBtn"></button>
+        <label id="primaryColorLabel" for="primaryColorPicker"></label>
+        <input type="color" id="primaryColorPicker" value="#B917FF">
+        <label id="secondaryColorLabel" for="secondaryColorPicker"></label>
+        <input type="color" id="secondaryColorPicker" value="#ff0000">
+        <label for="blueShadowColorPicker">Shadow Blue:</label>
+        <input type="color" id="blueShadowColorPicker" value="#4444ff">
+        <label for="redShadowColorPicker">Shadow Red:</label>
+        <input type="color" id="redShadowColorPicker" value="#ff4444">
         <button id="downloadBtn"></button>
+        <button id="tipsBtn"></button>
         <div class="language-selector">
             <img src="https://flagcdn.com/br.svg" alt="Português" data-lang="pt" id="flag-pt">
             <img src="https://flagcdn.com/us.svg" alt="English" data-lang="en" id="flag-en">
@@ -276,9 +508,30 @@
     <div class="discord-message">
       <p>
         <a href="https://discord.com/invite/aZdM3t86ZW" target="_blank">
-          ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICAR DOS EVENTOS.
+          ENTRE AGORA MESMO EM NOSSO DISCORD PARA PARTICIPAR DOS EVENTOS.
         </a>
       </p>
+    </div>
+
+    <div id="formationSelectors" style="display:none; flex-direction: row; gap: 16px; margin-bottom: 10px; justify-content: center;">
+      <div>
+        <label for="redFormationSelect">Formação Red:</label>
+        <select id="redFormationSelect">
+          <option value="442">4-4-2</option>
+          <option value="433">4-3-3</option>
+          <option value="352">3-5-2</option>
+          <option value="343">3-4-3</option>
+        </select>
+      </div>
+      <div>
+        <label for="blueFormationSelect">Formação Blue:</label>
+        <select id="blueFormationSelect">
+          <option value="442">4-4-2</option>
+          <option value="433">4-3-3</option>
+          <option value="352">3-5-2</option>
+          <option value="343">3-4-3</option>
+        </select>
+      </div>
     </div>
 
     <div class="board-wrap" id="board">
@@ -288,10 +541,52 @@
     <div class="credits-message">
       <span id="creditsLabel"></span> jojo discordurser: dranklean
     </div>
+    </div>
+    
+    <!-- Aba Reprodutor de Replay -->
+    <div id="replay-tab" class="tab-content">
+      <div class="replay-container">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-content">
+            <h2>📁 Upload do Seu Replay HBR2</h2>
+            <p>Arraste e solte seu arquivo .hbr2 aqui ou clique para selecionar</p>
+            <input type="file" id="hbr2FileInput" accept=".hbr2" style="display: none;">
+            <button id="selectFileBtn">Selecionar Arquivo</button>
+          </div>
+        </div>
+        
+        <div class="replay-player" id="replayPlayer" style="display: none;">
+          <div class="replay-info">
+            <h3 id="replayTitle">Carregando replay...</h3>
+            <div class="replay-details">
+              <span id="replayDuration">Duração: --:--</span>
+              <span id="replayPlayers">Jogadores: --</span>
+              <span id="replayMap">Mapa: --</span>
+            </div>
+          </div>
+          
+          <div class="replay-controls">
+            <button id="playPauseBtn">▶️ Play</button>
+            <button id="stopBtn">⏹️ Stop</button>
+            <input type="range" id="timelineSlider" min="0" max="100" value="0">
+            <span id="timeDisplay">00:00 / 00:00</span>
+          </div>
+          
+          <div class="replay-canvas-container">
+            <canvas id="replayCanvas"></canvas>
+            <canvas id="replayDrawLayer"></canvas>
+          </div>
+          
+          <div class="replay-toolbar">
+            <button id="replayDrawBtn">✏️ Desenhar</button>
+            <button id="replayEraseBtn">🧽 Borracha</button>
+            <button id="replayClearBtn">🗑️ Limpar</button>
+            <input type="color" id="replayColorPicker" value="#ff0000">
+        </div>
+      </div>
+    </div>
   </div>
-
-  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+
 
 </body>
 </html>

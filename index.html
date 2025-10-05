@@ -11,35 +11,8 @@
     body {
       margin:0;
       background:#1b1b1b;
-      color:#e          <div class="replay-controls">
-            <button id="playPauseBtn">▶️ Play</button>
-            <button id="stopBtn">⏹️ Stop</button>
-            <div class="timeline-container">
-              <input type="range" id="timelineSlider" min="0" max="100" value="0">
-              <div class="timeline-events" id="timelineEvents"></div>
-            </div>
-            <span id="timeDisplay">00:00 / 00:00</span>
-          </div>
-          
-          <div class="replay-canvas-container">
-            <canvas id="replayCanvas"></canvas>
-            <canvas id="replayDrawLayer"></canvas>
-          </div>
-          
-          <div class="replay-toolbar">
-            <button id="replayDrawBtn">✏️ Desenhar</button>
-            <button id="replayEraseBtn">🧽 Borracha</button>
-            <button id="replayClearBtn">🗑️ Limpar</button>
-            <label>Cor Esquerda:</label>
-            <input type="color" id="replayLeftColorPicker" value="#ff0000">
-            <label>Cor Direita:</label>
-            <input type="color" id="replayRightColorPicker" value="#0000ff">
-            <label>Tamanho:</label>
-            <input type="range" id="replayBrushSize" min="1" max="20" value="3">
-            <label>Borracha:</label>
-            <input type="range" id="replayEraserSize" min="5" max="50" value="20">
-            <button id="newReplayBtn">📁 Novo Replay</button>
-          </div>-family: Arial, sans-serif;
+      color:#eeeeee;
+      font-family:Arial,sans-serif;
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -488,10 +461,10 @@
         <input type="color" id="primaryColorPicker" value="#B917FF">
         <label id="secondaryColorLabel" for="secondaryColorPicker"></label>
         <input type="color" id="secondaryColorPicker" value="#ff0000">
-        <label for="redShadowColorPicker">Shadow Red:</label>
-        <input type="color" id="redShadowColorPicker" value="#ff4444">
         <label for="blueShadowColorPicker">Shadow Blue:</label>
         <input type="color" id="blueShadowColorPicker" value="#4444ff">
+        <label for="redShadowColorPicker">Shadow Red:</label>
+        <input type="color" id="redShadowColorPicker" value="#ff4444">
         <button id="downloadBtn"></button>
         <button id="tipsBtn"></button>
         <div class="language-selector">
