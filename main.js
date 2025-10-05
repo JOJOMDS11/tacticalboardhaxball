@@ -254,12 +254,17 @@ class SimpleTracker {
       const response = await fetch(url, { method: 'POST' });
       if (response.ok) {
         const data = await response.json();
-        counterDisplay.textContent = data.count.toLocaleString();
+        if (data.success && data.count !== undefined) {
+          counterDisplay.textContent = data.count.toLocaleString();
+        } else {
+          counterDisplay.textContent = 'Erro';
+        }
       } else {
         counterDisplay.textContent = 'Erro';
       }
     } catch (err) {
       counterDisplay.textContent = 'Erro';
+      console.error('Erro contador:', err);
     }
   }
 
@@ -283,23 +288,33 @@ const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzOuK6yD2
 async function loadPublicPosts(tipo, listElementId) {
   try {
     const response = await fetch(GOOGLE_SHEETS_API_URL + '?type=posts');
-    const posts = await response.json();
+    if (!response.ok) throw new Error('Erro na resposta');
+    const data = await response.json();
+    if (!data.success && !Array.isArray(data)) throw new Error('Dados inválidos');
+    const posts = Array.isArray(data) ? data : [];
     const filtered = posts.filter(p => p.tipo === tipo);
     const list = document.getElementById(listElementId);
     if (!list) return;
     list.innerHTML = '';
+    if (filtered.length === 0) {
+      list.innerHTML = '<p style="color: #999;">Nenhum item encontrado</p>';
+      return;
+    }
     filtered.forEach(post => {
       const div = document.createElement('div');
       div.className = 'post-item';
+      div.style.cssText = 'padding: 10px; margin: 10px 0; background: #2c2c2c; border-radius: 8px; border: 1px solid #444;';
       if (tipo === 'video') {
-        div.innerHTML = `<b>${post.titulo}</b><br><a href="${post.url}" target="_blank">Assistir</a>`;
+        div.innerHTML = `<b>${post.titulo}</b><br><a href="${post.url}" target="_blank" style="color: #B917FF;">Assistir</a>`;
       } else {
-        div.innerHTML = `<b>${post.titulo}</b><br><div>${post.conteudo}</div>`;
+        div.innerHTML = `<b>${post.titulo}</b><br><div style="margin-top: 5px; color: #ddd;">${post.conteudo}</div>`;
       }
       list.appendChild(div);
     });
   } catch (err) {
-    // erro ao carregar posts
+    console.error('Erro ao carregar posts:', err);
+    const list = document.getElementById(listElementId);
+    if (list) list.innerHTML = '<p style="color: #ff4444;">Erro ao carregar</p>';
   }
 }
 
@@ -313,12 +328,20 @@ async function addPost(tipo, titulo, conteudo, url) {
       conteudo,
       url: url || ''
     });
-    await fetch(GOOGLE_SHEETS_API_URL + '?' + params.toString(), { method: 'POST' });
+    const response = await fetch(GOOGLE_SHEETS_API_URL + '?' + params.toString(), { method: 'POST' });
+    if (!response.ok) throw new Error('Erro na resposta');
+    const data = await response.json();
+    if (!data.success) throw new Error(data.error || 'Erro desconhecido');
+    
     // Recarregar lista após adicionar
     if (tipo === 'video') loadPublicPosts('video', 'publicVideosList');
     if (tipo === 'tutorial') loadPublicPosts('tutorial', 'publicTutorialsList');
+    
+    // Mostrar sucesso
+    alert('Post adicionado com sucesso!');
   } catch (err) {
-    // erro ao adicionar post
+    console.error('Erro ao adicionar post:', err);
+    alert('Erro ao adicionar post: ' + err.message);
   }
 }
 
