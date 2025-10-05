@@ -90,11 +90,12 @@
       background:url('https://i.imgur.com/UiOK7Gr.png') center/contain no-repeat;
       background-color: #4a4a4a;
     }
-    canvas { position:absolute; inset:0; width:100%; height:100%; }
+    canvas { position:absolute; inset:0; width:100%; height:100%; z-index: 2; }
     .players-layer {
       position:absolute;
       inset:0;
       pointer-events:none;
+      z-index: 1;
     }
     .player {
       --size:29px;
@@ -200,11 +201,24 @@
     .donations img {
       height: 30px;
     }
+    .viewer-counter {
+      margin: 5px 0;
+      text-align: center;
+      font-size: 14px;
+      color: #999;
+      padding: 5px;
+      background: #2c2c2c;
+      border-radius: 5px;
+      border: 1px solid #444;
+    }
   </style>
 </head>
 <body>
   <div class="app">
     <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
+    <div class="viewer-counter">
+      <span id="viewerCount">Carregando visitantes...</span>
+    </div>
     
     <div class="config-group">
       <label id="teamSizeLabel" for="teamSizeSelect">Tamanho do Time:</label>
@@ -224,13 +238,13 @@
         <button id="drawOffBtn"></button>
         <button id="eraseBtn"></button>
         <button id="clearBtn"></button>
-        <label id="colorLabel" for="colorPicker"></label>
-        <input type="color" id="colorPicker" value="#ffffff">
-      <label for="colorPicker">Cor Primária:</label>
-      <input type="color" id="colorPicker" value="#e5e7eb">
-      <label for="colorPicker2">Cor Secundária:</label>
-      <input type="color" id="colorPicker2" value="#ffb300">
+        <button id="clearShadowsBtn"></button>
+        <label id="primaryColorLabel" for="primaryColorPicker"></label>
+        <input type="color" id="primaryColorPicker" value="#B917FF">
+        <label id="secondaryColorLabel" for="secondaryColorPicker"></label>
+        <input type="color" id="secondaryColorPicker" value="#ff0000">
         <button id="downloadBtn"></button>
+        <button id="tipsBtn"></button>
         <div class="language-selector">
             <img src="https://flagcdn.com/br.svg" alt="Português" data-lang="pt" id="flag-pt">
             <img src="https://flagcdn.com/us.svg" alt="English" data-lang="en" id="flag-en">
@@ -245,9 +259,6 @@
         <button id="triangleBtn"></button>
         <button id="circleBtn"></button>
         <button id="arrowBtn"></button>
-          <button id="drawOnBtn">Desenhar</button>
-          <button id="eraseBtn">Borracha</button>
-          <button id="drawOffBtn">Desativar</button>
       </div>
       <div class="size-group">
         <label id="strokeSizeLabel" for="sizePicker"></label>
@@ -288,10 +299,6 @@
     </div>
   </div>
 
-  <!-- Firebase Scripts - Carregamento direto -->
-  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
-  
   <script type="module" src="/main.js"></script>
 
 </body>
