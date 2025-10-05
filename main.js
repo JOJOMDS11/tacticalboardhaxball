@@ -1113,6 +1113,7 @@ document.getElementById("clearBtn").onclick=()=>{
 document.getElementById("clearShadowsBtn").onclick=()=>{
   shadows = [];
   ctx.clearRect(0,0,draw.width,draw.height);
+  // Redesenha apenas o desenho, sem shadows
   if (history.length > 0) {
     const img = new Image();
     img.onload = () => {
@@ -1120,7 +1121,7 @@ document.getElementById("clearShadowsBtn").onclick=()=>{
     };
     img.src = history[history.length - 1];
   }
-  saveState();
+  // Não redesenha shadows, nem salva no histórico
 };
 document.getElementById("freeBtn").onclick=()=>{
   erasing = false;
