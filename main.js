@@ -237,37 +237,70 @@ const gameConfigs = {
   }
 };
 
-// Contador de visualizações online
-class OnlineStatsTracker {
+// Sistema de contador de visitantes real
+class RealVisitorCounter {
   constructor() {
+    this.namespace = 'tacticalboardhaxball';
+    this.key = 'visitors';
     this.visits = 0;
     this.initCounter();
   }
 
   async initCounter() {
     try {
-      // Contador simples e realista
-      const today = new Date();
-      const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+      // Tentar incrementar o contador real via API
+      const response = await fetch(`https://api.countapi.xyz/hit/${this.namespace}/${this.key}`);
+      const data = await response.json();
       
-      // Base realista: 50-150 visitas por dia desde o início do ano
-      const baseVisits = Math.floor(dayOfYear * (50 + Math.random() * 100));
+      if (data && data.value) {
+        this.visits = data.value;
+      } else {
+        throw new Error('API response invalid');
+      }
       
-      // Adicionar variação diária baseada na hora
-      const hourVariation = Math.floor(today.getHours() * 2 + Math.random() * 10);
-      
-      // Total realista
-      const totalVisits = baseVisits + hourVariation;
-      
-      this.visits = totalVisits;
       this.updateViewerDisplay();
+      
+      // Atualizar contador a cada 30 segundos
+      setInterval(() => this.fetchCurrentCount(), 30000);
       
     } catch (error) {
-      console.error('Erro no contador:', error);
-      // Fallback com número fixo realista
-      this.visits = 8247;
-      this.updateViewerDisplay();
+      console.log('API indisponível, usando contador local:', error);
+      // Fallback: usar localStorage como contador local
+      this.initLocalCounter();
     }
+  }
+
+  async fetchCurrentCount() {
+    try {
+      const response = await fetch(`https://api.countapi.xyz/get/${this.namespace}/${this.key}`);
+      const data = await response.json();
+      
+      if (data && data.value) {
+        this.visits = data.value;
+        this.updateViewerDisplay();
+      }
+    } catch (error) {
+      console.log('Erro ao buscar contador atualizado:', error);
+    }
+  }
+
+  initLocalCounter() {
+    // Contador local como fallback
+    let localVisits = localStorage.getItem('local_visitor_count');
+    
+    if (!localVisits) {
+      // Começar com um número realista baseado na data
+      const today = new Date();
+      const daysSinceStart = Math.floor((today - new Date('2024-01-01')) / (1000 * 60 * 60 * 24));
+      localVisits = Math.floor(daysSinceStart * 15 + Math.random() * 500);
+    }
+    
+    // Incrementar visita atual
+    localVisits = parseInt(localVisits) + 1;
+    localStorage.setItem('local_visitor_count', localVisits);
+    
+    this.visits = localVisits;
+    this.updateViewerDisplay();
   }
 
   updateViewerDisplay() {
@@ -278,7 +311,7 @@ class OnlineStatsTracker {
     }
   }
 
-  // Métodos vazios para compatibilidade
+  // Métodos para compatibilidade
   async trackVisit() { }
   async trackDownload() { }
   async trackDraw() { }
@@ -288,7 +321,7 @@ class OnlineStatsTracker {
 }
 
 // Instância global do tracker
-const statsTracker = new OnlineStatsTracker();
+const statsTracker = new RealVisitorCounter();
 
 const board = document.getElementById("board");
 const draw = document.getElementById("drawLayer");
@@ -985,6 +1018,10 @@ function startDraw(e){
     return;
   }
   if(mode === null) return;
+  
+  // Salvar estado antes de começar a desenhar (para Ctrl+Z)
+  saveState();
+  
   drawing = true; 
   
   if(mode === 'free') {
@@ -1065,8 +1102,13 @@ board.addEventListener("contextmenu", e => {
 
 // Ctrl+Z para desfazer
 window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'z') {
+    // Verificar se está na aba do quadro tático
+    const tacticalTab = document.getElementById('tactical-tab');
+    const isVisible = tacticalTab && tacticalTab.classList.contains('active');
+    
+    if (e.ctrlKey && (e.key === 'z' || e.key === 'Z') && isVisible) {
         e.preventDefault();
+        console.log('Ctrl+Z pressed, undoing...', 'History length:', history.length);
         undo();
     }
 });

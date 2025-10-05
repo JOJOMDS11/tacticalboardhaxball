@@ -387,6 +387,48 @@
       text-decoration: underline;
     }
     
+    /* Estilo "Em breve" */
+    .coming-soon-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+      padding: 40px;
+    }
+    .coming-soon-message {
+      text-align: center;
+      background: #2c2c2c;
+      padding: 40px;
+      border-radius: 15px;
+      border: 2px solid #444;
+      max-width: 600px;
+    }
+    .coming-soon-message h2 {
+      color: #e5e7eb;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    .coming-soon-badge {
+      background: #B917FF;
+      color: white;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-size: 20px;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    .coming-soon-message p {
+      color: #e5e7eb;
+      margin: 15px 0;
+      font-size: 16px;
+    }
+    .features-list p {
+      color: #B917FF;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    
     /* Timeline com eventos */
     .timeline-container {
       position: relative;
@@ -565,51 +607,20 @@
     
     <!-- Aba Reprodutor de Replay -->
     <div id="replay-tab" class="tab-content">
-      <div class="replay-container">
-        <div class="upload-area" id="uploadArea">
-          <div class="upload-content">
-            <h2>📁 Upload do Seu Replay HBR2</h2>
-            <p>Arraste e solte seu arquivo .hbr2 aqui ou clique para selecionar</p>
-            <input type="file" id="hbr2FileInput" accept=".hbr2" style="display: none;">
-            <button id="selectFileBtn">Selecionar Arquivo</button>
+      <div class="coming-soon-container">
+        <div class="coming-soon-message">
+          <h2>🎬 Reprodutor de Replay HBR2</h2>
+          <div class="coming-soon-badge">Em breve!</div>
+          <p>Estamos trabalhando para trazer o melhor reprodutor de replays do Haxball.</p>
+          <div class="features-list">
+            <p>🔜 Upload de arquivos .hbr2</p>
+            <p>🔜 Análise completa de partidas</p>
+            <p>🔜 Timeline com eventos de gol</p>
+            <p>🔜 Ferramentas de desenho avançadas</p>
           </div>
-        </div>
-        
-        <div class="replay-player" id="replayPlayer" style="display: none;">
-          <div class="replay-info">
-            <h3 id="replayTitle">Carregando replay...</h3>
-            <div class="replay-details">
-              <span id="replayDuration">Duração: --:--</span>
-              <span id="replayPlayers">Jogadores: --</span>
-              <span id="replayMap">Mapa: --</span>
-            </div>
-          </div>
-          
-          <div class="replay-controls">
-            <button id="playPauseBtn">▶️ Play</button>
-            <button id="stopBtn">⏹️ Stop</button>
-            <input type="range" id="timelineSlider" min="0" max="100" value="0">
-            <span id="timeDisplay">00:00 / 00:00</span>
-          </div>
-          
-          <div class="replay-canvas-container">
-            <canvas id="replayCanvas"></canvas>
-            <canvas id="replayDrawLayer"></canvas>
-          </div>
-          
-          <div class="replay-toolbar">
-            <button id="replayDrawBtn">✏️ Desenhar</button>
-            <button id="replayEraseBtn">🧽 Borracha</button>
-            <button id="replayClearBtn">🗑️ Limpar</button>
-            <input type="color" id="replayColorPicker" value="#ff0000">
-        </div>
-        
-        <!-- Créditos e informações do Replay Player -->
-        <div class="replay-credits">
-          <p><strong>Reprodutor de Replay HBR2</strong></p>
-          <p>📁 Carregue arquivos .hbr2 • ⏸️ Pause para desenhar • 🎨 Ferramentas de análise</p>
-          <p>Baseado no <a href="https://haxball-replay-analyzer.github.io" target="_blank">Haxball Replay Analyzer</a></p>
-          <p style="font-size: 12px; color: #999;">Créditos: haxball-replay-analyzer.github.io</p>
+          <p style="font-size: 14px; color: #999; margin-top: 30px;">
+            Inspirado no <a href="https://haxball-replay-analyzer.github.io" target="_blank" style="color: #B917FF;">Haxball Replay Analyzer</a>
+          </p>
         </div>
       </div>
     </div>
