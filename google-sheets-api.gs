@@ -10,7 +10,7 @@ function doGet(e) {
     if (type === 'counter') {
       var count = Number(sheet.getRange('A1').getValue());
       if (isNaN(count)) count = 0;
-      return ContentService.createTextOutput(JSON.stringify({success: true, count: count})).setMimeType(ContentService.MimeType.JSON);
+      return createCorsResponse(JSON.stringify({success: true, count: count}));
     }
     
     if (type === 'posts') {
@@ -26,12 +26,12 @@ function doGet(e) {
           });
         }
       }
-      return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+      return createCorsResponse(JSON.stringify(result));
     }
     
-    return ContentService.createTextOutput(JSON.stringify({success: true, message: 'OK'})).setMimeType(ContentService.MimeType.JSON);
+    return createCorsResponse(JSON.stringify({success: true, message: 'OK'}));
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: error.toString()})).setMimeType(ContentService.MimeType.JSON);
+    return createCorsResponse(JSON.stringify({success: false, error: error.toString()}));
   }
 }
 
@@ -48,7 +48,7 @@ function doPost(e) {
       count++;
       range.setValue(count);
       SpreadsheetApp.flush(); // Force save
-      return ContentService.createTextOutput(JSON.stringify({success: true, count: count})).setMimeType(ContentService.MimeType.JSON);
+      return createCorsResponse(JSON.stringify({success: true, count: count}));
     }
     
     if (type === 'addpost') {
@@ -60,14 +60,26 @@ function doPost(e) {
       if (tipo && titulo) {
         postsSheet.appendRow([tipo, titulo, conteudo, url]);
         SpreadsheetApp.flush(); // Force save
-        return ContentService.createTextOutput(JSON.stringify({success: true, message: 'Post added'})).setMimeType(ContentService.MimeType.JSON);
+        return createCorsResponse(JSON.stringify({success: true, message: 'Post added'}));
       } else {
-        return ContentService.createTextOutput(JSON.stringify({success: false, error: 'Missing required fields'})).setMimeType(ContentService.MimeType.JSON);
+        return createCorsResponse(JSON.stringify({success: false, error: 'Missing required fields'}));
       }
     }
     
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: 'Unknown type'})).setMimeType(ContentService.MimeType.JSON);
+    return createCorsResponse(JSON.stringify({success: false, error: 'Unknown type'}));
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: error.toString()})).setMimeType(ContentService.MimeType.JSON);
+    return createCorsResponse(JSON.stringify({success: false, error: error.toString()}));
   }
+}
+
+// Função para criar resposta com CORS habilitado
+function createCorsResponse(content) {
+  return ContentService
+    .createTextOutput(content)
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
 }
