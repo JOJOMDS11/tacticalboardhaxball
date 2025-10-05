@@ -241,6 +241,38 @@ const gameConfigs = {
 class SimpleTracker {
   constructor() {
     console.log('Usando hitwebcounter para contagem de visitantes');
+    this.initCounter();
+  }
+
+  // Inicializar contador local quando externa falha
+  initCounter() {
+    const counterDisplay = document.getElementById('counterDisplay');
+    if (counterDisplay) {
+      // Tentar carregar contador do localStorage
+      let count = parseInt(localStorage.getItem('visitorCount') || '100');
+      
+      // Incrementar e salvar
+      count++;
+      localStorage.setItem('visitorCount', count.toString());
+      
+      // Exibir contador
+      counterDisplay.textContent = count.toLocaleString();
+      
+      // Tentar usar hitwebcounter como backup
+      this.tryHitwebcounter();
+    }
+  }
+
+  tryHitwebcounter() {
+    // Criar imagem invisível para tentar acessar hitwebcounter
+    const img = new Image();
+    img.onload = () => {
+      console.log('Hitwebcounter carregado com sucesso');
+    };
+    img.onerror = () => {
+      console.log('Hitwebcounter bloqueado, usando contador local');
+    };
+    img.src = 'https://hitwebcounter.com/counter/counter.php?page=21445755&style=0034&nbdigits=5&type=page&initCount=100';
   }
 
   // Métodos para compatibilidade
@@ -1905,7 +1937,7 @@ function downloadFinalCanvas(canvas) {
 // Sistema de Autenticação e Gerenciamento de Conteúdo
 class ContentManager {
   constructor() {
-    this.adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+    this.adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'jojos13';
     this.videos = JSON.parse(localStorage.getItem('videos') || '[]');
     this.tutorials = JSON.parse(localStorage.getItem('tutorials') || '[]');
     this.initContent();

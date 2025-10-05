@@ -605,7 +605,7 @@
       box-shadow: 0 6px 20px rgba(185, 23, 255, 0.4);
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-RFmm814j.js"></script>
+  <script type="module" crossorigin src="/assets/main-Ccj0Nose.js"></script>
 </head>
 <body>
   <div class="app">
@@ -763,7 +763,7 @@
     <!-- Aba Stream -->
     <div id="stream-tab" class="tab-content">
       <div class="stream-container">
-        <h2>🔴 LIVE STREAM - JP HAXBALL</h2>
+        <h2>🔴 LIVE STREAM - JOJO HAXBALL</h2>
         <iframe 
           class="stream-embed"
           src="https://player.twitch.tv/?channel=jphmdx&parent=tacticalboardhaxball.netlify.app&muted=false"
@@ -778,7 +778,7 @@
     <!-- Aba Videos -->
     <div id="videos-tab" class="tab-content">
       <div class="videos-container">
-        <h2>📹 Vídeos JP Haxball</h2>
+        <h2>📹 Vídeos JOJO Haxball</h2>
         
         <div id="videosPublicView">
           <div class="content-list" id="publicVideosList">
@@ -787,10 +787,12 @@
         </div>
         
         <div id="videosLoginForm" class="login-form">
-          <h3>🔐 Acesso Admin</h3>
-          <p>Gerenciar vídeos:</p>
-          <input type="password" id="videosPassword" placeholder="Senha">
-          <button onclick="authenticateVideos()">Entrar</button>
+          <form onsubmit="event.preventDefault(); authenticateVideos();">
+            <h3>🔐 Acesso Admin</h3>
+            <p>Gerenciar vídeos:</p>
+            <input type="password" id="videosPassword" placeholder="Senha">
+            <button type="submit">Entrar</button>
+          </form>
         </div>
         
         <div id="videosAdminPanel" class="admin-panel" style="display: none;">
@@ -820,10 +822,12 @@
         </div>
         
         <div id="tutorialsLoginForm" class="login-form">
-          <h3>🔐 Acesso Admin</h3>
-          <p>Gerenciar tutoriais:</p>
-          <input type="password" id="tutorialsPassword" placeholder="Senha">
-          <button onclick="authenticateTutorials()">Entrar</button>
+          <form onsubmit="event.preventDefault(); authenticateTutorials();">
+            <h3>🔐 Acesso Admin</h3>
+            <p>Gerenciar tutoriais:</p>
+            <input type="password" id="tutorialsPassword" placeholder="Senha">
+            <button type="submit">Entrar</button>
+          </form>
         </div>
         
         <div id="tutorialsAdminPanel" class="admin-panel" style="display: none;">
@@ -844,7 +848,7 @@
     <!-- Aba Shop -->
     <div id="shop-tab" class="tab-content">
       <div class="shop-container">
-        <h2>🛒 Loja JP Haxball</h2>
+        <h2>🛒 Loja JOJO Haxball</h2>
         <p style="margin: 20px 0; color: #aaa;">
           Confira nossos produtos exclusivos para Haxball!
         </p>
@@ -866,11 +870,10 @@
 
   <!-- Contador de Visitantes -->
   <div class="viewer-counter" style="text-align: center; padding: 20px;">
-    <!-- hitwebcounter Code START -->
-    <a href="https://www.hitwebcounter.com/" target="_blank">
-      <img src="https://hitwebcounter.com/counter/counter.php?page=21445755&style=0034&nbdigits=5&type=page&initCount=100" title="Visitantes" Alt="Visitantes" border="0" />
-    </a>
-    <!-- hitwebcounter Code END -->
+    <div id="visitorCounter" style="background: #2d2d2d; padding: 10px; border-radius: 8px; display: inline-block;">
+      <span style="font-size: 14px; color: #aaa;">Visitantes: </span>
+      <span id="counterDisplay" style="font-size: 16px; font-weight: bold; color: #B917FF;">Carregando...</span>
+    </div>
   </div>
 
 
