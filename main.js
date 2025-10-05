@@ -248,10 +248,8 @@ class SimpleTracker {
     const counterDisplay = document.getElementById('counterDisplay');
     if (!counterDisplay) return;
     try {
-      // Incrementa contador global via Google Sheets API
-      const url = 'https://script.google.com/macros/s/AKfycbzOuK6yD2pbaWnj95cTAG8OOI9Rv58ycTTOKnRtFa0w4cpMG0-wUcUvl590BvCQVSSs/exec?type=counter';
-      // POST para incrementar
-      const response = await fetch(url, { method: 'POST' });
+  // POST para incrementar via proxy Netlify (evita CORS)
+  const response = await fetch('/.netlify/functions/gSheetsProxy?type=counter', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.count !== undefined) {
@@ -282,12 +280,13 @@ class SimpleTracker {
 const statsTracker = new SimpleTracker();
 
 // --- INTEGRAÇÃO GOOGLE SHEETS API: POSTS (VÍDEOS/TUTORIAIS) ---
-const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzOuK6yD2pbaWnj95cTAG8OOI9Rv58ycTTOKnRtFa0w4cpMG0-wUcUvl590BvCQVSSs/exec';
+// Usar proxy Netlify para evitar CORS no browser
+const GOOGLE_SHEETS_API_URL = '/.netlify/functions/gSheetsProxy';
 
 // Carregar posts públicos (vídeos e tutoriais)
 async function loadPublicPosts(tipo, listElementId) {
   try {
-    const response = await fetch(GOOGLE_SHEETS_API_URL + '?type=posts');
+  const response = await fetch(GOOGLE_SHEETS_API_URL + '?type=posts', { method: 'GET', headers: { 'Accept': 'application/json' } });
     if (!response.ok) throw new Error('Erro na resposta');
     const data = await response.json();
     if (!data.success && !Array.isArray(data)) throw new Error('Dados inválidos');
@@ -328,7 +327,7 @@ async function addPost(tipo, titulo, conteudo, url) {
       conteudo,
       url: url || ''
     });
-    const response = await fetch(GOOGLE_SHEETS_API_URL + '?' + params.toString(), { method: 'POST' });
+  const response = await fetch(GOOGLE_SHEETS_API_URL + '?' + params.toString(), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
     if (!response.ok) throw new Error('Erro na resposta');
     const data = await response.json();
     if (!data.success) throw new Error(data.error || 'Erro desconhecido');
