@@ -82,18 +82,29 @@ const gameConfigs = {
   }
 };
 
-// Contador simples de visualizações
-class SimpleStatsTracker {
+// Contador de visualizações online
+class OnlineStatsTracker {
   constructor() {
+    this.visits = 0;
     this.initCounter();
   }
 
-  initCounter() {
-    // Incrementar contador a cada visita
-    let visits = parseInt(localStorage.getItem('haxball_visits') || '0');
-    visits++;
-    localStorage.setItem('haxball_visits', visits.toString());
-    this.visits = visits;
+  async initCounter() {
+    try {
+      // Usar uma API simples para contar visitantes
+      const response = await fetch('https://api.countapi.xyz/hit/haxballboard/visits');
+      const data = await response.json();
+      this.visits = data.value || 0;
+      this.updateViewerDisplay();
+    } catch (error) {
+      console.error('Erro ao carregar contador:', error);
+      // Fallback para localStorage se a API falhar
+      let visits = parseInt(localStorage.getItem('haxball_visits') || '0');
+      visits++;
+      localStorage.setItem('haxball_visits', visits.toString());
+      this.visits = visits;
+      this.updateViewerDisplay();
+    }
   }
 
   updateViewerDisplay() {
@@ -105,7 +116,7 @@ class SimpleStatsTracker {
   }
 
   // Métodos vazios para compatibilidade
-  async trackVisit() { this.updateViewerDisplay(); }
+  async trackVisit() { }
   async trackDownload() { }
   async trackDraw() { }
   async trackLanguageChange() { this.updateViewerDisplay(); }
@@ -114,12 +125,18 @@ class SimpleStatsTracker {
 }
 
 // Instância global do tracker
-const statsTracker = new SimpleStatsTracker();
+const statsTracker = new OnlineStatsTracker();
 
 const board = document.getElementById("board");
 const draw = document.getElementById("drawLayer");
 const playersLayer = document.getElementById("players");
-const ctx = draw.getContext("2d");
+
+// Verificar se os elementos existem
+if (!board || !draw || !playersLayer) {
+  console.error('Elementos HTML não encontrados!', { board, draw, playersLayer });
+}
+
+const ctx = draw?.getContext("2d");
 let mode = 'line';
 let drawing = false;
 let erasing = false;
@@ -449,8 +466,14 @@ function undo() {
 }
 
 function resizeCanvas(){
+  if (!draw || !board || !ctx) {
+    console.error('Canvas ou elementos não encontrados para resize');
+    return;
+  }
+  
   draw.width = board.clientWidth;
   draw.height = board.clientHeight;
+  
   if (history.length > 0) {
     const img = new Image();
     img.onload = () => {
@@ -625,11 +648,14 @@ window.addEventListener("pointerup",e=>{
 
 // Funções de desenho
 function getPos(e){
+  if (!draw) return {x: 0, y: 0};
   const rect=draw.getBoundingClientRect();
   return {x:e.clientX-rect.left,y:e.clientY-rect.top};
 }
 
 function drawShadows() {
+  if (!ctx || !board) return;
+  
   const rect = board.getBoundingClientRect();
   
   shadows.forEach(shadow => {
@@ -997,11 +1023,23 @@ function downloadFinalCanvas(canvas) {
 }
 
 // Inicialização
-document.getElementById("drawOffBtn").click();
-populateSelects();
-updateTexts();
-
-// Rastrear visita após carregamento
-setTimeout(() => {
-  statsTracker.trackVisit();
-}, 100);
+document.addEventListener('DOMContentLoaded', () => {
+  // Verificar se todos os elementos existem
+  const drawBtn = document.getElementById("drawOffBtn");
+  if (drawBtn) {
+    drawBtn.click();
+  }
+  
+  populateSelects();
+  updateTexts();
+  
+  // Certificar que o canvas está configurado
+  if (draw && board) {
+    resizeCanvas();
+  }
+  
+  // Rastrear visita após carregamento
+  setTimeout(() => {
+    statsTracker.trackVisit();
+  }, 100);
+});
