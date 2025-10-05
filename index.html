@@ -11,8 +11,35 @@
     body {
       margin:0;
       background:#1b1b1b;
-      color:#e5e7eb;
-      font-family: Arial, sans-serif;
+      color:#e          <div class="replay-controls">
+            <button id="playPauseBtn">▶️ Play</button>
+            <button id="stopBtn">⏹️ Stop</button>
+            <div class="timeline-container">
+              <input type="range" id="timelineSlider" min="0" max="100" value="0">
+              <div class="timeline-events" id="timelineEvents"></div>
+            </div>
+            <span id="timeDisplay">00:00 / 00:00</span>
+          </div>
+          
+          <div class="replay-canvas-container">
+            <canvas id="replayCanvas"></canvas>
+            <canvas id="replayDrawLayer"></canvas>
+          </div>
+          
+          <div class="replay-toolbar">
+            <button id="replayDrawBtn">✏️ Desenhar</button>
+            <button id="replayEraseBtn">🧽 Borracha</button>
+            <button id="replayClearBtn">🗑️ Limpar</button>
+            <label>Cor Esquerda:</label>
+            <input type="color" id="replayLeftColorPicker" value="#ff0000">
+            <label>Cor Direita:</label>
+            <input type="color" id="replayRightColorPicker" value="#0000ff">
+            <label>Tamanho:</label>
+            <input type="range" id="replayBrushSize" min="1" max="20" value="3">
+            <label>Borracha:</label>
+            <input type="range" id="replayEraserSize" min="5" max="50" value="20">
+            <button id="newReplayBtn">📁 Novo Replay</button>
+          </div>-family: Arial, sans-serif;
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -364,6 +391,59 @@
     }
     .replay-toolbar button.active {
       background: #B917FF;
+    }
+    
+    /* Timeline com eventos */
+    .timeline-container {
+      position: relative;
+      flex: 1;
+      margin: 0 10px;
+    }
+    .timeline-events {
+      position: absolute;
+      top: -8px;
+      left: 0;
+      right: 0;
+      height: 16px;
+      pointer-events: none;
+    }
+    .timeline-event {
+      position: absolute;
+      width: 3px;
+      height: 16px;
+      background: #ffaa00;
+      border-radius: 2px;
+      transform: translateX(-50%);
+    }
+    .timeline-event.goal {
+      background: #ff4444;
+    }
+    .timeline-event.own-goal {
+      background: #ff8844;
+    }
+    
+    /* Controles de desenho melhorados */
+    .replay-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .replay-toolbar label {
+      font-size: 12px;
+      color: #e5e7eb;
+      margin-left: 8px;
+    }
+    .replay-toolbar input[type="range"] {
+      width: 80px;
+    }
+    .replay-toolbar input[type="color"] {
+      width: 30px;
+      height: 25px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
     }
   </style>
 </head>
