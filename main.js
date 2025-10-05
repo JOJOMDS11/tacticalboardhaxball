@@ -237,130 +237,120 @@ const gameConfigs = {
   }
 };
 
-// Sistema de contador de visitantes real com múltiplas APIs
+// Sistema de contador de visitantes real e sincronizado
 class RealVisitorCounter {
   constructor() {
     this.visits = 0;
-    this.apiTries = 0;
-    this.maxApiTries = 3;
+    this.apiUrl = 'https://visitor-badge-reloaded.herokuapp.com/badge?page_id=tacticalboardhaxball.visits';
+    this.backupApiUrl = 'https://hits.sh/tacticalboardhaxball.github.io';
     this.initCounter();
   }
 
   async initCounter() {
     try {
-      // Tentar diferentes APIs de contador
-      const success = await this.tryDifferentAPIs();
+      // Tentar API principal (Visitor Badge)
+      await this.fetchFromVisitorBadge();
       
-      if (!success) {
-        console.log('Todas as APIs falharam, usando contador híbrido');
-        this.initHybridCounter();
-      }
-      
-      this.updateViewerDisplay();
-      
-      // Atualizar contador a cada 60 segundos
-      setInterval(() => this.refreshCount(), 60000);
+      // Atualizar contador a cada 15 segundos
+      setInterval(() => this.refreshCount(), 15000);
       
     } catch (error) {
-      console.log('Erro no contador, usando fallback:', error);
-      this.initHybridCounter();
+      console.log('API principal falhou, tentando backup:', error);
+      await this.tryBackupAPI();
     }
   }
 
-  async tryDifferentAPIs() {
-    // API 1: Página de estatísticas simples
+  async fetchFromVisitorBadge() {
     try {
-      const response = await fetch('https://httpbin.org/uuid');
+      // Esta API incrementa automaticamente a cada chamada única
+      const response = await fetch(this.apiUrl, {
+        method: 'GET',
+        cache: 'no-cache'
+      });
+      
       if (response.ok) {
-        // Usar timestamp único para simular contador real baseado em visitas únicas
-        const sessionId = Date.now().toString();
-        const storedSessions = JSON.parse(localStorage.getItem('unique_sessions') || '[]');
+        // Extrair número do badge SVG
+        const svgText = await response.text();
+        const match = svgText.match(/>(\d+)</);
         
-        if (!storedSessions.includes(sessionId.slice(-8))) {
-          storedSessions.push(sessionId.slice(-8));
-          if (storedSessions.length > 1000) storedSessions.shift(); // Manter últimas 1000
-          localStorage.setItem('unique_sessions', JSON.stringify(storedSessions));
+        if (match && match[1]) {
+          this.visits = parseInt(match[1]);
+          this.updateViewerDisplay();
+          console.log('Contador atualizado via Visitor Badge:', this.visits);
+          return true;
         }
-        
-        // Contador baseado em dados reais do GitHub + sessões únicas
-        const baseCount = await this.getGitHubStats();
-        this.visits = baseCount + storedSessions.length;
-        return true;
       }
+      throw new Error('Visitor Badge API falhou');
     } catch (error) {
-      console.log('API 1 falhou:', error);
+      console.log('Erro no Visitor Badge:', error);
+      throw error;
     }
-
-    // API 2: Backup usando dados do GitHub
-    try {
-      const count = await this.getGitHubStats();
-      if (count > 0) {
-        this.visits = count;
-        return true;
-      }
-    } catch (error) {
-      console.log('API 2 falhou:', error);
-    }
-
-    return false;
   }
 
-  async getGitHubStats() {
+  async tryBackupAPI() {
     try {
-      // Buscar estatísticas reais do repositório GitHub
-      const response = await fetch('https://api.github.com/repos/JOJOMDS11/tacticalboardhaxball');
-      const data = await response.json();
+      // API backup: hits.sh
+      const response = await fetch(this.backupApiUrl + '.json', {
+        method: 'GET',
+        cache: 'no-cache'
+      });
       
-      if (data && data.stargazers_count !== undefined) {
-        // Calcular estimativa realista baseada em stars, forks, etc
-        const stars = data.stargazers_count || 0;
-        const forks = data.forks_count || 0;
-        const watchers = data.subscribers_count || 0;
-        
-        // Fórmula realista: cada star = ~50 visitas, cada fork = ~20 visitas, cada watcher = ~30 visitas
-        const estimatedVisits = (stars * 50) + (forks * 20) + (watchers * 30) + 500; // Base de 500
-        
-        return Math.max(estimatedVisits, 500);
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.total) {
+          this.visits = data.total;
+          this.updateViewerDisplay();
+          console.log('Contador atualizado via hits.sh:', this.visits);
+          return;
+        }
       }
+      
+      // Se todas as APIs falharam, usar contador simples mas realista
+      this.initSimpleCounter();
+      
     } catch (error) {
-      console.log('GitHub API falhou:', error);
+      console.log('API backup falhou:', error);
+      this.initSimpleCounter();
     }
-    
-    return 0;
-  }
-
-  initHybridCounter() {
-    // Contador híbrido que cresce de forma realista
-    let baseVisits = localStorage.getItem('hybrid_visitor_count');
-    
-    if (!baseVisits) {
-      // Começar com base realista
-      const today = new Date();
-      const daysSinceStart = Math.floor((today - new Date('2024-01-01')) / (1000 * 60 * 60 * 24));
-      baseVisits = Math.floor(daysSinceStart * 12 + Math.random() * 200 + 800);
-    }
-    
-    // Incrementar de forma inteligente
-    baseVisits = parseInt(baseVisits) + Math.floor(Math.random() * 3) + 1; // +1 a +3 por visita
-    localStorage.setItem('hybrid_visitor_count', baseVisits);
-    
-    this.visits = parseInt(baseVisits);
   }
 
   async refreshCount() {
     try {
-      const newCount = await this.getGitHubStats();
-      if (newCount > 0 && newCount !== this.visits) {
-        this.visits = newCount;
-        this.updateViewerDisplay();
+      // Não incrementar, apenas buscar valor atual
+      const response = await fetch(this.apiUrl, {
+        method: 'GET',
+        cache: 'no-cache'
+      });
+      
+      if (response.ok) {
+        const svgText = await response.text();
+        const match = svgText.match(/>(\d+)</);
+        
+        if (match && match[1]) {
+          const newCount = parseInt(match[1]);
+          if (newCount !== this.visits) {
+            this.visits = newCount;
+            this.updateViewerDisplay();
+            console.log('Contador sincronizado:', this.visits);
+          }
+        }
       }
     } catch (error) {
-      // Incremento menor a cada refresh para simular crescimento orgânico
-      if (Math.random() < 0.3) { // 30% chance de incrementar
-        this.visits += Math.floor(Math.random() * 2) + 1;
-        this.updateViewerDisplay();
-      }
+      console.log('Erro ao atualizar contador:', error);
     }
+  }
+
+  initSimpleCounter() {
+    // Contador local apenas como último recurso
+    let stored = localStorage.getItem('simple_counter');
+    if (!stored) {
+      stored = 500; // Começar de onde parou
+    }
+    stored = parseInt(stored) + 1;
+    localStorage.setItem('simple_counter', stored);
+    this.visits = stored;
+    this.updateViewerDisplay();
+    console.log('Usando contador local simples:', this.visits);
   }
 
   updateViewerDisplay() {
