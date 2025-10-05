@@ -250,6 +250,7 @@ class SimpleTracker {
   async trackLanguageChange() { }
   async trackDiscordClick() { }
   async trackConfigChange() { }
+  updateViewerDisplay() { } // Método vazio para compatibilidade
 }
 
 // Instância global do tracker
@@ -2096,6 +2097,12 @@ function addVideo() {
 function addTutorial() {
   contentManager.addTutorial();
 }
+
+// Expor funções no escopo global
+window.authenticateVideos = authenticateVideos;
+window.authenticateTutorials = authenticateTutorials;
+window.addVideo = addVideo;
+window.addTutorial = addTutorial;
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {

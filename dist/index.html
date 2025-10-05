@@ -527,31 +527,43 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
     .login-form {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 30px;
+      max-width: 300px;
+      margin: 0 auto 20px auto;
+      padding: 20px;
       background: #2d2d2d;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .login-form h3 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      text-align: center;
+    }
+    .login-form p {
+      margin: 0 0 15px 0;
+      font-size: 14px;
+      color: #aaa;
+      text-align: center;
     }
     .login-form input {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+      padding: 8px 12px;
+      margin: 8px 0;
       background: #1b1b1b;
       border: 1px solid #444;
-      border-radius: 6px;
+      border-radius: 4px;
       color: #fff;
       font-size: 14px;
+      box-sizing: border-box;
     }
     .login-form button {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       background: #B917FF;
       color: white;
       border: none;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 4px;
+      font-size: 14px;
       font-weight: bold;
       cursor: pointer;
       transition: background 0.3s ease;
@@ -593,18 +605,11 @@
       box-shadow: 0 6px 20px rgba(185, 23, 255, 0.4);
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-DNHnVzpG.js"></script>
+  <script type="module" crossorigin src="/assets/main-RFmm814j.js"></script>
 </head>
 <body>
   <div class="app">
     <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
-    <div class="viewer-counter">
-      <!-- hitwebcounter Code START -->
-      <a href="https://www.hitwebcounter.com/" target="_blank">
-        <img src="https://hitwebcounter.com/counter/counter.php?page=21445755&style=0034&nbdigits=5&type=page&initCount=100" title="Visitantes" Alt="Visitantes" border="0" />
-      </a>
-      <!-- hitwebcounter Code END -->
-    </div>
     
     <!-- Discord de Torneios -->
     <div class="discord-tournament">
@@ -619,9 +624,9 @@
         <button class="tab active" data-tab="tactical">Quadro Tático</button>
         <button class="tab" data-tab="replay">Reprodutor de Replay</button>
         <button class="tab" data-tab="stream">Stream</button>
-        <button class="tab" data-tab="videos">Vídeos</button>
         <button class="tab" data-tab="tutorials">Tutoriais/Dicas</button>
         <button class="tab" data-tab="shop">Loja</button>
+        <button class="tab" data-tab="videos">Vídeos</button>
       </div>
     </div>
     
@@ -773,30 +778,31 @@
     <!-- Aba Videos -->
     <div id="videos-tab" class="tab-content">
       <div class="videos-container">
+        <h2>📹 Vídeos JP Haxball</h2>
+        
+        <div id="videosPublicView">
+          <div class="content-list" id="publicVideosList">
+            <!-- Vídeos públicos serão mostrados aqui -->
+          </div>
+        </div>
+        
         <div id="videosLoginForm" class="login-form">
-          <h3>🔐 Acesso Administrativo</h3>
-          <p>Digite a senha para gerenciar vídeos:</p>
-          <input type="password" id="videosPassword" placeholder="Senha de administrador">
+          <h3>🔐 Acesso Admin</h3>
+          <p>Gerenciar vídeos:</p>
+          <input type="password" id="videosPassword" placeholder="Senha">
           <button onclick="authenticateVideos()">Entrar</button>
         </div>
         
         <div id="videosAdminPanel" class="admin-panel" style="display: none;">
-          <h2>📹 Gerenciamento de Vídeos</h2>
+          <h3>📹 Adicionar Vídeo</h3>
           <div style="margin-bottom: 20px;">
-            <input type="text" id="videoTitle" placeholder="Título do vídeo" style="width: 100%; margin: 5px 0; padding: 10px;">
-            <input type="url" id="videoUrl" placeholder="URL do YouTube (https://www.youtube.com/watch?v=...)" style="width: 100%; margin: 5px 0; padding: 10px;">
+            <input type="text" id="videoTitle" placeholder="Título do vídeo" style="width: 100%; margin: 5px 0; padding: 10px; box-sizing: border-box;">
+            <input type="url" id="videoUrl" placeholder="URL do YouTube (https://www.youtube.com/watch?v=...)" style="width: 100%; margin: 5px 0; padding: 10px; box-sizing: border-box;">
             <button onclick="addVideo()" style="padding: 10px 20px; background: #B917FF; color: white; border: none; border-radius: 6px;">Adicionar Vídeo</button>
           </div>
           
           <div class="content-list" id="videosList">
-            <!-- Vídeos serão carregados aqui -->
-          </div>
-        </div>
-        
-        <div id="videosPublicView">
-          <h2>📹 Vídeos JP Haxball</h2>
-          <div class="content-list" id="publicVideosList">
-            <!-- Vídeos públicos serão mostrados aqui -->
+            <!-- Vídeos admin serão carregados aqui -->
           </div>
         </div>
       </div>
@@ -805,30 +811,31 @@
     <!-- Aba Tutorials/Dicas -->
     <div id="tutorials-tab" class="tab-content">
       <div class="tutorials-container">
+        <h2>📚 Tutoriais e Dicas Haxball</h2>
+        
+        <div id="tutorialsPublicView">
+          <div class="content-list" id="publicTutorialsList">
+            <!-- Tutoriais públicos serão mostrados aqui -->
+          </div>
+        </div>
+        
         <div id="tutorialsLoginForm" class="login-form">
-          <h3>🔐 Acesso Administrativo</h3>
-          <p>Digite a senha para gerenciar tutoriais:</p>
-          <input type="password" id="tutorialsPassword" placeholder="Senha de administrador">
+          <h3>🔐 Acesso Admin</h3>
+          <p>Gerenciar tutoriais:</p>
+          <input type="password" id="tutorialsPassword" placeholder="Senha">
           <button onclick="authenticateTutorials()">Entrar</button>
         </div>
         
         <div id="tutorialsAdminPanel" class="admin-panel" style="display: none;">
-          <h2>📚 Gerenciamento de Tutoriais/Dicas</h2>
+          <h3>📚 Adicionar Tutorial</h3>
           <div style="margin-bottom: 20px;">
-            <input type="text" id="tutorialTitle" placeholder="Título do tutorial" style="width: 100%; margin: 5px 0; padding: 10px;">
-            <textarea id="tutorialContent" placeholder="Conteúdo do tutorial (suporta HTML básico)" style="width: 100%; height: 150px; margin: 5px 0; padding: 10px;"></textarea>
+            <input type="text" id="tutorialTitle" placeholder="Título do tutorial" style="width: 100%; margin: 5px 0; padding: 10px; box-sizing: border-box;">
+            <textarea id="tutorialContent" placeholder="Conteúdo do tutorial (suporta HTML básico)" style="width: 100%; height: 120px; margin: 5px 0; padding: 10px; box-sizing: border-box; background: #1b1b1b; color: #fff; border: 1px solid #444; border-radius: 4px;"></textarea>
             <button onclick="addTutorial()" style="padding: 10px 20px; background: #B917FF; color: white; border: none; border-radius: 6px;">Adicionar Tutorial</button>
           </div>
           
           <div class="content-list" id="tutorialsList">
-            <!-- Tutoriais serão carregados aqui -->
-          </div>
-        </div>
-        
-        <div id="tutorialsPublicView">
-          <h2>📚 Tutoriais e Dicas Haxball</h2>
-          <div class="content-list" id="publicTutorialsList">
-            <!-- Tutoriais públicos serão mostrados aqui -->
+            <!-- Tutoriais admin serão carregados aqui -->
           </div>
         </div>
       </div>
@@ -855,6 +862,15 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Contador de Visitantes -->
+  <div class="viewer-counter" style="text-align: center; padding: 20px;">
+    <!-- hitwebcounter Code START -->
+    <a href="https://www.hitwebcounter.com/" target="_blank">
+      <img src="https://hitwebcounter.com/counter/counter.php?page=21445755&style=0034&nbdigits=5&type=page&initCount=100" title="Visitantes" Alt="Visitantes" border="0" />
+    </a>
+    <!-- hitwebcounter Code END -->
   </div>
 
 
