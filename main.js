@@ -93,11 +93,11 @@ const gameConfigs = {
         { uid: 4, id: 'ZAG', team: 'red', x: 0.2, y: 0.65, size: 22 },
         { uid: 5, id: 'LD', team: 'red', x: 0.2, y: 0.85, size: 22 },
         
-        // Meio-campo
-        { uid: 6, id: 'VOL', team: 'red', x: 0.35, y: 0.25, size: 22 },
-        { uid: 7, id: 'MC', team: 'red', x: 0.35, y: 0.5, size: 22 },
-        { uid: 8, id: 'MC', team: 'red', x: 0.35, y: 0.75, size: 22 },
-        { uid: 9, id: 'MEI', team: 'red', x: 0.5, y: 0.5, size: 22 },
+  // Meio-campo
+  { uid: 6, id: 'VOL', team: 'red', x: 0.35, y: 0.25, size: 22 },
+  { uid: 7, id: 'MC', team: 'red', x: 0.35, y: 0.5, size: 22 },
+  { uid: 8, id: 'MC', team: 'red', x: 0.35, y: 0.75, size: 22 },
+  { uid: 9, id: 'MEI', team: 'red', x: 0.48, y: 0.47, size: 22 },
         
         // Ataque
         { uid: 10, id: 'ATA', team: 'red', x: 0.65, y: 0.35, size: 22 },
@@ -112,18 +112,18 @@ const gameConfigs = {
         { uid: 15, id: 'ZAG', team: 'blue', x: 0.8, y: 0.65, size: 22 },
         { uid: 16, id: 'LD', team: 'blue', x: 0.8, y: 0.85, size: 22 },
         
-        // Meio-campo
-        { uid: 17, id: 'VOL', team: 'blue', x: 0.65, y: 0.25, size: 22 },
-        { uid: 18, id: 'MC', team: 'blue', x: 0.65, y: 0.5, size: 22 },
-        { uid: 19, id: 'MC', team: 'blue', x: 0.65, y: 0.75, size: 22 },
-        { uid: 20, id: 'MEI', team: 'blue', x: 0.5, y: 0.5, size: 22 },
+  // Meio-campo
+  { uid: 17, id: 'VOL', team: 'blue', x: 0.65, y: 0.25, size: 22 },
+  { uid: 18, id: 'MC', team: 'blue', x: 0.65, y: 0.5, size: 22 },
+  { uid: 19, id: 'MC', team: 'blue', x: 0.65, y: 0.75, size: 22 },
+  { uid: 20, id: 'MEI', team: 'blue', x: 0.52, y: 0.53, size: 22 },
         
         // Ataque
         { uid: 21, id: 'ATA', team: 'blue', x: 0.35, y: 0.35, size: 22 },
         { uid: 22, id: 'ATA', team: 'blue', x: 0.35, y: 0.65, size: 22 },
         
-        // Bola
-        { uid: 23, id: '', team: 'ball', x: 0.5, y: 0.5, size: 8 }
+  // Bola
+  { uid: 23, id: '', team: 'ball', x: 0.5, y: 0.5, size: 10 }
       ]
     },
     realsoccer: {
