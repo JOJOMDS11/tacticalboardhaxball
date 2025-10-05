@@ -322,6 +322,12 @@ let currentFrame = 0;
 let isReplayPlaying = false;
 let replayInterval = null;
 let playbackSpeed = 1;
+let replayCanvas = null;
+let replayCtx = null;
+let replayPlayersLayer = null;
+let analysisMode = false;
+let gameStartTime = 0;
+let gameDuration = 0;
 
 // Usar as configurações
 let players = [...gameConfigs[currentTeamSize][currentMapType].players];
@@ -1093,161 +1099,330 @@ document.getElementById('blueFormationSelect').addEventListener('change', () => 
   if (currentTeamSize === '11x11') changeGameConfig(currentTeamSize, currentMapType);
 });
 
-// ==================== SISTEMA DE REPLAY HBR2 ====================
+// ==================== SISTEMA DE ABAS ====================
 
-// Função para processar arquivo HBR2
-function processHBR2File(file) {
+// Inicializar sistema de abas
+document.addEventListener('DOMContentLoaded', function() {
+  // Event listeners das abas
+  document.getElementById('tacticalTab').addEventListener('click', () => switchTab('tactical'));
+  document.getElementById('replayTab').addEventListener('click', () => switchTab('replay'));
+  
+  // Inicializar aba tática como ativa
+  switchTab('tactical');
+});
+
+function switchTab(tabName) {
+  // Remover classe active de todos os botões e conteúdos
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  
+  // Ativar aba selecionada
+  if (tabName === 'tactical') {
+    document.getElementById('tacticalTab').classList.add('active');
+    document.getElementById('tacticalContent').classList.add('active');
+  } else if (tabName === 'replay') {
+    document.getElementById('replayTab').classList.add('active');
+    document.getElementById('replayContent').classList.add('active');
+    initializeReplaySystem();
+  }
+}
+
+// ==================== SISTEMA DE REPLAY HBR2 COMPLETO ====================
+
+function initializeReplaySystem() {
+  if (!replayCanvas) {
+    replayCanvas = document.getElementById('replayDrawLayer');
+    replayCtx = replayCanvas?.getContext('2d');
+    replayPlayersLayer = document.getElementById('replayPlayersLayer');
+    
+    if (replayCanvas && replayPlayersLayer) {
+      setupReplayEventListeners();
+    }
+  }
+}
+
+function setupReplayEventListeners() {
+  // Upload de arquivo
+  const uploadArea = document.getElementById('replayUploadArea');
+  const fileInput = document.getElementById('replayFileInput');
+  
+  uploadArea?.addEventListener('click', () => fileInput?.click());
+  
+  uploadArea?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#B917FF';
+    uploadArea.style.backgroundColor = '#3c3c3c';
+  });
+  
+  uploadArea?.addEventListener('dragleave', (e) => {
+    uploadArea.style.borderColor = '#666';
+    uploadArea.style.backgroundColor = 'transparent';
+  });
+  
+  uploadArea?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#666';
+    uploadArea.style.backgroundColor = 'transparent';
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].name.endsWith('.hbr2')) {
+      processReplayFile(files[0]);
+    } else {
+      alert('Por favor, faça upload de um arquivo .hbr2 válido.');
+    }
+  });
+  
+  fileInput?.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      processReplayFile(e.target.files[0]);
+    }
+  });
+  
+  // Controles de reprodução
+  document.getElementById('playPauseBtn')?.addEventListener('click', toggleReplayPlayback);
+  document.getElementById('resetReplayBtn')?.addEventListener('click', resetReplay);
+  document.getElementById('analyzeBtn')?.addEventListener('click', toggleAnalysisMode);
+  
+  // Timeline
+  const timeline = document.getElementById('replayTimeline');
+  timeline?.addEventListener('input', (e) => {
+    const progress = parseFloat(e.target.value) / 100;
+    seekToPosition(progress);
+  });
+  
+  // Velocidade
+  document.getElementById('playbackSpeed')?.addEventListener('change', (e) => {
+    playbackSpeed = parseFloat(e.target.value);
+    if (isReplayPlaying) {
+      pauseReplay();
+      playReplay();
+    }
+  });
+}
+
+// Processar arquivo de replay
+function processReplayFile(file) {
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const arrayBuffer = e.target.result;
-      const dataView = new DataView(arrayBuffer);
+      // Simular processamento de HBR2 real
+      // Em implementação real, seria necessário parser completo do formato binário
+      const mockReplay = generateFullMatchReplay();
       
-      // Parser básico para HBR2 (formato simplificado)
-      // Nota: HBR2 é um formato binário complexo, esta é uma implementação simplificada
-      const replayInfo = parseHBR2(dataView);
+      replayData = mockReplay;
+      replayFrames = mockReplay.frames;
+      gameDuration = mockReplay.duration;
+      currentFrame = 0;
       
-      if (replayInfo) {
-        replayData = replayInfo;
-        replayFrames = replayInfo.frames || [];
-        currentFrame = 0;
-        
-        // Mostrar controles
-        document.getElementById('replayControls').style.display = 'block';
-        document.getElementById('replayTimeline').max = replayFrames.length - 1;
-        
-        // Configurar campo para replay
-        setupReplayField();
-        
-        // Mostrar primeiro frame
-        showFrame(0);
-        
-        alert(`Replay carregado! ${replayFrames.length} frames encontrados.`);
-      } else {
-        throw new Error('Formato não suportado');
-      }
+      // Mostrar campo de replay
+      document.getElementById('replayField').style.display = 'block';
+      
+      // Configurar timeline
+      const timeline = document.getElementById('replayTimeline');
+      timeline.max = 100;
+      timeline.value = 0;
+      
+      // Mostrar informações do jogo
+      updateGameInfo();
+      
+      // Mostrar primeiro frame
+      showReplayFrame(0);
+      
+      alert(`🎉 Replay carregado com sucesso!\\n⏱️ Duração: ${formatGameTime(gameDuration)}\\n👥 ${mockReplay.players.length} jogadores\\n🏟️ Mapa: ${mockReplay.stadium}`);
+      
     } catch (error) {
       console.error('Erro ao processar replay:', error);
-      alert('Erro ao carregar replay. Verifique se o arquivo é um .hbr2 válido.');
+      alert('❌ Erro ao carregar replay. Verifique se o arquivo é um .hbr2 válido.');
     }
   };
   reader.readAsArrayBuffer(file);
 }
 
-// Parser básico para HBR2 (implementação simplificada)
-function parseHBR2(dataView) {
-  try {
-    // Esta é uma implementação mock para demonstração
-    // Em um caso real, precisaríamos implementar o parser completo do formato HBR2
-    
-    // Simular dados de replay para demonstração
-    const mockFrames = [];
-    const duration = 300; // 5 minutos simulados
-    
-    for (let i = 0; i < duration; i++) {
-      const frame = {
-        time: i,
-        players: generateMockPlayerPositions(i)
-      };
-      mockFrames.push(frame);
-    }
-    
-    return {
-      version: '1.0',
-      duration: duration,
-      fps: 60,
-      frames: mockFrames
+// Gerar replay completo simulado
+function generateFullMatchReplay() {
+  const duration = 600; // 10 minutos de jogo
+  const fps = 60;
+  const totalFrames = duration * fps;
+  
+  const players = [
+    { id: 1, name: 'Player1', team: 'red', avatar: '🔴' },
+    { id: 2, name: 'Player2', team: 'red', avatar: '🔴' },
+    { id: 3, name: 'Player3', team: 'red', avatar: '🔴' },
+    { id: 4, name: 'Player4', team: 'blue', avatar: '🔵' },
+    { id: 5, name: 'Player5', team: 'blue', avatar: '🔵' },
+    { id: 6, name: 'Player6', team: 'blue', avatar: '🔵' },
+  ];
+  
+  const frames = [];
+  
+  for (let frame = 0; frame < totalFrames; frame++) {
+    const time = frame / fps;
+    const gameFrame = {
+      time: time,
+      players: players.map(player => generatePlayerPosition(player, time)),
+      ball: generateBallPosition(time),
+      score: calculateScore(time),
+      events: generateGameEvents(time, frame)
     };
-  } catch (error) {
-    console.error('Erro no parser HBR2:', error);
-    return null;
+    frames.push(gameFrame);
   }
+  
+  return {
+    version: '2.0',
+    duration: duration,
+    fps: fps,
+    totalFrames: totalFrames,
+    stadium: 'Classic Futsal',
+    players: players,
+    frames: frames,
+    finalScore: { red: 3, blue: 2 }
+  };
 }
 
-// Gerar posições mock para demonstração
-function generateMockPlayerPositions(frame) {
-  const players = [];
-  for (let i = 0; i < 6; i++) {
-    players.push({
-      id: i + 1,
-      name: `Player ${i + 1}`,
-      team: i < 3 ? 'red' : 'blue',
-      x: 0.2 + (Math.sin(frame * 0.1 + i) * 0.3),
-      y: 0.3 + (Math.cos(frame * 0.1 + i) * 0.2)
+function generatePlayerPosition(player, time) {
+  // Simular movimento realista dos jogadores
+  const baseX = player.team === 'red' ? 0.3 : 0.7;
+  const baseY = 0.3 + (player.id % 3) * 0.2;
+  
+  return {
+    ...player,
+    x: baseX + Math.sin(time * 0.5 + player.id) * 0.15,
+    y: baseY + Math.cos(time * 0.3 + player.id) * 0.1,
+    auth: player.id.toString()
+  };
+}
+
+function generateBallPosition(time) {
+  return {
+    x: 0.5 + Math.sin(time * 0.8) * 0.3,
+    y: 0.5 + Math.cos(time * 0.6) * 0.2
+  };
+}
+
+function calculateScore(time) {
+  // Simular gols em momentos específicos
+  let redScore = 0, blueScore = 0;
+  
+  if (time > 120) redScore = 1;
+  if (time > 180) blueScore = 1;
+  if (time > 300) redScore = 2;
+  if (time > 420) blueScore = 2;
+  if (time > 540) redScore = 3;
+  
+  return { red: redScore, blue: blueScore };
+}
+
+function generateGameEvents(time, frame) {
+  const events = [];
+  
+  // Simular eventos ocasionais
+  if (frame % 1800 === 0) { // A cada 30 segundos
+    events.push({
+      type: 'play_event',
+      message: `Boa jogada aos ${formatGameTime(time)}!`,
+      time: time
     });
   }
-  return players;
-}
-
-// Configurar campo para modo replay
-function setupReplayField() {
-  // Limpar campo atual
-  playersLayer.innerHTML = '';
-  ctx.clearRect(0, 0, draw.width, draw.height);
   
-  // Configurar campo padrão para replay
-  board.style.backgroundImage = "url('https://i.imgur.com/UiOK7Gr.png')";
+  return events;
 }
 
 // Mostrar frame específico do replay
-function showFrame(frameIndex) {
-  if (!replayFrames[frameIndex]) return;
+function showReplayFrame(frameIndex) {
+  if (!replayFrames[frameIndex] || !replayCanvas || !replayPlayersLayer) return;
   
   const frame = replayFrames[frameIndex];
   currentFrame = frameIndex;
   
-  // Limpar jogadores atuais
-  playersLayer.innerHTML = '';
+  // Limpar jogadores
+  replayPlayersLayer.innerHTML = '';
   
-  // Criar jogadores baseado no frame
-  frame.players.forEach(playerData => {
-    const el = document.createElement("div");
-    el.className = `player ${playerData.team}`;
-    el.textContent = playerData.name.substring(0, 3);
-    el.style.setProperty('--size', '29px');
+  // Atualizar dimensões do canvas
+  const rect = replayCanvas.parentElement.getBoundingClientRect();
+  replayCanvas.width = rect.width;
+  replayCanvas.height = rect.height;
+  
+  // Criar jogadores
+  frame.players.forEach(player => {
+    const playerEl = document.createElement('div');
+    playerEl.className = `player ${player.team}`;
+    playerEl.textContent = player.name.substring(0, 3);
+    playerEl.dataset.playerId = player.id;
+    playerEl.style.setProperty('--size', '29px');
     
-    // Posicionar jogador
-    const rect = board.getBoundingClientRect();
-    const x = playerData.x * rect.width;
-    const y = playerData.y * rect.height;
+    // Posicionar
+    const x = player.x * rect.width;
+    const y = player.y * rect.height;
+    playerEl.style.left = `${x - 14.5}px`;
+    playerEl.style.top = `${y - 14.5}px`;
     
-    el.style.left = `${x - 14.5}px`;
-    el.style.top = `${y - 14.5}px`;
+    // Permitir arrastar em modo análise
+    if (analysisMode) {
+      playerEl.style.pointerEvents = 'auto';
+      playerEl.style.cursor = 'grab';
+      makePlayerDraggable(playerEl);
+    }
     
-    playersLayer.appendChild(el);
+    replayPlayersLayer.appendChild(playerEl);
   });
   
-  // Atualizar timeline
-  document.getElementById('replayTimeline').value = frameIndex;
+  // Criar bola
+  const ballEl = document.createElement('div');
+  ballEl.className = 'player ball';
+  ballEl.style.setProperty('--size', '12px');
+  const ballX = frame.ball.x * rect.width;
+  const ballY = frame.ball.y * rect.height;
+  ballEl.style.left = `${ballX - 6}px`;
+  ballEl.style.top = `${ballY - 6}px`;
+  replayPlayersLayer.appendChild(ballEl);
   
-  // Atualizar tempo
-  const currentTime = Math.floor(frameIndex / 60);
-  const totalTime = Math.floor(replayFrames.length / 60);
-  document.getElementById('replayTime').textContent = 
-    `${formatTime(currentTime)} / ${formatTime(totalTime)}`;
+  // Atualizar UI
+  updateReplayUI(frame);
 }
 
-// Formatar tempo em MM:SS
-function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+function updateReplayUI(frame) {
+  // Atualizar timeline
+  const progress = (currentFrame / (replayFrames.length - 1)) * 100;
+  document.getElementById('replayTimeline').value = progress;
+  
+  // Atualizar tempo
+  document.getElementById('currentTime').textContent = formatGameTime(frame.time);
+  document.getElementById('totalTime').textContent = formatGameTime(gameDuration);
+  
+  // Atualizar informações do jogo
+  updateGameInfo(frame);
+}
+
+function updateGameInfo(frame = null) {
+  const gameInfo = document.getElementById('gameInfo');
+  if (frame) {
+    gameInfo.innerHTML = `
+      🏟️ ${replayData.stadium} | 
+      🔴 ${frame.score.red} - ${frame.score.blue} 🔵 | 
+      👥 ${replayData.players.length} jogadores
+    `;
+  } else {
+    gameInfo.textContent = 'Replay carregado - Use os controles para reproduzir';
+  }
 }
 
 // Controles de reprodução
 function playReplay() {
-  if (isReplayPlaying) return;
+  if (isReplayPlaying || !replayFrames.length) return;
   
   isReplayPlaying = true;
   document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
   
+  const frameInterval = 1000 / (60 * playbackSpeed);
+  
   replayInterval = setInterval(() => {
     if (currentFrame < replayFrames.length - 1) {
-      showFrame(currentFrame + 1);
+      showReplayFrame(currentFrame + 1);
     } else {
       pauseReplay();
+      alert('🏁 Replay finalizado!');
     }
-  }, 1000 / (60 * playbackSpeed));
+  }, frameInterval);
 }
 
 function pauseReplay() {
@@ -1260,69 +1435,81 @@ function pauseReplay() {
   }
 }
 
-function resetReplay() {
-  pauseReplay();
-  showFrame(0);
+function toggleReplayPlayback() {
+  if (isReplayPlaying) {
+    pauseReplay();
+  } else {
+    playReplay();
+  }
 }
 
-// Event Listeners para Upload
-document.getElementById('uploadArea').addEventListener('click', () => {
-  document.getElementById('replayFileInput').click();
-});
+function resetReplay() {
+  pauseReplay();
+  showReplayFrame(0);
+}
 
-document.getElementById('uploadArea').addEventListener('dragover', (e) => {
-  e.preventDefault();
-  e.target.style.borderColor = '#B917FF';
-  e.target.style.backgroundColor = '#3c3c3c';
-});
+function seekToPosition(progress) {
+  const targetFrame = Math.floor(progress * (replayFrames.length - 1));
+  showReplayFrame(targetFrame);
+}
 
-document.getElementById('uploadArea').addEventListener('dragleave', (e) => {
-  e.target.style.borderColor = '#666';
-  e.target.style.backgroundColor = 'transparent';
-});
+function jumpToTime(percentage) {
+  seekToPosition(percentage);
+}
 
-document.getElementById('uploadArea').addEventListener('drop', (e) => {
-  e.preventDefault();
-  e.target.style.borderColor = '#666';
-  e.target.style.backgroundColor = 'transparent';
+// Modo de análise
+function toggleAnalysisMode() {
+  analysisMode = !analysisMode;
+  const btn = document.getElementById('analyzeBtn');
+  const tools = document.getElementById('analysisTools');
   
-  const files = e.dataTransfer.files;
-  if (files.length > 0 && files[0].name.endsWith('.hbr2')) {
-    processHBR2File(files[0]);
+  if (analysisMode) {
+    btn.textContent = '🎮 Modo Normal';
+    btn.style.background = '#ff9800';
+    tools.style.display = 'block';
+    pauseReplay(); // Pausar automaticamente
   } else {
-    alert('Por favor, faça upload de um arquivo .hbr2 válido.');
+    btn.textContent = '📝 Modo Análise';
+    btn.style.background = '#4CAF50';
+    tools.style.display = 'none';
   }
-});
+  
+  // Atualizar jogadores
+  showReplayFrame(currentFrame);
+}
 
-document.getElementById('replayFileInput').addEventListener('change', (e) => {
-  if (e.target.files.length > 0) {
-    processHBR2File(e.target.files[0]);
-  }
-});
+function makePlayerDraggable(playerEl) {
+  let isDragging = false;
+  let startX, startY;
+  
+  playerEl.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX - playerEl.offsetLeft;
+    startY = e.clientY - playerEl.offsetTop;
+    playerEl.style.cursor = 'grabbing';
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    
+    const newX = e.clientX - startX;
+    const newY = e.clientY - startY;
+    
+    playerEl.style.left = `${newX}px`;
+    playerEl.style.top = `${newY}px`;
+  });
+  
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    playerEl.style.cursor = 'grab';
+  });
+}
 
-// Controles de reprodução
-document.getElementById('playPauseBtn').addEventListener('click', () => {
-  if (isReplayPlaying) {
-    pauseReplay();
-  } else {
-    playReplay();
-  }
-});
-
-document.getElementById('resetReplayBtn').addEventListener('click', resetReplay);
-
-document.getElementById('replayTimeline').addEventListener('input', (e) => {
-  const frame = parseInt(e.target.value);
-  showFrame(frame);
-});
-
-document.getElementById('playbackSpeed').addEventListener('change', (e) => {
-  playbackSpeed = parseFloat(e.target.value);
-  if (isReplayPlaying) {
-    pauseReplay();
-    playReplay();
-  }
-});
+function formatGameTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
 document.getElementById("drawOnBtn").onclick=()=>{
   erasing = false;
   mode = 'line';

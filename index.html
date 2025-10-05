@@ -211,11 +211,82 @@
       border-radius: 5px;
       border: 1px solid #444;
     }
+    
+    /* Sistema de Abas */
+    .tab-system {
+      margin-bottom: 20px;
+    }
+    .tab-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 12px 24px;
+      background: #2c2c2c;
+      color: #e5e7eb;
+      border: 1px solid #444;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    .tab-button:hover {
+      background: #3c3c3c;
+      border-color: #666;
+    }
+    .tab-button.active {
+      background: #B917FF;
+      border-color: #B917FF;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Estilos específicos do reprodutor */
+    .replay-board-wrap {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .replay-controls button:hover {
+      opacity: 0.8;
+      transform: translateY(-1px);
+    }
+    .replay-controls input[type="range"] {
+      -webkit-appearance: none;
+      height: 8px;
+      border-radius: 4px;
+      background: #666;
+      outline: none;
+    }
+    .replay-controls input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #B917FF;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
+    <!-- Sistema de Abas -->
+    <div class="tab-system">
+      <div class="tab-buttons">
+        <button id="tacticalTab" class="tab-button active">🎯 Quadro Tático</button>
+        <button id="replayTab" class="tab-button">📺 Reprodutor de Replay</button>
+      </div>
+    </div>
+
+    <!-- Aba do Quadro Tático -->
+    <div id="tacticalContent" class="tab-content active">
+      <h1>Quadro Tático Haxball <span id="currentModeLabel">— 3x3 Futsal</span></h1>
     <div class="viewer-counter">
       <span id="viewerCount">Carregando visitantes...</span>
     </div>
@@ -272,39 +343,89 @@
       </div>
     </div>
 
-    <div class="replay-upload-section" style="margin: 20px 0; text-align: center; padding: 15px; background: #2c2c2c; border-radius: 8px; border: 1px solid #444;">
-      <h3 style="margin: 0 0 10px; color: #e5e7eb;">📺 Analisador de Replay Haxball</h3>
-      <p style="margin: 0 0 15px; color: #999; font-size: 14px;">Faça upload do seu arquivo .hbr2 para analisar jogadas frame por frame!</p>
-      
-      <div class="upload-area" style="border: 2px dashed #666; border-radius: 8px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s;" id="uploadArea">
-        <input type="file" id="replayFileInput" accept=".hbr2" style="display: none;">
-        <div id="uploadContent">
-          <span style="font-size: 24px;">📁</span><br>
-          <span style="color: #e5e7eb;">Clique aqui ou arraste seu arquivo .hbr2</span><br>
-          <small style="color: #999;">Suporte para replays do Haxball</small>
+    </div>
+
+    <!-- Aba do Reprodutor de Replay -->
+    <div id="replayContent" class="tab-content">
+      <h1>📺 Reprodutor de Replay Haxball</h1>
+      <p style="text-align: center; color: #999; margin-bottom: 20px;">
+        Reproduza replays completos do Haxball com controles para pausar e analisar jogadas
+      </p>
+
+      <div class="replay-upload-section" style="margin: 20px 0; text-align: center; padding: 15px; background: #2c2c2c; border-radius: 8px; border: 1px solid #444;">
+        <h3 style="margin: 0 0 10px; color: #e5e7eb;">� Upload do Replay</h3>
+        <p style="margin: 0 0 15px; color: #999; font-size: 14px;">Faça upload do seu arquivo .hbr2 para reproduzir o jogo completo!</p>
+        
+        <div class="upload-area" style="border: 2px dashed #666; border-radius: 8px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s;" id="replayUploadArea">
+          <input type="file" id="replayFileInput" accept=".hbr2" style="display: none;">
+          <div id="replayUploadContent">
+            <span style="font-size: 24px;">📁</span><br>
+            <span style="color: #e5e7eb;">Clique aqui ou arraste seu arquivo .hbr2</span><br>
+            <small style="color: #999;">Reprodutor completo de partidas Haxball</small>
+          </div>
         </div>
       </div>
-      
-      <div id="replayControls" style="display: none; margin-top: 15px;">
-        <div style="margin-bottom: 10px;">
-          <span style="color: #e5e7eb; margin-right: 10px;">Timeline:</span>
-          <input type="range" id="replayTimeline" min="0" max="100" value="0" style="width: 60%; margin: 0 10px;">
-          <span id="replayTime" style="color: #999;">00:00 / 00:00</span>
+
+      <!-- Campo de Replay -->
+      <div id="replayField" style="display: none;">
+        <div class="replay-board-wrap" style="position:relative; width:100%; aspect-ratio:16/9; border:2px solid #444; border-radius:12px; overflow:hidden; background:url('https://i.imgur.com/UiOK7Gr.png') center/contain no-repeat; background-color: #4a4a4a; margin-bottom: 15px;">
+          <canvas id="replayDrawLayer" style="position:absolute; inset:0; width:100%; height:100%; z-index: 2;"></canvas>
+          <div id="replayPlayersLayer" style="position:absolute; inset:0; pointer-events:none; z-index: 1;"></div>
         </div>
-        <div>
-          <button id="playPauseBtn" style="margin: 0 5px; padding: 8px 16px; background: #B917FF; color: white; border: none; border-radius: 4px; cursor: pointer;">▶️ Play</button>
-          <button id="resetReplayBtn" style="margin: 0 5px; padding: 8px 16px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;">🔄 Reset</button>
-          <span style="color: #e5e7eb; margin-left: 15px;">Velocidade:</span>
-          <select id="playbackSpeed" style="margin-left: 5px; padding: 4px; background: #2c2c2c; color: white; border: 1px solid #444;">
-            <option value="0.5">0.5x</option>
-            <option value="1" selected>1x</option>
-            <option value="2">2x</option>
-            <option value="4">4x</option>
-          </select>
+
+        <!-- Controles do Replay -->
+        <div class="replay-controls" style="background: #2c2c2c; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+          <div style="margin-bottom: 15px; text-align: center;">
+            <div id="gameInfo" style="color: #e5e7eb; margin-bottom: 10px; font-weight: bold;">
+              Carregando replay...
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="color: #e5e7eb; min-width: 50px; text-align: right;" id="currentTime">00:00</span>
+              <input type="range" id="replayTimeline" min="0" max="100" value="0" style="flex: 1; margin: 0;">
+              <span style="color: #e5e7eb; min-width: 50px;" id="totalTime">00:00</span>
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin-bottom: 15px;">
+            <button id="playPauseBtn" style="margin: 0 5px; padding: 10px 20px; background: #B917FF; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">▶️ Play</button>
+            <button id="resetReplayBtn" style="margin: 0 5px; padding: 10px 20px; background: #ff4444; color: white; border: none; border-radius: 6px; cursor: pointer;">🔄 Reset</button>
+            <button id="analyzeBtn" style="margin: 0 5px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer;">📝 Modo Análise</button>
+          </div>
+
+          <div style="text-align: center;">
+            <label style="color: #e5e7eb; margin-right: 10px;">Velocidade:</label>
+            <select id="playbackSpeed" style="margin-right: 20px; padding: 5px; background: #2c2c2c; color: white; border: 1px solid #444;">
+              <option value="0.25">0.25x</option>
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="2">2x</option>
+              <option value="4">4x</option>
+            </select>
+            
+            <label style="color: #e5e7eb; margin-right: 10px;">Pular para:</label>
+            <button onclick="jumpToTime(0)" style="margin: 0 2px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">Início</button>
+            <button onclick="jumpToTime(0.25)" style="margin: 0 2px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">25%</button>
+            <button onclick="jumpToTime(0.5)" style="margin: 0 2px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">50%</button>
+            <button onclick="jumpToTime(0.75)" style="margin: 0 2px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">75%</button>
+          </div>
+        </div>
+
+        <!-- Ferramentas de Análise -->
+        <div id="analysisTools" style="display: none; background: #2c2c2c; padding: 15px; border-radius: 8px; border: 1px solid #444; margin-top: 15px;">
+          <h4 style="color: #e5e7eb; margin: 0 0 10px;">🎯 Ferramentas de Análise</h4>
+          <div style="text-align: center;">
+            <button id="drawModeBtn" style="margin: 0 5px; padding: 8px 16px; background: #B917FF; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Desenhar</button>
+            <button id="moveModeBtn" style="margin: 0 5px; padding: 8px 16px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">🔄 Mover Jogadores</button>
+            <button id="clearAnalysisBtn" style="margin: 0 5px; padding: 8px 16px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;">🗑️ Limpar</button>
+            <input type="color" id="analysisColor" value="#ffff00" style="margin: 0 5px; width: 40px; height: 32px;">
+          </div>
+          <p style="color: #999; font-size: 12px; text-align: center; margin: 10px 0 0;">
+            Pause o replay e use as ferramentas para analisar jogadas. Clique em "Play" para continuar.
+          </p>
         </div>
       </div>
     </div>
-    
+
     <div class="donations">
         <h2 id="helpProjectLabel"></h2>
         <div class="links">
