@@ -230,27 +230,6 @@
       <select id="mapTypeSelect">
         <!-- Será populado dinamicamente pelo JavaScript -->
       </select>
-
-      <div id="formationSelectors" style="display:none; flex-direction: row; gap: 16px; margin-top: 10px;">
-        <div>
-          <label for="redFormationSelect">Formação Red:</label>
-          <select id="redFormationSelect">
-            <option value="442">4-4-2</option>
-            <option value="433">4-3-3</option>
-            <option value="352">3-5-2</option>
-            <option value="343">3-4-3</option>
-          </select>
-        </div>
-        <div>
-          <label for="blueFormationSelect">Formação Blue:</label>
-          <select id="blueFormationSelect">
-            <option value="442">4-4-2</option>
-            <option value="433">4-3-3</option>
-            <option value="352">3-5-2</option>
-            <option value="343">3-4-3</option>
-          </select>
-        </div>
-      </div>
     </div>
     
     <div class="toolbar">
@@ -313,6 +292,26 @@
     </div>
 
     <div class="board-wrap" id="board">
+    <div id="formationSelectors" style="display:none; flex-direction: row; gap: 16px; margin-bottom: 10px; justify-content: center;">
+      <div>
+        <label for="redFormationSelect">Formação Red:</label>
+        <select id="redFormationSelect">
+          <option value="442">4-4-2</option>
+          <option value="433">4-3-3</option>
+          <option value="352">3-5-2</option>
+          <option value="343">3-4-3</option>
+        </select>
+      </div>
+      <div>
+        <label for="blueFormationSelect">Formação Blue:</label>
+        <select id="blueFormationSelect">
+          <option value="442">4-4-2</option>
+          <option value="433">4-3-3</option>
+          <option value="352">3-5-2</option>
+          <option value="343">3-4-3</option>
+        </select>
+      </div>
+    </div>
       <canvas id="drawLayer"></canvas>
       <div class="players-layer" id="players"></div>
     </div>
