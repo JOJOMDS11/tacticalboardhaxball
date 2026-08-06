@@ -318,9 +318,28 @@ async function loadPublicPosts(tipo, listElementId) {
       div.className = 'post-item';
       div.style.cssText = 'padding: 10px; margin: 10px 0; background: #2c2c2c; border-radius: 8px; border: 1px solid #444;';
       if (tipo === 'video') {
-        div.innerHTML = `<b>${post.titulo}</b><br><a href="${post.url}" target="_blank" style="color: #B917FF;">Assistir</a>`;
+        const titleEl = document.createElement('b');
+        titleEl.textContent = post.titulo;
+        div.appendChild(titleEl);
+        div.appendChild(document.createElement('br'));
+        if (/^https?:\/\//i.test(post.url || '')) {
+          const linkEl = document.createElement('a');
+          linkEl.href = post.url;
+          linkEl.target = '_blank';
+          linkEl.rel = 'noopener noreferrer';
+          linkEl.style.color = '#B917FF';
+          linkEl.textContent = 'Assistir';
+          div.appendChild(linkEl);
+        }
       } else {
-        div.innerHTML = `<b>${post.titulo}</b><br><div style="margin-top: 5px; color: #ddd;">${post.conteudo}</div>`;
+        const titleEl = document.createElement('b');
+        titleEl.textContent = post.titulo;
+        div.appendChild(titleEl);
+        div.appendChild(document.createElement('br'));
+        const contentEl = document.createElement('div');
+        contentEl.style.cssText = 'margin-top: 5px; color: #ddd;';
+        contentEl.textContent = post.conteudo;
+        div.appendChild(contentEl);
       }
       list.appendChild(div);
     });
@@ -334,17 +353,15 @@ async function loadPublicPosts(tipo, listElementId) {
 // Adicionar post (admin)
 async function addPost(tipo, titulo, conteudo, url) {
   try {
+    const secret = (typeof contentManager !== 'undefined' && contentManager.adminPassword) || '';
     const params = new URLSearchParams({
       tipo,
       titulo,
       conteudo,
-      url: url || ''
+      url: url || '',
+      secret
     });
     const response = await fetch('/.netlify/functions/postsManager?' + params.toString(), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-    if (!response.ok) {
-      const text = await response.text().catch(() => '');
-      throw new Error('Erro na resposta: ' + (text || response.statusText));
-    }
     const contentType = response.headers.get('content-type') || '';
     let data;
     if (contentType.includes('application/json')) data = await response.json();
@@ -352,7 +369,7 @@ async function addPost(tipo, titulo, conteudo, url) {
       const text = await response.text().catch(() => '');
       throw new Error('Resposta inválida do servidor: ' + (text || contentType));
     }
-    if (!data.success) throw new Error(data.error || 'Erro desconhecido');
+    if (!response.ok || !data.success) throw new Error(data.error || 'Erro desconhecido');
     
     // Recarregar lista após adicionar
     if (tipo === 'video') loadPublicPosts('video', 'publicVideosList');
@@ -2117,6 +2134,12 @@ class ContentManager {
     this.loadPublicVideos();
   }
 
+  escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
   extractYouTubeId(url) {
     const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const match = url.match(regex);
@@ -2134,9 +2157,9 @@ class ContentManager {
     const container = document.getElementById('videosList');
     container.innerHTML = this.videos.map(video => `
       <div class="content-item">
-        <h3>${video.title}</h3>
-        <iframe width="100%" height="200" src="${video.embedUrl}" frameborder="0" allowfullscreen></iframe>
-        <p>Adicionado em: ${video.createdAt}</p>
+        <h3>${this.escapeHtml(video.title)}</h3>
+        <iframe width="100%" height="200" src="${this.escapeHtml(video.embedUrl)}" frameborder="0" allowfullscreen></iframe>
+        <p>Adicionado em: ${this.escapeHtml(video.createdAt)}</p>
         <button onclick="contentManager.removeVideo(${video.id})" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px;">Remover</button>
       </div>
     `).join('');
@@ -2151,9 +2174,9 @@ class ContentManager {
 
     container.innerHTML = this.videos.map(video => `
       <div class="content-item">
-        <h3>${video.title}</h3>
-        <iframe width="100%" height="200" src="${video.embedUrl}" frameborder="0" allowfullscreen></iframe>
-        <p>Publicado em: ${video.createdAt}</p>
+        <h3>${this.escapeHtml(video.title)}</h3>
+        <iframe width="100%" height="200" src="${this.escapeHtml(video.embedUrl)}" frameborder="0" allowfullscreen></iframe>
+        <p>Publicado em: ${this.escapeHtml(video.createdAt)}</p>
       </div>
     `).join('');
   }
@@ -2196,9 +2219,9 @@ class ContentManager {
     const container = document.getElementById('tutorialsList');
     container.innerHTML = this.tutorials.map(tutorial => `
       <div class="content-item">
-        <h3>${tutorial.title}</h3>
-        <div>${tutorial.content}</div>
-        <p>Adicionado em: ${tutorial.createdAt}</p>
+        <h3>${this.escapeHtml(tutorial.title)}</h3>
+        <div>${this.escapeHtml(tutorial.content)}</div>
+        <p>Adicionado em: ${this.escapeHtml(tutorial.createdAt)}</p>
         <button onclick="contentManager.removeTutorial(${tutorial.id})" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px;">Remover</button>
       </div>
     `).join('');
@@ -2213,9 +2236,9 @@ class ContentManager {
 
     container.innerHTML = this.tutorials.map(tutorial => `
       <div class="content-item">
-        <h3>${tutorial.title}</h3>
-        <div>${tutorial.content}</div>
-        <p>Publicado em: ${tutorial.createdAt}</p>
+        <h3>${this.escapeHtml(tutorial.title)}</h3>
+        <div>${this.escapeHtml(tutorial.content)}</div>
+        <p>Publicado em: ${this.escapeHtml(tutorial.createdAt)}</p>
       </div>
     `).join('');
   }
