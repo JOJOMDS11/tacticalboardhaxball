@@ -69,6 +69,24 @@ exports.handler = async function(event, context) {
     if (event.httpMethod === 'POST') {
       // Adicionar novo post
       const qs = event.queryStringParameters || {};
+
+      // Verificação server-side da senha (evita que qualquer um poste sem autorização)
+      const expectedSecret = process.env.POSTS_ADMIN_SECRET;
+      if (!expectedSecret) {
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ success: false, error: 'POSTS_ADMIN_SECRET não configurado no servidor' })
+        };
+      }
+      if (qs.secret !== expectedSecret) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ success: false, error: 'Não autorizado' })
+        };
+      }
+
       const newPost = {
         tipo: qs.tipo || '',
         titulo: qs.titulo || '',
@@ -82,6 +100,22 @@ exports.handler = async function(event, context) {
           statusCode: 400,
           headers,
           body: JSON.stringify({success: false, error: 'Tipo e título são obrigatórios'})
+        };
+      }
+
+      // Validações básicas anti-abuso
+      if (newPost.titulo.length > 200 || newPost.conteudo.length > 5000 || newPost.url.length > 500) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({success: false, error: 'Campo excede o tamanho máximo permitido'})
+        };
+      }
+      if (newPost.url && !/^https?:\/\//i.test(newPost.url)) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({success: false, error: 'URL deve começar com http:// ou https://'})
         };
       }
 
